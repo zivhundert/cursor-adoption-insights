@@ -20,6 +20,7 @@ export interface CursorDataRow {
   'API Requests': string;
   'Chat Suggested Lines Added': string;
   'Chat Accepted Lines Added': string;
+  'Tabs Accepted': string;
   'Most Used Model': string;
   'Most Used Apply Extension': string;
   'Most Used Tab Extension': string;
