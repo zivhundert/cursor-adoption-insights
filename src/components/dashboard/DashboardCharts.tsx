@@ -3,6 +3,7 @@ import { CumulativeChart } from './charts/CumulativeChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
 import { TopContributorsTable } from './charts/TopContributorsTable';
 import { UserActivityChart } from './charts/UserActivityChart';
+import { DayOfWeekChart } from './charts/DayOfWeekChart';
 import { CursorDataRow } from '@/pages/Index';
 
 interface DashboardChartsProps {
@@ -21,8 +22,13 @@ export const DashboardCharts = ({ data }: DashboardChartsProps) => {
         <UserActivityChart data={data} />
       </div>
       
-      {/* Third row - Full width contributors table */}
-      <TopContributorsTable data={data} />
+      {/* Third row - Two column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <DayOfWeekChart data={data} />
+        <div className="lg:col-span-1">
+          <TopContributorsTable data={data} />
+        </div>
+      </div>
     </div>
   );
 };
