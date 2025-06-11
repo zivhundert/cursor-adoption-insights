@@ -2,6 +2,7 @@
 import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { format } from 'date-fns';
 import { CursorDataRow } from '@/pages/Index';
 
 interface CumulativeChartProps {
@@ -31,6 +32,15 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
     });
   }, [data]);
 
+  const formatXAxisTick = (tickItem: string) => {
+    try {
+      const date = new Date(tickItem);
+      return format(date, 'MMM dd');
+    } catch {
+      return tickItem;
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -46,6 +56,7 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                tickFormatter={formatXAxisTick}
               />
               <YAxis 
                 fontSize={12}
@@ -55,7 +66,7 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
               />
               <Tooltip 
                 formatter={(value: number) => [value.toLocaleString(), 'Cumulative Lines']}
-                labelFormatter={(label) => `Date: ${label}`}
+                labelFormatter={(label) => `Date: ${formatXAxisTick(label)}`}
               />
               <Line 
                 type="monotone" 
