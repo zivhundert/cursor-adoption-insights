@@ -2,6 +2,8 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 
 interface TopContributorsTableProps {
@@ -51,7 +53,20 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Top Contributors</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold">Top Contributors</CardTitle>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Top 10 users ranked by total accepted lines.</p>
+                <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>

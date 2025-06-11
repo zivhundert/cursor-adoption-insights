@@ -2,6 +2,8 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 
 interface DayOfWeekChartProps {
@@ -10,29 +12,42 @@ interface DayOfWeekChartProps {
 
 export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
   const chartData = useMemo(() => {
-    const dayTotals = new Map<string, number>();
+    const dayOfWeekActivity = new Map<string, number>();
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     
-    // Initialize all days with 0
-    dayNames.forEach(day => dayTotals.set(day, 0));
+    // Initialize all days
+    dayNames.forEach(day => dayOfWeekActivity.set(day, 0));
     
     data.forEach(row => {
       const date = new Date(row.Date);
-      const dayOfWeek = dayNames[date.getDay()];
+      const dayName = dayNames[date.getDay()];
       const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-      dayTotals.set(dayOfWeek, (dayTotals.get(dayOfWeek) || 0) + acceptedLines);
+      dayOfWeekActivity.set(dayName, (dayOfWeekActivity.get(dayName) || 0) + acceptedLines);
     });
 
     return dayNames.map(day => ({
       day,
-      lines: dayTotals.get(day) || 0,
+      acceptedLines: dayOfWeekActivity.get(day) || 0
     }));
   }, [data]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Activity by Day of Week</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold">Activity by Day of Week</CardTitle>
+          <TooltipProvider>
+            <UITooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Total accepted lines grouped by day of the week.</p>
+                <p className="text-sm text-muted-foreground mt-1">Shows which days have the highest coding activity</p>
+              </TooltipContent>
+            </UITooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-80">
@@ -44,9 +59,6 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                angle={-45}
-                textAnchor="end"
-                height={80}
               />
               <YAxis 
                 fontSize={12}
@@ -57,17 +69,7 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
               <Tooltip 
                 formatter={(value: number) => [value.toLocaleString(), 'Accepted Lines']}
               />
-              <Bar 
-                dataKey="lines" 
-                fill="url(#dayGradient)"
-                radius={[4, 4, 0, 0]}
-              />
-              <defs>
-                <linearGradient id="dayGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#1e40af" />
-                  <stop offset="100%" stopColor="#0891b2" />
-                </linearGradient>
-              </defs>
+              <Bar dataKey="acceptedLines" fill="#0891b2" />
             </BarChart>
           </ResponsiveContainer>
         </div>

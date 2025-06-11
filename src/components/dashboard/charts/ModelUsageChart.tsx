@@ -2,34 +2,47 @@
 import { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 interface ModelUsageChartProps {
   data: CursorDataRow[];
 }
 
-const COLORS = ['#1e40af', '#0891b2', '#0d9488', '#059669', '#10b981'];
-
 export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
   const chartData = useMemo(() => {
-    const modelTotals = new Map<string, number>();
+    const modelCounts = new Map<string, number>();
     
     data.forEach(row => {
       const model = row['Most Used Model'] || 'Unknown';
-      const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-      modelTotals.set(model, (modelTotals.get(model) || 0) + acceptedLines);
+      modelCounts.set(model, (modelCounts.get(model) || 0) + 1);
     });
 
-    return Array.from(modelTotals.entries())
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 5); // Top 5 models
+    return Array.from(modelCounts.entries())
+      .map(([model, count]) => ({ model, count }))
+      .sort((a, b) => b.count - a.count);
   }, [data]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Accepted Lines by Model</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold">Model Usage Distribution</CardTitle>
+          <TooltipProvider>
+            <UITooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Distribution of AI models used by all users.</p>
+                <p className="text-sm text-muted-foreground mt-1">Based on 'Most Used Model' field per user session</p>
+              </TooltipContent>
+            </UITooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-80">
@@ -40,16 +53,17 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
+                label={({ model, percent }) => `${model} ${(percent * 100).toFixed(0)}%`}
                 outerRadius={80}
                 fill="#8884d8"
-                dataKey="value"
+                dataKey="count"
               >
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Lines']} />
+              <Tooltip />
+              <Legend />
             </PieChart>
           </ResponsiveContainer>
         </div>

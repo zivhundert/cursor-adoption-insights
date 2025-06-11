@@ -2,6 +2,8 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 
 interface UserActivityChartProps {
@@ -10,61 +12,57 @@ interface UserActivityChartProps {
 
 export const UserActivityChart = ({ data }: UserActivityChartProps) => {
   const chartData = useMemo(() => {
-    const userTotals = new Map<string, number>();
+    const dailyActivity = new Map<string, number>();
     
     data.forEach(row => {
-      const email = row.Email;
-      const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-      userTotals.set(email, (userTotals.get(email) || 0) + acceptedLines);
+      const date = row.Date;
+      const isActive = row['Is Active'].toLowerCase() === 'true';
+      if (isActive) {
+        dailyActivity.set(date, (dailyActivity.get(date) || 0) + 1);
+      }
     });
 
-    return Array.from(userTotals.entries())
-      .map(([email, lines]) => ({ 
-        user: email.split('@')[0], // Show username part only
-        lines 
-      }))
-      .sort((a, b) => b.lines - a.lines)
-      .slice(0, 10); // Top 10 users
+    return Array.from(dailyActivity.entries())
+      .map(([date, activeUsers]) => ({ date, activeUsers }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [data]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Avg Accepted Lines per User</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold">Daily Active Users</CardTitle>
+          <TooltipProvider>
+            <UITooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Number of active users per day.</p>
+                <p className="text-sm text-muted-foreground mt-1">Counts users where 'Is Active' field is true</p>
+              </TooltipContent>
+            </UITooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout="horizontal">
+            <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 
-                type="number"
+                dataKey="date" 
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
               />
               <YAxis 
-                type="category"
-                dataKey="user" 
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                width={80}
               />
-              <Tooltip 
-                formatter={(value: number) => [value.toLocaleString(), 'Lines']}
-              />
-              <Bar 
-                dataKey="lines" 
-                fill="url(#barGradient)"
-                radius={[0, 4, 4, 0]}
-              />
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#1e40af" />
-                  <stop offset="100%" stopColor="#0891b2" />
-                </linearGradient>
-              </defs>
+              <Tooltip />
+              <Bar dataKey="activeUsers" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
         </div>

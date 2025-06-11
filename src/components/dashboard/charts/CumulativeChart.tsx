@@ -2,6 +2,8 @@
 import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { CursorDataRow } from '@/pages/Index';
 
@@ -44,7 +46,20 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-semibold">Cumulative Accepted Lines</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-xl font-semibold">Cumulative Accepted Lines</CardTitle>
+          <TooltipProvider>
+            <UITooltip>
+              <TooltipTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Shows the running total of accepted lines over time. Each day adds to the previous total.</p>
+                <p className="text-sm text-muted-foreground mt-1">Formula: Daily sum of 'Chat Accepted Lines Added' field</p>
+              </TooltipContent>
+            </UITooltip>
+          </TooltipProvider>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="h-80">
