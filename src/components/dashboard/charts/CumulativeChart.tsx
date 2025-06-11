@@ -13,23 +13,32 @@ interface CumulativeChartProps {
 
 export const CumulativeChart = ({ data }: CumulativeChartProps) => {
   const chartData = useMemo(() => {
-    const dailyTotals = new Map<string, number>();
+    const dailyAccepted = new Map<string, number>();
+    const dailySuggested = new Map<string, number>();
     
     data.forEach(row => {
       const date = row.Date;
       const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-      dailyTotals.set(date, (dailyTotals.get(date) || 0) + acceptedLines);
+      const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
+      
+      dailyAccepted.set(date, (dailyAccepted.get(date) || 0) + acceptedLines);
+      dailySuggested.set(date, (dailySuggested.get(date) || 0) + suggestedLines);
     });
 
-    const sortedDates = Array.from(dailyTotals.keys()).sort();
-    let cumulative = 0;
+    const sortedDates = Array.from(new Set([...dailyAccepted.keys(), ...dailySuggested.keys()])).sort();
+    let cumulativeAccepted = 0;
+    let cumulativeSuggested = 0;
     
     return sortedDates.map(date => {
-      cumulative += dailyTotals.get(date) || 0;
+      cumulativeAccepted += dailyAccepted.get(date) || 0;
+      cumulativeSuggested += dailySuggested.get(date) || 0;
+      
       return {
         date,
-        cumulative,
-        daily: dailyTotals.get(date) || 0,
+        cumulativeAccepted,
+        cumulativeSuggested,
+        dailyAccepted: dailyAccepted.get(date) || 0,
+        dailySuggested: dailySuggested.get(date) || 0,
       };
     });
   }, [data]);
@@ -43,6 +52,23 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
     }
   };
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
+          <p className="font-medium mb-2">{`Date: ${formatXAxisTick(label)}`}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }} className="text-sm">
+              {entry.dataKey === 'cumulativeAccepted' && `Cumulative Accepted: ${entry.value.toLocaleString()}`}
+              {entry.dataKey === 'cumulativeSuggested' && `Cumulative Suggested: ${entry.value.toLocaleString()}`}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -54,8 +80,9 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Shows the running total of accepted lines over time. Each day adds to the previous total.</p>
-                <p className="text-sm text-muted-foreground mt-1">Formula: Daily sum of 'Chat Accepted Lines Added' field</p>
+                <p>Shows the running total of accepted and suggested lines over time. Each day adds to the previous total.</p>
+                <p className="text-sm text-muted-foreground mt-1">Solid line: Cumulative 'Chat Accepted Lines Added'</p>
+                <p className="text-sm text-muted-foreground">Dashed line: Cumulative 'Chat Suggested Lines Added'</p>
               </TooltipContent>
             </UITooltip>
           </TooltipProvider>
@@ -65,6 +92,16 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
+              <defs>
+                <linearGradient id="acceptedGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#1e40af" />
+                  <stop offset="100%" stopColor="#0891b2" />
+                </linearGradient>
+                <linearGradient id="suggestedGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#dc2626" />
+                  <stop offset="100%" stopColor="#ea580c" />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 
                 dataKey="date" 
@@ -79,24 +116,24 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
                 axisLine={false}
                 tickFormatter={(value) => value.toLocaleString()}
               />
-              <Tooltip 
-                formatter={(value: number) => [value.toLocaleString(), 'Cumulative Lines']}
-                labelFormatter={(label) => `Date: ${formatXAxisTick(label)}`}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Line 
                 type="monotone" 
-                dataKey="cumulative" 
-                stroke="url(#colorGradient)"
+                dataKey="cumulativeAccepted" 
+                stroke="url(#acceptedGradient)"
                 strokeWidth={3}
                 dot={false}
                 activeDot={{ r: 6, fill: '#0891b2' }}
               />
-              <defs>
-                <linearGradient id="colorGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#1e40af" />
-                  <stop offset="100%" stopColor="#0891b2" />
-                </linearGradient>
-              </defs>
+              <Line 
+                type="monotone" 
+                dataKey="cumulativeSuggested" 
+                stroke="url(#suggestedGradient)"
+                strokeWidth={3}
+                strokeDasharray="8 4"
+                dot={false}
+                activeDot={{ r: 6, fill: '#ea580c' }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
