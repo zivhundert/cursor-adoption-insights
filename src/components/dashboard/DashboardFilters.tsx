@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { CursorDataRow } from '@/pages/Index';
+import type { DateRange } from 'react-day-picker';
 
 interface DashboardFiltersProps {
   data: CursorDataRow[];
@@ -20,7 +21,7 @@ interface DashboardFiltersProps {
 }
 
 export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProps) => {
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedUser, setSelectedUser] = useState<string>('all');
   const [selectedModel, setSelectedModel] = useState<string>('all');
 
@@ -29,14 +30,17 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
 
   const handleFilterChange = () => {
     onFiltersChange({
-      dateRange,
+      dateRange: {
+        from: dateRange?.from,
+        to: dateRange?.to,
+      },
       selectedUser,
       selectedModel,
     });
   };
 
   const clearFilters = () => {
-    setDateRange({});
+    setDateRange(undefined);
     setSelectedUser('all');
     setSelectedModel('all');
     onFiltersChange({
@@ -65,11 +69,11 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                   variant="outline"
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !dateRange.from && "text-muted-foreground"
+                    !dateRange?.from && "text-muted-foreground"
                   )}
                 >
                   <CalendarRange className="mr-2 h-4 w-4" />
-                  {dateRange.from ? (
+                  {dateRange?.from ? (
                     dateRange.to ? (
                       <>
                         {format(dateRange.from, "LLL dd, y")} -{" "}
@@ -87,7 +91,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                 <CalendarComponent
                   initialFocus
                   mode="range"
-                  defaultMonth={dateRange.from}
+                  defaultMonth={dateRange?.from}
                   selected={dateRange}
                   onSelect={setDateRange}
                   numberOfMonths={2}
