@@ -4,14 +4,15 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
-import { format } from 'date-fns';
 import { CursorDataRow } from '@/pages/Index';
+import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
 
 interface CumulativeChartProps {
   data: CursorDataRow[];
+  aggregationPeriod: AggregationPeriod;
 }
 
-export const CumulativeChart = ({ data }: CumulativeChartProps) => {
+export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProps) => {
   const chartData = useMemo(() => {
     const dailyAccepted = new Map<string, number>();
     const dailySuggested = new Map<string, number>();
@@ -45,8 +46,7 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
 
   const formatXAxisTick = (tickItem: string) => {
     try {
-      const date = new Date(tickItem);
-      return format(date, 'MMM dd');
+      return formatPeriodLabel(tickItem, aggregationPeriod);
     } catch {
       return tickItem;
     }
@@ -69,18 +69,26 @@ export const CumulativeChart = ({ data }: CumulativeChartProps) => {
     return null;
   };
 
+  const getPeriodText = () => {
+    switch (aggregationPeriod) {
+      case 'week': return 'weekly';
+      case 'month': return 'monthly';
+      default: return 'daily';
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Cumulative Accepted Lines</CardTitle>
+          <CardTitle className="text-xl font-semibold">Cumulative Accepted Lines ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Shows the running total of accepted and suggested lines over time. Each day adds to the previous total.</p>
+                <p>Shows the running total of accepted and suggested lines over time aggregated by {getPeriodText()} periods.</p>
                 <p className="text-sm text-muted-foreground mt-1">Solid line: Cumulative 'Chat Accepted Lines Added'</p>
                 <p className="text-sm text-muted-foreground">Dashed line: Cumulative 'Chat Suggested Lines Added'</p>
               </TooltipContent>

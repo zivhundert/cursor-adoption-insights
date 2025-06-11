@@ -4,14 +4,15 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
-import { format } from 'date-fns';
 import { CursorDataRow } from '@/pages/Index';
+import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
 
 interface CumulativeAskRequestsChartProps {
   data: CursorDataRow[];
+  aggregationPeriod: AggregationPeriod;
 }
 
-export const CumulativeAskRequestsChart = ({ data }: CumulativeAskRequestsChartProps) => {
+export const CumulativeAskRequestsChart = ({ data, aggregationPeriod }: CumulativeAskRequestsChartProps) => {
   const chartData = useMemo(() => {
     const dailyAskRequests = new Map<string, number>();
     
@@ -38,8 +39,7 @@ export const CumulativeAskRequestsChart = ({ data }: CumulativeAskRequestsChartP
 
   const formatXAxisTick = (tickItem: string) => {
     try {
-      const date = new Date(tickItem);
-      return format(date, 'MMM dd');
+      return formatPeriodLabel(tickItem, aggregationPeriod);
     } catch {
       return tickItem;
     }
@@ -57,7 +57,7 @@ export const CumulativeAskRequestsChart = ({ data }: CumulativeAskRequestsChartP
           ))}
           {payload[0] && (
             <p className="text-sm text-muted-foreground mt-1">
-              Daily: {payload[0].payload.dailyAskRequests.toLocaleString()}
+              Period Total: {payload[0].payload.dailyAskRequests.toLocaleString()}
             </p>
           )}
         </div>
@@ -66,18 +66,26 @@ export const CumulativeAskRequestsChart = ({ data }: CumulativeAskRequestsChartP
     return null;
   };
 
+  const getPeriodText = () => {
+    switch (aggregationPeriod) {
+      case 'week': return 'weekly';
+      case 'month': return 'monthly';
+      default: return 'daily';
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Cumulative Ask Requests</CardTitle>
+          <CardTitle className="text-xl font-semibold">Cumulative Ask Requests ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Shows the running total of Ask Requests over time. Each day adds to the previous total.</p>
+                <p>Shows the running total of Ask Requests over time aggregated by {getPeriodText()} periods.</p>
                 <p className="text-sm text-muted-foreground mt-1">Tracks cumulative 'Ask Requests' from the data</p>
               </TooltipContent>
             </UITooltip>

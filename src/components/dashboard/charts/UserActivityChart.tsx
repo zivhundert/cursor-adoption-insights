@@ -1,47 +1,68 @@
+
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
-import { format } from 'date-fns';
+import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
 
 interface UserActivityChartProps {
   data: CursorDataRow[];
+  aggregationPeriod: AggregationPeriod;
 }
 
-export const UserActivityChart = ({ data }: UserActivityChartProps) => {
+export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChartProps) => {
   const chartData = useMemo(() => {
-    const dailyActivity = new Map<string, number>();
+    const periodActivity = new Map<string, Set<string>>();
     
     data.forEach(row => {
       const date = row.Date;
       const isActive = row['Is Active'].toLowerCase() === 'true';
       if (isActive) {
-        dailyActivity.set(date, (dailyActivity.get(date) || 0) + 1);
+        if (!periodActivity.has(date)) {
+          periodActivity.set(date, new Set());
+        }
+        periodActivity.get(date)!.add(row.Email);
       }
     });
 
-    return Array.from(dailyActivity.entries())
+    return Array.from(periodActivity.entries())
       .map(([date, activeUsers]) => ({ 
-        date: format(new Date(date), 'MMM dd'), 
-        activeUsers 
+        date,
+        activeUsers: activeUsers.size 
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [data]);
+
+  const formatXAxisTick = (tickItem: string) => {
+    try {
+      return formatPeriodLabel(tickItem, aggregationPeriod);
+    } catch {
+      return tickItem;
+    }
+  };
+
+  const getPeriodText = () => {
+    switch (aggregationPeriod) {
+      case 'week': return 'weekly';
+      case 'month': return 'monthly';
+      default: return 'daily';
+    }
+  };
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Daily Active Users</CardTitle>
+          <CardTitle className="text-xl font-semibold">Active Users ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>
                 <HelpCircle className="h-4 w-4 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Number of active users per day.</p>
+                <p>Number of active users per {aggregationPeriod}.</p>
                 <p className="text-sm text-muted-foreground mt-1">Counts users where 'Is Active' field is true</p>
               </TooltipContent>
             </UITooltip>
@@ -58,13 +79,17 @@ export const UserActivityChart = ({ data }: UserActivityChartProps) => {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                tickFormatter={formatXAxisTick}
               />
               <YAxis 
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
               />
-              <Tooltip />
+              <Tooltip 
+                formatter={(value: number) => [value, 'Active Users']}
+                labelFormatter={formatXAxisTick}
+              />
               <Bar dataKey="activeUsers" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>

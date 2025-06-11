@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Calendar, CalendarRange, User, Filter } from 'lucide-react';
+import { Calendar, CalendarRange, User, Filter, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { CursorDataRow } from '@/pages/Index';
 import type { DateRange } from 'react-day-picker';
+import type { AggregationPeriod } from '@/utils/dataAggregation';
 
 interface DashboardFiltersProps {
   data: CursorDataRow[];
@@ -17,6 +18,7 @@ interface DashboardFiltersProps {
     dateRange: { from?: Date; to?: Date };
     selectedUser: string;
     selectedModel: string;
+    aggregationPeriod: AggregationPeriod;
   }) => void;
 }
 
@@ -24,6 +26,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedUser, setSelectedUser] = useState<string>('all');
   const [selectedModel, setSelectedModel] = useState<string>('all');
+  const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
 
   const uniqueUsers = Array.from(new Set(data.map(row => row.Email))).sort();
   const uniqueModels = Array.from(new Set(data.map(row => row['Most Used Model']).filter(Boolean))).sort();
@@ -36,6 +39,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
       },
       selectedUser,
       selectedModel,
+      aggregationPeriod,
     });
   };
 
@@ -43,10 +47,12 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
     setDateRange(undefined);
     setSelectedUser('all');
     setSelectedModel('all');
+    setAggregationPeriod('day');
     onFiltersChange({
       dateRange: {},
       selectedUser: 'all',
       selectedModel: 'all',
+      aggregationPeriod: 'day',
     });
   };
 
@@ -59,7 +65,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {/* Date Range Picker */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Date Range</label>
@@ -99,6 +105,22 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                 />
               </PopoverContent>
             </Popover>
+          </div>
+
+          {/* Aggregation Period */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Time Period</label>
+            <Select value={aggregationPeriod} onValueChange={(value: AggregationPeriod) => setAggregationPeriod(value)}>
+              <SelectTrigger>
+                <BarChart3 className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Select period" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">Daily</SelectItem>
+                <SelectItem value="week">Weekly</SelectItem>
+                <SelectItem value="month">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* User Filter */}
