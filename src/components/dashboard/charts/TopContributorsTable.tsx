@@ -1,8 +1,9 @@
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 
@@ -11,7 +12,9 @@ interface TopContributorsTableProps {
 }
 
 export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
-  const topContributors = useMemo(() => {
+  const [showAll, setShowAll] = useState(false);
+
+  const allContributors = useMemo(() => {
     const userStats = new Map<string, {
       email: string;
       acceptedLines: number;
@@ -46,26 +49,36 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
     });
 
     return Array.from(userStats.values())
-      .sort((a, b) => b.acceptedLines - a.acceptedLines)
-      .slice(0, 10);
+      .sort((a, b) => b.acceptedLines - a.acceptedLines);
   }, [data]);
+
+  const displayedContributors = showAll ? allContributors : allContributors.slice(0, 10);
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Top Contributors</CardTitle>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Top 10 users ranked by total accepted lines.</p>
-                <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-xl font-semibold">Top Contributors</CardTitle>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Users ranked by total accepted lines.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowAll(!showAll)}
+          >
+            {showAll ? 'Show Top 10' : 'Show All'}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -79,7 +92,7 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {topContributors.map((contributor, index) => (
+            {displayedContributors.map((contributor, index) => (
               <TableRow key={contributor.email}>
                 <TableCell className="font-medium">{contributor.email}</TableCell>
                 <TableCell className="text-right">{contributor.acceptedLines.toLocaleString()}</TableCell>

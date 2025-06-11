@@ -1,10 +1,10 @@
-
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
+import { format } from 'date-fns';
 
 interface UserActivityChartProps {
   data: CursorDataRow[];
@@ -23,7 +23,10 @@ export const UserActivityChart = ({ data }: UserActivityChartProps) => {
     });
 
     return Array.from(dailyActivity.entries())
-      .map(([date, activeUsers]) => ({ date, activeUsers }))
+      .map(([date, activeUsers]) => ({ 
+        date: format(new Date(date), 'MMM dd'), 
+        activeUsers 
+      }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [data]);
 
@@ -70,3 +73,5 @@ export const UserActivityChart = ({ data }: UserActivityChartProps) => {
     </Card>
   );
 };
+
+export default UserActivityChart;

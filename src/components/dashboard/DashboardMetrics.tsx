@@ -1,6 +1,8 @@
 
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 
 interface DashboardMetricsProps {
@@ -41,21 +43,25 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       title: 'Accepted Lines (Total)',
       value: metrics.totalAcceptedLines,
       gradient: 'from-blue-500 to-blue-600',
+      tooltip: 'Sum of all accepted lines across all users and dates. These are lines that were suggested by AI and accepted by users.',
     },
     {
       title: 'Equivalent Dev Hours Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
+      tooltip: 'Estimated development hours saved based on accepted lines. Calculated assuming 10 lines of code per minute (600 lines per hour).',
     },
     {
       title: 'Active Users',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
+      tooltip: 'Number of unique users marked as active during the selected time period.',
     },
     {
       title: 'Acceptance Rate',
       value: metrics.acceptanceRate,
       gradient: 'from-emerald-500 to-emerald-600',
+      tooltip: 'Percentage of suggested lines that were accepted. Formula: (Total Accepted Lines / Total Suggested Lines) × 100',
     },
   ];
 
@@ -64,9 +70,21 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       {metricCards.map((metric, index) => (
         <Card key={index} className="overflow-hidden">
           <CardHeader className={`bg-gradient-to-br ${metric.gradient} text-white pb-2`}>
-            <CardTitle className="text-sm font-medium opacity-90">
-              {metric.title}
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-sm font-medium opacity-90">
+                {metric.title}
+              </CardTitle>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <HelpCircle className="h-4 w-4 text-white opacity-75" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">{metric.tooltip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="text-3xl font-bold text-gray-900">
