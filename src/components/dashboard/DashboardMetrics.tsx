@@ -88,7 +88,7 @@ export const DashboardMetrics = ({ originalData }: DashboardMetricsProps) => {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="text-3xl font-bold text-gray-900">
+            <div className="text-3xl font-bold text-foreground">
               {metric.value}
             </div>
           </CardContent>
