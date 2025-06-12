@@ -12,7 +12,7 @@ export const DashboardHeader = () => {
         <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
           <BarChart3 className="w-6 h-6 text-white" />
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-900 to-teal-700 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
           Cursor Adoption & Impact
         </h1>
       </div>
