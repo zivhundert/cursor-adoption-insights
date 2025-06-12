@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,26 +13,46 @@ interface UserActivityChartProps {
 
 export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChartProps) => {
   const chartData = useMemo(() => {
-    const periodActivity = new Map<string, Set<string>>();
-    
-    data.forEach(row => {
-      const date = row.Date;
-      const isActive = row['Is Active'].toLowerCase() === 'true';
-      if (isActive) {
-        if (!periodActivity.has(date)) {
-          periodActivity.set(date, new Set());
+    if (aggregationPeriod === 'day') {
+      const periodActivity = new Map<string, Set<string>>();
+      
+      data.forEach(row => {
+        const date = row.Date;
+        const isActive = row['Is Active'].toLowerCase() === 'true';
+        if (isActive) {
+          if (!periodActivity.has(date)) {
+            periodActivity.set(date, new Set());
+          }
+          periodActivity.get(date)!.add(row.Email);
         }
-        periodActivity.get(date)!.add(row.Email);
-      }
-    });
+      });
 
-    return Array.from(periodActivity.entries())
-      .map(([date, activeUsers]) => ({ 
-        date,
-        activeUsers: activeUsers.size 
-      }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [data]);
+      return Array.from(periodActivity.entries())
+        .map(([date, activeUsers]) => ({ 
+          date,
+          activeUsers: activeUsers.size 
+        }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    } else {
+      // For weekly/monthly, use the aggregated data
+      const aggregatedRows = data.filter(row => row.Email.includes('active users'));
+      const periodActivity = new Map<string, number>();
+      
+      aggregatedRows.forEach(row => {
+        const date = row.Date;
+        const activeUsersText = row.Email;
+        const activeUsersCount = parseInt(activeUsersText.split(' ')[0]) || 0;
+        periodActivity.set(date, activeUsersCount);
+      });
+
+      return Array.from(periodActivity.entries())
+        .map(([date, activeUsers]) => ({ 
+          date,
+          activeUsers 
+        }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }
+  }, [data, aggregationPeriod]);
 
   const formatXAxisTick = (tickItem: string) => {
     try {

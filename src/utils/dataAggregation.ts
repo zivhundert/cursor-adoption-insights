@@ -11,7 +11,7 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
 
   const aggregatedMap = new Map<string, {
     date: string;
-    emails: Set<string>;
+    users: CursorDataRow[];
     askRequests: number;
     editRequests: number;
     agentRequests: number;
@@ -22,6 +22,8 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
     acceptedLines: number;
     tabsAccepted: number;
     models: Map<string, number>;
+    applyExtensions: Map<string, number>;
+    tabExtensions: Map<string, number>;
     activeUsers: Set<string>;
   }>();
 
@@ -40,7 +42,7 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
     if (!aggregatedMap.has(periodKey)) {
       aggregatedMap.set(periodKey, {
         date: periodKey,
-        emails: new Set(),
+        users: [],
         askRequests: 0,
         editRequests: 0,
         agentRequests: 0,
@@ -51,11 +53,16 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
         acceptedLines: 0,
         tabsAccepted: 0,
         models: new Map(),
+        applyExtensions: new Map(),
+        tabExtensions: new Map(),
         activeUsers: new Set(),
       });
     }
 
     const agg = aggregatedMap.get(periodKey)!;
+    
+    // Store all user records for this period
+    agg.users.push(row);
     
     // Aggregate numeric values
     agg.askRequests += parseInt(row['Ask Requests']) || 0;
@@ -68,27 +75,47 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
     agg.acceptedLines += parseInt(row['Chat Accepted Lines Added']) || 0;
     agg.tabsAccepted += parseInt(row['Tabs Accepted']) || 0;
 
-    // Collect unique users
-    agg.emails.add(row.Email);
+    // Collect unique active users
     if (row['Is Active'].toLowerCase() === 'true') {
       agg.activeUsers.add(row.Email);
     }
 
     // Count model usage
     const model = row['Most Used Model'];
-    if (model) {
+    if (model && model.trim()) {
       agg.models.set(model, (agg.models.get(model) || 0) + 1);
+    }
+
+    // Count apply extensions
+    const applyExt = row['Most Used Apply Extension'];
+    if (applyExt && applyExt.trim() && applyExt !== 'Unknown' && applyExt !== '') {
+      agg.applyExtensions.set(applyExt, (agg.applyExtensions.get(applyExt) || 0) + 1);
+    }
+
+    // Count tab extensions
+    const tabExt = row['Most Used Tab Extension'];
+    if (tabExt && tabExt.trim() && tabExt !== 'Unknown' && tabExt !== '') {
+      agg.tabExtensions.set(tabExt, (agg.tabExtensions.get(tabExt) || 0) + 1);
     }
   });
 
   // Convert aggregated data back to CursorDataRow format
-  return Array.from(aggregatedMap.values()).map(agg => {
+  const result: CursorDataRow[] = [];
+  
+  Array.from(aggregatedMap.values()).forEach(agg => {
     const mostUsedModel = Array.from(agg.models.entries())
       .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
 
-    return {
+    const mostUsedApplyExt = Array.from(agg.applyExtensions.entries())
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+
+    const mostUsedTabExt = Array.from(agg.tabExtensions.entries())
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+
+    // Add the aggregated row for time-series charts
+    result.push({
       Date: agg.date,
-      Email: Array.from(agg.emails)[0] || '', // Use first email as representative
+      Email: `${agg.activeUsers.size} active users`, // Special marker for aggregated data
       'User ID': '',
       'Is Active': agg.activeUsers.size > 0 ? 'true' : 'false',
       'Ask Requests': agg.askRequests.toString(),
@@ -101,10 +128,20 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
       'Chat Accepted Lines Added': agg.acceptedLines.toString(),
       'Tabs Accepted': agg.tabsAccepted.toString(),
       'Most Used Model': mostUsedModel,
-      'Most Used Apply Extension': '',
-      'Most Used Tab Extension': '',
-    } as CursorDataRow;
-  }).sort((a, b) => a.Date.localeCompare(b.Date));
+      'Most Used Apply Extension': mostUsedApplyExt,
+      'Most Used Tab Extension': mostUsedTabExt,
+    } as CursorDataRow);
+
+    // Add all individual user records for components that need them
+    agg.users.forEach(userRow => {
+      result.push({
+        ...userRow,
+        Date: agg.date, // Update date to the period start
+      });
+    });
+  });
+
+  return result.sort((a, b) => a.Date.localeCompare(b.Date));
 };
 
 export const formatPeriodLabel = (date: string, period: AggregationPeriod): string => {

@@ -15,6 +15,9 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
   const [showAll, setShowAll] = useState(false);
 
   const allContributors = useMemo(() => {
+    // Filter out aggregated summary rows (those with special email markers)
+    const userRows = data.filter(row => !row.Email.includes('active users'));
+    
     const userStats = new Map<string, {
       email: string;
       acceptedLines: number;
@@ -22,7 +25,7 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
       acceptanceRate: number;
     }>();
     
-    data.forEach(row => {
+    userRows.forEach(row => {
       const email = row.Email;
       const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
       const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
