@@ -1,5 +1,7 @@
+
 import { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -28,11 +30,11 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
       });
 
       return Array.from(periodActivity.entries())
-        .map(([date, activeUsers]) => ({ 
-          date,
-          activeUsers: activeUsers.size 
-        }))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        .map(([date, activeUsers]) => [
+          new Date(date).getTime(),
+          activeUsers.size 
+        ])
+        .sort((a, b) => a[0] - b[0]);
     } else {
       // For weekly/monthly, use the aggregated data
       const aggregatedRows = data.filter(row => row.Email.includes('active users'));
@@ -46,27 +48,88 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
       });
 
       return Array.from(periodActivity.entries())
-        .map(([date, activeUsers]) => ({ 
-          date,
+        .map(([date, activeUsers]) => [
+          new Date(date).getTime(),
           activeUsers 
-        }))
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        ])
+        .sort((a, b) => a[0] - b[0]);
     }
   }, [data, aggregationPeriod]);
-
-  const formatXAxisTick = (tickItem: string) => {
-    try {
-      return formatPeriodLabel(tickItem, aggregationPeriod);
-    } catch {
-      return tickItem;
-    }
-  };
 
   const getPeriodText = () => {
     switch (aggregationPeriod) {
       case 'week': return 'weekly';
       case 'month': return 'monthly';
       default: return 'daily';
+    }
+  };
+
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'column',
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
+    },
+    title: {
+      text: undefined
+    },
+    xAxis: {
+      type: 'datetime',
+      title: {
+        text: 'Date',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      lineColor: 'hsl(var(--border))',
+      tickColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      }
+    },
+    yAxis: {
+      title: {
+        text: 'Active Users',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'hsl(var(--background))',
+      borderColor: 'hsl(var(--border))',
+      style: {
+        color: 'hsl(var(--foreground))'
+      },
+      formatter: function() {
+        return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
+                Active Users: <b>${this.y}</b>`;
+      }
+    },
+    plotOptions: {
+      column: {
+        color: '#8884d8',
+        borderRadius: 4
+      }
+    },
+    series: [{
+      name: 'Active Users',
+      type: 'column',
+      data: chartData
+    }],
+    credits: {
+      enabled: false
     }
   };
 
@@ -90,28 +153,10 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
       </CardHeader>
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis 
-                dataKey="date" 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={formatXAxisTick}
-              />
-              <YAxis 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
-              <Tooltip 
-                formatter={(value: number) => [value, 'Active Users']}
-                labelFormatter={formatXAxisTick}
-              />
-              <Bar dataKey="activeUsers" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+          />
         </div>
       </CardContent>
     </Card>

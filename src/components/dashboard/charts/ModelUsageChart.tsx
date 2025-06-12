@@ -1,6 +1,7 @@
 
 import { useMemo } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -22,9 +23,60 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
     });
 
     return Array.from(modelCounts.entries())
-      .map(([model, count]) => ({ model, count }))
-      .sort((a, b) => b.count - a.count);
+      .map(([name, y], index) => ({ 
+        name, 
+        y, 
+        color: COLORS[index % COLORS.length] 
+      }))
+      .sort((a, b) => b.y - a.y);
   }, [data]);
+
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'pie',
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
+    },
+    title: {
+      text: undefined
+    },
+    tooltip: {
+      backgroundColor: 'hsl(var(--background))',
+      borderColor: 'hsl(var(--border))',
+      style: {
+        color: 'hsl(var(--foreground))'
+      },
+      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+      point: {
+        valueSuffix: '%'
+      }
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+          enabled: true,
+          format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+          style: {
+            color: 'hsl(var(--foreground))'
+          }
+        }
+      }
+    },
+    series: [{
+      name: 'Model Usage',
+      type: 'pie',
+      data: chartData
+    }],
+    credits: {
+      enabled: false
+    }
+  };
 
   return (
     <Card>
@@ -46,26 +98,10 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
       </CardHeader>
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ model, percent }) => `${model} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="count"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+          />
         </div>
       </CardContent>
     </Card>

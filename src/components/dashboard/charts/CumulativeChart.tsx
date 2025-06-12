@@ -1,6 +1,7 @@
 
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -35,7 +36,7 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
       cumulativeSuggested += dailySuggested.get(date) || 0;
       
       return {
-        date,
+        date: new Date(date).getTime(),
         cumulativeAccepted,
         cumulativeSuggested,
         dailyAccepted: dailyAccepted.get(date) || 0,
@@ -44,36 +45,105 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
     });
   }, [data]);
 
-  const formatXAxisTick = (tickItem: string) => {
-    try {
-      return formatPeriodLabel(tickItem, aggregationPeriod);
-    } catch {
-      return tickItem;
-    }
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
-          <p className="font-medium mb-2">{`Date: ${formatXAxisTick(label)}`}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }} className="text-sm">
-              {entry.dataKey === 'cumulativeAccepted' && `Cumulative Accepted: ${entry.value.toLocaleString()}`}
-              {entry.dataKey === 'cumulativeSuggested' && `Cumulative Suggested: ${entry.value.toLocaleString()}`}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
   const getPeriodText = () => {
     switch (aggregationPeriod) {
       case 'week': return 'weekly';
       case 'month': return 'monthly';
       default: return 'daily';
+    }
+  };
+
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'line',
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
+    },
+    title: {
+      text: undefined
+    },
+    xAxis: {
+      type: 'datetime',
+      title: {
+        text: 'Date',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      lineColor: 'hsl(var(--border))',
+      tickColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      }
+    },
+    yAxis: {
+      title: {
+        text: 'Cumulative Lines',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        },
+        formatter: function() {
+          return this.value?.toLocaleString() || '';
+        }
+      }
+    },
+    legend: {
+      itemStyle: {
+        color: 'hsl(var(--foreground))'
+      }
+    },
+    tooltip: {
+      backgroundColor: 'hsl(var(--background))',
+      borderColor: 'hsl(var(--border))',
+      style: {
+        color: 'hsl(var(--foreground))'
+      },
+      formatter: function() {
+        return `<b>${this.series.name}</b><br/>
+                Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
+                Value: ${this.y?.toLocaleString()}`;
+      }
+    },
+    plotOptions: {
+      line: {
+        marker: {
+          enabled: false,
+          states: {
+            hover: {
+              enabled: true
+            }
+          }
+        }
+      }
+    },
+    series: [
+      {
+        name: 'Cumulative Accepted',
+        type: 'line',
+        data: chartData.map(d => [d.date, d.cumulativeAccepted]),
+        color: '#0891b2'
+      },
+      {
+        name: 'Cumulative Suggested',
+        type: 'line',
+        data: chartData.map(d => [d.date, d.cumulativeSuggested]),
+        color: '#ea580c',
+        dashStyle: 'Dash'
+      }
+    ],
+    credits: {
+      enabled: false
     }
   };
 
@@ -98,52 +168,10 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
       </CardHeader>
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <defs>
-                <linearGradient id="acceptedGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#1e40af" />
-                  <stop offset="100%" stopColor="#0891b2" />
-                </linearGradient>
-                <linearGradient id="suggestedGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#dc2626" />
-                  <stop offset="100%" stopColor="#ea580c" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis 
-                dataKey="date" 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={formatXAxisTick}
-              />
-              <YAxis 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => value.toLocaleString()}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line 
-                type="monotone" 
-                dataKey="cumulativeAccepted" 
-                stroke="url(#acceptedGradient)"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6, fill: '#0891b2' }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="cumulativeSuggested" 
-                stroke="url(#suggestedGradient)"
-                strokeWidth={3}
-                strokeDasharray="8 4"
-                dot={false}
-                activeDot={{ r: 6, fill: '#ea580c' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+          />
         </div>
       </CardContent>
     </Card>

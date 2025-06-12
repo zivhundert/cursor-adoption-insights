@@ -1,6 +1,7 @@
 
 import { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -25,11 +26,80 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
       dayOfWeekActivity.set(dayName, (dayOfWeekActivity.get(dayName) || 0) + acceptedLines);
     });
 
-    return dayNames.map(day => ({
-      day,
-      acceptedLines: dayOfWeekActivity.get(day) || 0
-    }));
+    return dayNames.map(day => [day, dayOfWeekActivity.get(day) || 0]);
   }, [data]);
+
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'column',
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
+    },
+    title: {
+      text: undefined
+    },
+    xAxis: {
+      type: 'category',
+      title: {
+        text: 'Day of Week',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      lineColor: 'hsl(var(--border))',
+      tickColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      }
+    },
+    yAxis: {
+      title: {
+        text: 'Accepted Lines',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        },
+        formatter: function() {
+          return this.value?.toLocaleString() || '';
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'hsl(var(--background))',
+      borderColor: 'hsl(var(--border))',
+      style: {
+        color: 'hsl(var(--foreground))'
+      },
+      formatter: function() {
+        return `${this.x}<br/>
+                Accepted Lines: <b>${this.y?.toLocaleString()}</b>`;
+      }
+    },
+    plotOptions: {
+      column: {
+        color: '#0891b2',
+        borderRadius: 4
+      }
+    },
+    series: [{
+      name: 'Accepted Lines',
+      type: 'column',
+      data: chartData
+    }],
+    credits: {
+      enabled: false
+    }
+  };
 
   return (
     <Card>
@@ -51,27 +121,10 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
       </CardHeader>
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis 
-                dataKey="day" 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => value.toLocaleString()}
-              />
-              <Tooltip 
-                formatter={(value: number) => [value.toLocaleString(), 'Accepted Lines']}
-              />
-              <Bar dataKey="acceptedLines" fill="#0891b2" />
-            </BarChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+          />
         </div>
       </CardContent>
     </Card>

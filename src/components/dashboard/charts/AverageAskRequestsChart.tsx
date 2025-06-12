@@ -1,6 +1,7 @@
 
 import { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -30,50 +31,87 @@ export const AverageAskRequestsChart = ({ data, aggregationPeriod }: AverageAskR
     });
 
     return Array.from(periodData.entries())
-      .map(([date, { total, userDays }]) => ({
-        date,
-        averageAskRequests: userDays > 0 ? Math.round((total / userDays) * 10) / 10 : 0,
-        totalAskRequests: total,
-        userDays,
-      }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .map(([date, { total, userDays }]) => [
+        new Date(date).getTime(),
+        userDays > 0 ? Math.round((total / userDays) * 10) / 10 : 0
+      ])
+      .sort((a, b) => a[0] - b[0]);
   }, [data]);
-
-  const formatXAxisTick = (tickItem: string) => {
-    try {
-      return formatPeriodLabel(tickItem, aggregationPeriod);
-    } catch {
-      return tickItem;
-    }
-  };
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
-          <p className="font-medium mb-2">{`Period: ${formatXAxisTick(label)}`}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }} className="text-sm">
-              Average Ask Requests: {entry.value}
-            </p>
-          ))}
-          {payload[0] && (
-            <div className="text-sm text-muted-foreground mt-1">
-              <p>Total: {payload[0].payload.totalAskRequests.toLocaleString()}</p>
-              <p>User-Days: {payload[0].payload.userDays}</p>
-            </div>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
 
   const getPeriodText = () => {
     switch (aggregationPeriod) {
       case 'week': return 'weekly';
       case 'month': return 'monthly';
       default: return 'daily';
+    }
+  };
+
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'column',
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
+    },
+    title: {
+      text: undefined
+    },
+    xAxis: {
+      type: 'datetime',
+      title: {
+        text: 'Date',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      lineColor: 'hsl(var(--border))',
+      tickColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      }
+    },
+    yAxis: {
+      title: {
+        text: 'Average Ask Requests',
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--muted-foreground))'
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'hsl(var(--background))',
+      borderColor: 'hsl(var(--border))',
+      style: {
+        color: 'hsl(var(--foreground))'
+      },
+      formatter: function() {
+        return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
+                Average Ask Requests: <b>${this.y}</b>`;
+      }
+    },
+    plotOptions: {
+      column: {
+        color: '#16a34a',
+        borderRadius: 4
+      }
+    },
+    series: [{
+      name: 'Average Ask Requests',
+      type: 'column',
+      data: chartData
+    }],
+    credits: {
+      enabled: false
     }
   };
 
@@ -97,30 +135,10 @@ export const AverageAskRequestsChart = ({ data, aggregationPeriod }: AverageAskR
       </CardHeader>
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis 
-                dataKey="date" 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={formatXAxisTick}
-              />
-              <YAxis 
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => value.toLocaleString()}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar 
-                dataKey="averageAskRequests" 
-                fill="#16a34a"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+          />
         </div>
       </CardContent>
     </Card>
