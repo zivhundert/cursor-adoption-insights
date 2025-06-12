@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
@@ -102,10 +103,16 @@ const Index = () => {
     setFilteredData(aggregatedData);
   };
 
+  const handleReloadCSV = () => {
+    setData([]);
+    setFilteredData([]);
+    setAggregationPeriod('day');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <DashboardHeader />
+        <DashboardHeader showReloadButton={data.length > 0} onReloadCSV={handleReloadCSV} />
         
         {data.length === 0 ? (
           <div className="mt-12">
@@ -113,8 +120,8 @@ const Index = () => {
           </div>
         ) : (
           <div className="mt-8 space-y-8">
-            <DashboardFilters data={data} onFiltersChange={handleFiltersChange} />
             <DashboardMetrics data={filteredData} originalData={data} />
+            <DashboardFilters data={data} onFiltersChange={handleFiltersChange} />
             <DashboardCharts data={filteredData} aggregationPeriod={aggregationPeriod} />
           </div>
         )}

@@ -1,11 +1,28 @@
 
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, RefreshCcw } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { Button } from '@/components/ui/button';
 
-export const DashboardHeader = () => {
+interface DashboardHeaderProps {
+  showReloadButton?: boolean;
+  onReloadCSV?: () => void;
+}
+
+export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: DashboardHeaderProps) => {
   return (
     <header className="text-center relative">
-      <div className="absolute top-0 right-0">
+      <div className="absolute top-0 right-0 flex items-center gap-2">
+        {showReloadButton && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onReloadCSV}
+            className="flex items-center gap-2"
+          >
+            <RefreshCcw className="w-4 h-4" />
+            Load New CSV
+          </Button>
+        )}
         <ThemeToggle />
       </div>
       <div className="flex items-center justify-center gap-3 mb-4">
