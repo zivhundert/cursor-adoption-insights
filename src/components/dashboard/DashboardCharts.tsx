@@ -1,5 +1,6 @@
 
 import { CumulativeChart } from './charts/CumulativeChart';
+import { CumulativeChartHighcharts } from './charts/CumulativeChartHighcharts';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
 import { AverageTabsAcceptedChart } from './charts/AverageTabsAcceptedChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
@@ -19,8 +20,11 @@ interface DashboardChartsProps {
 export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProps) => {
   return (
     <div className="space-y-8">
-      {/* First row - Full width cumulative chart */}
+      {/* Original Recharts version */}
       <CumulativeChart data={data} aggregationPeriod={aggregationPeriod} />
+      
+      {/* NEW: Highcharts sample for comparison */}
+      <CumulativeChartHighcharts data={data} aggregationPeriod={aggregationPeriod} />
       
       {/* Second row - Two new average charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
