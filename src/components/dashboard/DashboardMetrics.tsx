@@ -7,20 +7,21 @@ import { CursorDataRow } from '@/pages/Index';
 
 interface DashboardMetricsProps {
   data: CursorDataRow[];
+  originalData: CursorDataRow[];
 }
 
-export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
+export const DashboardMetrics = ({ originalData }: DashboardMetricsProps) => {
   const metrics = useMemo(() => {
-    const totalAcceptedLines = data.reduce((sum, row) => {
+    const totalAcceptedLines = originalData.reduce((sum, row) => {
       return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
     }, 0);
 
-    const totalSuggestedLines = data.reduce((sum, row) => {
+    const totalSuggestedLines = originalData.reduce((sum, row) => {
       return sum + (parseInt(row['Chat Suggested Lines Added']) || 0);
     }, 0);
 
     const activeUsers = new Set(
-      data.filter(row => row['Is Active'] === 'true').map(row => row.Email)
+      originalData.filter(row => row['Is Active'] === 'true').map(row => row.Email)
     ).size;
 
     const acceptanceRate = totalSuggestedLines > 0 
@@ -36,7 +37,7 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     };
-  }, [data]);
+  }, [originalData]);
 
   const metricCards = [
     {

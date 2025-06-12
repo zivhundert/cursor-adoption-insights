@@ -1,7 +1,7 @@
 
 import { CumulativeChart } from './charts/CumulativeChart';
-import { CumulativeAskRequestsChart } from './charts/CumulativeAskRequestsChart';
-import { CumulativeTabsAcceptedChart } from './charts/CumulativeTabsAcceptedChart';
+import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
+import { AverageTabsAcceptedChart } from './charts/AverageTabsAcceptedChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
 import { TopContributorsTable } from './charts/TopContributorsTable';
 import { UserActivityChart } from './charts/UserActivityChart';
@@ -22,10 +22,10 @@ export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProp
       {/* First row - Full width cumulative chart */}
       <CumulativeChart data={data} aggregationPeriod={aggregationPeriod} />
       
-      {/* Second row - Two new cumulative charts */}
+      {/* Second row - Two new average charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <CumulativeAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />
-        <CumulativeTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />
+        <AverageAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />
+        <AverageTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />
       </div>
       
       {/* Third row - Two column layout */}

@@ -114,7 +114,7 @@ const Index = () => {
         ) : (
           <div className="mt-8 space-y-8">
             <DashboardFilters data={data} onFiltersChange={handleFiltersChange} />
-            <DashboardMetrics data={filteredData} />
+            <DashboardMetrics data={filteredData} originalData={data} />
             <DashboardCharts data={filteredData} aggregationPeriod={aggregationPeriod} />
           </div>
         )}
