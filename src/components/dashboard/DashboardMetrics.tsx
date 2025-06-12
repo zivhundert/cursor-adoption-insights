@@ -10,18 +10,18 @@ interface DashboardMetricsProps {
   originalData: CursorDataRow[];
 }
 
-export const DashboardMetrics = ({ originalData }: DashboardMetricsProps) => {
+export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
   const metrics = useMemo(() => {
-    const totalAcceptedLines = originalData.reduce((sum, row) => {
+    const totalAcceptedLines = data.reduce((sum, row) => {
       return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
     }, 0);
 
-    const totalSuggestedLines = originalData.reduce((sum, row) => {
+    const totalSuggestedLines = data.reduce((sum, row) => {
       return sum + (parseInt(row['Chat Suggested Lines Added']) || 0);
     }, 0);
 
     const activeUsers = new Set(
-      originalData.filter(row => row['Is Active'] === 'true').map(row => row.Email)
+      data.filter(row => row['Is Active'] === 'true').map(row => row.Email)
     ).size;
 
     const acceptanceRate = totalSuggestedLines > 0 
@@ -37,32 +37,32 @@ export const DashboardMetrics = ({ originalData }: DashboardMetricsProps) => {
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     };
-  }, [originalData]);
+  }, [data]);
 
   const metricCards = [
     {
       title: 'Accepted Lines (Total)',
       value: metrics.totalAcceptedLines,
       gradient: 'from-blue-500 to-blue-600',
-      tooltip: 'Sum of all accepted lines across all users and dates. These are lines that were suggested by AI and accepted by users.',
+      tooltip: 'Sum of all accepted lines for the current selection. These are lines that were suggested by AI and accepted by users in the filtered data.',
     },
     {
       title: 'Acceptance Rate',
       value: metrics.acceptanceRate,
       gradient: 'from-emerald-500 to-emerald-600',
-      tooltip: 'Percentage of suggested lines that were accepted. Formula: (Total Accepted Lines / Total Suggested Lines) × 100',
+      tooltip: 'Percentage of suggested lines that were accepted in the current selection. Formula: (Accepted Lines / Suggested Lines) × 100',
     },
     {
       title: 'Equivalent Dev Hours Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
-      tooltip: 'Estimated development hours saved based on accepted lines. Calculated assuming 10 lines of code per minute (600 lines per hour).',
+      tooltip: 'Estimated development hours saved based on accepted lines in the current selection. Calculated assuming 10 lines of code per minute (600 lines per hour).',
     },
     {
       title: 'Active Users',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
-      tooltip: 'Number of unique users marked as active during the selected time period.',
+      tooltip: 'Number of unique users marked as active in the current selection (filtered by date range and other filters).',
     },
   ];
 
