@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
@@ -49,13 +48,14 @@ const Index = () => {
             rowData[header] = values[index] || '';
           });
           return rowData as CursorDataRow;
-        });
+        })
+        .filter(row => row['Is Active'].toLowerCase() === 'true'); // Only include active users
 
       setData(parsedData);
       setFilteredData(parsedData);
       toast({
         title: "File uploaded successfully",
-        description: `Processed ${parsedData.length} rows of data`,
+        description: `Processed ${parsedData.length} rows of active user data`,
       });
     } catch (error) {
       toast({
