@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -18,7 +17,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
     const modelCounts = new Map<string, number>();
     
     data.forEach(row => {
-      const model = row['Most Used Model'] || 'Unknown';
+      const model = row['Most Used Model'] || 'No Model';
       modelCounts.set(model, (modelCounts.get(model) || 0) + 1);
     });
 
