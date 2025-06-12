@@ -46,6 +46,12 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       tooltip: 'Sum of all accepted lines across all users and dates. These are lines that were suggested by AI and accepted by users.',
     },
     {
+      title: 'Acceptance Rate',
+      value: metrics.acceptanceRate,
+      gradient: 'from-emerald-500 to-emerald-600',
+      tooltip: 'Percentage of suggested lines that were accepted. Formula: (Total Accepted Lines / Total Suggested Lines) × 100',
+    },
+    {
       title: 'Equivalent Dev Hours Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
@@ -56,12 +62,6 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
       tooltip: 'Number of unique users marked as active during the selected time period.',
-    },
-    {
-      title: 'Acceptance Rate',
-      value: metrics.acceptanceRate,
-      gradient: 'from-emerald-500 to-emerald-600',
-      tooltip: 'Percentage of suggested lines that were accepted. Formula: (Total Accepted Lines / Total Suggested Lines) × 100',
     },
   ];
 

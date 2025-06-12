@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -86,7 +86,7 @@ export const CumulativeAskRequestsChart = ({ data, aggregationPeriod }: Cumulati
               </TooltipTrigger>
               <TooltipContent>
                 <p>Shows the running total of Ask Requests over time aggregated by {getPeriodText()} periods.</p>
-                <p className="text-sm text-muted-foreground mt-1">Tracks cumulative 'Ask Requests' from the data</p>
+                <p className="text-sm text-muted-foreground mt-1">Area chart makes cumulative growth more visually apparent</p>
               </TooltipContent>
             </UITooltip>
           </TooltipProvider>
@@ -95,11 +95,11 @@ export const CumulativeAskRequestsChart = ({ data, aggregationPeriod }: Cumulati
       <CardContent>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <AreaChart data={chartData}>
               <defs>
-                <linearGradient id="askRequestsGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#16a34a" />
-                  <stop offset="100%" stopColor="#22c55e" />
+                <linearGradient id="askRequestsAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#16a34a" stopOpacity={0.8} />
+                  <stop offset="100%" stopColor="#16a34a" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -117,15 +117,14 @@ export const CumulativeAskRequestsChart = ({ data, aggregationPeriod }: Cumulati
                 tickFormatter={(value) => value.toLocaleString()}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Line 
+              <Area 
                 type="monotone" 
                 dataKey="cumulativeAskRequests" 
-                stroke="url(#askRequestsGradient)"
-                strokeWidth={3}
-                dot={false}
-                activeDot={{ r: 6, fill: '#22c55e' }}
+                stroke="#16a34a"
+                strokeWidth={2}
+                fill="url(#askRequestsAreaGradient)"
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
