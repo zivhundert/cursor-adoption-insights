@@ -6,6 +6,8 @@ import { ModelUsageChart } from './charts/ModelUsageChart';
 import { TopContributorsTable } from './charts/TopContributorsTable';
 import { UserActivityChart } from './charts/UserActivityChart';
 import { DayOfWeekChart } from './charts/DayOfWeekChart';
+import { ApplyExtensionWordCloud } from './charts/ApplyExtensionWordCloud';
+import { TabExtensionWordCloud } from './charts/TabExtensionWordCloud';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
@@ -31,8 +33,14 @@ export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProp
         <ModelUsageChart data={data} />
         <UserActivityChart data={data} aggregationPeriod={aggregationPeriod} />
       </div>
+
+      {/* Fourth row - Word Cloud visualizations */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <ApplyExtensionWordCloud data={data} />
+        <TabExtensionWordCloud data={data} />
+      </div>
       
-      {/* Fourth row - Two column layout - Hide day of week chart for non-daily views */}
+      {/* Fifth row - Two column layout - Hide day of week chart for non-daily views */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {aggregationPeriod === 'day' && <DayOfWeekChart data={data} />}
         <div className={aggregationPeriod === 'day' ? "lg:col-span-1" : "lg:col-span-2"}>
