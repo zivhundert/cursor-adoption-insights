@@ -1,6 +1,5 @@
 
 import { useMemo } from 'react';
-import ReactWordcloud from 'react-wordcloud';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
@@ -26,28 +25,8 @@ export const TabExtensionWordCloud = ({ data }: TabExtensionWordCloudProps) => {
       .sort((a, b) => b.value - a.value);
   }, [data]);
 
-  const options = {
-    colors: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'],
-    enableTooltip: true,
-    deterministic: false,
-    fontFamily: 'Inter, sans-serif',
-    fontSizes: [16, 60] as [number, number],
-    fontStyle: 'normal',
-    fontWeight: 'normal',
-    padding: 1,
-    rotations: 3,
-    rotationAngles: [-90, 0] as [number, number],
-    scale: 'sqrt' as const,
-    spiral: 'archimedean' as const,
-    transitionDuration: 1000,
-  };
-
-  const callbacks = {
-    onWordClick: (word: any) => {
-      console.log(`Clicked: ${word.text} (${word.value} uses)`);
-    },
-    getWordTooltip: (word: any) => `${word.text}: ${word.value} uses`,
-  };
+  const maxValue = Math.max(...wordCloudData.map(item => item.value), 1);
+  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'];
 
   return (
     <Card>
@@ -68,13 +47,34 @@ export const TabExtensionWordCloud = ({ data }: TabExtensionWordCloudProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-80 flex flex-wrap items-center justify-center gap-2 p-4">
           {wordCloudData.length > 0 ? (
-            <ReactWordcloud 
-              words={wordCloudData} 
-              options={options} 
-              callbacks={callbacks}
-            />
+            wordCloudData.map((item, index) => {
+              const fontSize = Math.max(12, (item.value / maxValue) * 48);
+              const color = colors[index % colors.length];
+              return (
+                <TooltipProvider key={item.text}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span
+                        className="cursor-pointer hover:opacity-80 transition-opacity font-medium"
+                        style={{
+                          fontSize: `${fontSize}px`,
+                          color: color,
+                          lineHeight: 1.2,
+                        }}
+                        onClick={() => console.log(`Clicked: ${item.text} (${item.value} uses)`)}
+                      >
+                        {item.text}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{item.text}: {item.value} uses</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              );
+            })
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               No tab extension data available
