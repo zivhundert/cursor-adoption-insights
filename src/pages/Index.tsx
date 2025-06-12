@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
@@ -78,7 +77,7 @@ const Index = () => {
       
       // Reset filters to default
       const defaultFilters = {
-        dateRange: { from: undefined as Date | undefined, to: undefined as Date | undefined },
+        dateRange: { from: undefined, to: undefined },
         selectedUser: 'all',
         selectedModel: 'all',
         aggregationPeriod: 'day' as AggregationPeriod,
@@ -107,17 +106,7 @@ const Index = () => {
     selectedModel: string;
     aggregationPeriod: AggregationPeriod;
   }) => {
-    const updatedFilters = {
-      dateRange: { 
-        from: filters.dateRange.from, 
-        to: filters.dateRange.to 
-      },
-      selectedUser: filters.selectedUser,
-      selectedModel: filters.selectedModel,
-      aggregationPeriod: filters.aggregationPeriod,
-    };
-    
-    setCurrentFilters(updatedFilters);
+    setCurrentFilters(filters);
     
     let filtered = [...data];
 
@@ -148,7 +137,7 @@ const Index = () => {
     if (currentCampaign) {
       const updatedCampaign = {
         ...currentCampaign,
-        lastFilters: updatedFilters,
+        lastFilters: filters,
       };
       campaignService.saveCampaign(updatedCampaign);
       setCurrentCampaign(updatedCampaign);

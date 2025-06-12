@@ -103,21 +103,17 @@ export const CampaignSelector = ({
     <div className="flex items-center gap-2">
       {campaigns.length > 0 && (
         <Select 
-          value={currentCampaign?.id || 'no-campaign'} 
+          value={currentCampaign?.id || ''} 
           onValueChange={(value) => {
-            if (value === 'no-campaign') {
-              onCampaignSelect(null);
-            } else {
-              const selected = campaigns.find(c => c.id === value);
-              onCampaignSelect(selected || null);
-            }
+            const selected = campaigns.find(c => c.id === value);
+            onCampaignSelect(selected || null);
           }}
         >
           <SelectTrigger className="w-64">
             <SelectValue placeholder="Select campaign" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="no-campaign">No campaign selected</SelectItem>
+            <SelectItem value="">No campaign selected</SelectItem>
             {campaigns.map((campaign) => (
               <SelectItem key={campaign.id} value={campaign.id}>
                 <div className="flex flex-col items-start">
