@@ -1,7 +1,7 @@
 
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload } from 'lucide-react';
+import { Upload, ExternalLink } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -56,7 +56,16 @@ export const FileUpload = ({ onFileUpload, isLoading }: FileUploadProps) => {
             </Button>
           </div>
           <p className="text-sm text-gray-500">
-            Expected format: Date, Email, User ID, Is Active, Chat Accepted Lines Added, Most Used Model...
+            <a 
+              href="https://www.cursor.com/analytics" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              Download your team CSV data from Cursor Analytics
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </p>
         </div>
       </div>
