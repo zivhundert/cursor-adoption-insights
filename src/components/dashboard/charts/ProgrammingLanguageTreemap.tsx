@@ -11,78 +11,77 @@ interface ProgrammingLanguageTreemapProps {
   data: CursorDataRow[];
 }
 
+const COLORS = [
+  '#3B82F6', '#F59E42', '#10B981', '#F43F5E', '#6366F1', '#FBBF24', '#8B5CF6', '#EC4899', '#22D3EE', '#F87171',
+  '#A3E635', '#F472B6', '#FCD34D', '#60A5FA', '#34D399', '#FCA5A5', '#818CF8', '#FDE68A', '#6EE7B7', '#F9A8D4'
+];
+
 export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapProps) => {
   const treemapData = useMemo(() => {
     const extensionCounts = new Map<string, number>();
-    
     data.forEach(row => {
       const extension = row['Most Used Apply Extension'];
-      if (extension && extension.trim() && extension !== 'Unknown' && extension !== '') {
-        extensionCounts.set(extension, (extensionCounts.get(extension) || 0) + 1);
+      if (extension && extension.trim() && extension !== 'Unknown') {
+        const displayName = extension.toLowerCase() === 'tsx' ? 'TypeScript' : extension;
+        extensionCounts.set(displayName, (extensionCounts.get(displayName) || 0) + 1);
       }
     });
 
+    const totalCount = Array.from(extensionCounts.values()).reduce((sum, count) => sum + count, 0);
+
     return Array.from(extensionCounts.entries())
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value);
+      .sort(([, a], [, b]) => b - a)
+      .map(([extension, count], index) => ({
+        name: extension,
+        value: count,
+        percentage: ((count / totalCount) * 100).toFixed(1),
+        color: COLORS[index % COLORS.length]
+      }));
   }, [data]);
 
-  const chartOptions = useMemo(() => ({
+  const options: Highcharts.Options = {
     chart: {
       type: 'treemap',
       backgroundColor: 'transparent',
-      height: 400,
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      },
+      marginBottom: 80,
     },
     title: {
-      text: null,
+      text: undefined
     },
     tooltip: {
-      pointFormat: '<b>{point.name}</b>: {point.value} uses',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      borderColor: '#ccc',
-      borderRadius: 8,
-      shadow: true,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      borderColor: 'transparent',
+      style: {
+        color: '#ffffff'
+      },
+      pointFormat: '<b>{point.name}</b><br/>Usage: {point.percentage}%'
     },
     plotOptions: {
       treemap: {
         layoutAlgorithm: 'squarified',
-        allowDrillToNode: true,
-        animation: true,
-        borderColor: '#ffffff',
-        borderWidth: 2,
         dataLabels: {
           enabled: true,
-          format: '{point.name}',
+          format: '{point.name}<br/>{point.percentage}%',
           style: {
             color: '#ffffff',
-            fontWeight: 'bold',
             textOutline: '1px contrast',
-          },
-        },
-        levels: [{
-          level: 1,
-          dataLabels: {
-            enabled: true,
-          },
-        }],
-      },
-    },
-    colorAxis: {
-      minColor: '#3B82F6',
-      maxColor: '#1E40AF',
+            fontWeight: 'bold'
+          }
+        }
+      }
     },
     series: [{
       type: 'treemap',
       data: treemapData,
-      name: 'Programming Languages',
+      name: 'Programming Languages'
     }],
-    credits: {
-      enabled: false,
-    },
-    exporting: {
-      enabled: false,
-    },
-  }), [treemapData]);
+    legend: {
+      enabled: false
+    }
+  };
 
   return (
     <Card className="h-full">
@@ -108,7 +107,7 @@ export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapP
         {treemapData.length > 0 ? (
           <HighchartsReact
             highcharts={Highcharts}
-            options={chartOptions}
+            options={options}
           />
         ) : (
           <div className="flex items-center justify-center h-64 text-muted-foreground">

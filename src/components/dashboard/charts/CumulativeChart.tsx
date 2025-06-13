@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -7,43 +6,47 @@ import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger }
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
+import { startOfWeek, startOfMonth, format } from 'date-fns';
 
 interface CumulativeChartProps {
-  data: CursorDataRow[];
+  originalData: CursorDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
-export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProps) => {
+export const CumulativeChart = ({ originalData, aggregationPeriod }: CumulativeChartProps) => {
   const chartData = useMemo(() => {
-    const dailyAccepted = new Map<string, number>();
-    const dailySuggested = new Map<string, number>();
-    
-    data.forEach(row => {
-      const date = row.Date;
-      const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
-      const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
-      
-      dailyAccepted.set(date, (dailyAccepted.get(date) || 0) + acceptedLines);
-      dailySuggested.set(date, (dailySuggested.get(date) || 0) + suggestedLines);
+    // Group originalData by the selected period
+    const groupKey = (date: Date) => {
+      if (aggregationPeriod === 'week') {
+        return format(startOfWeek(date, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+      } else if (aggregationPeriod === 'month') {
+        return format(startOfMonth(date), 'yyyy-MM-dd');
+      }
+      return format(date, 'yyyy-MM-dd');
+    };
+
+    const grouped: Record<string, { accepted: number; suggested: number }> = {};
+    originalData.forEach(row => {
+      const key = groupKey(new Date(row.Date));
+      grouped[key] = grouped[key] || { accepted: 0, suggested: 0 };
+      grouped[key].accepted += parseInt(row['Chat Accepted Lines Added']) || 0;
+      grouped[key].suggested += parseInt(row['Chat Suggested Lines Added']) || 0;
     });
 
-    const sortedDates = Array.from(new Set([...dailyAccepted.keys(), ...dailySuggested.keys()])).sort();
+    // Sort keys and calculate cumulative sums
+    const sortedKeys = Object.keys(grouped).sort();
     let cumulativeAccepted = 0;
     let cumulativeSuggested = 0;
-    
-    return sortedDates.map(date => {
-      cumulativeAccepted += dailyAccepted.get(date) || 0;
-      cumulativeSuggested += dailySuggested.get(date) || 0;
-      
+    return sortedKeys.map(key => {
+      cumulativeAccepted += grouped[key].accepted;
+      cumulativeSuggested += grouped[key].suggested;
       return {
-        date: new Date(date).getTime(),
+        date: new Date(key).getTime(),
         cumulativeAccepted,
         cumulativeSuggested,
-        dailyAccepted: dailyAccepted.get(date) || 0,
-        dailySuggested: dailySuggested.get(date) || 0,
       };
     });
-  }, [data]);
+  }, [originalData, aggregationPeriod]);
 
   const getPeriodText = () => {
     switch (aggregationPeriod) {
@@ -59,7 +62,8 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
       backgroundColor: 'transparent',
       style: {
         fontFamily: 'Inter, sans-serif'
-      }
+      },
+      marginBottom: 100,
     },
     title: {
       text: undefined
@@ -67,31 +71,25 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
     xAxis: {
       type: 'datetime',
       title: {
-        text: 'Date',
-        style: {
-          color: 'hsl(var(--muted-foreground))'
-        }
+        text: null
       },
       gridLineColor: 'hsl(var(--border))',
       lineColor: 'hsl(var(--border))',
       tickColor: 'hsl(var(--border))',
       labels: {
         style: {
-          color: 'hsl(var(--muted-foreground))'
+          color: 'hsl(var(--foreground))'
         }
       }
     },
     yAxis: {
       title: {
-        text: 'Cumulative Lines',
-        style: {
-          color: 'hsl(var(--muted-foreground))'
-        }
+        text: null
       },
       gridLineColor: 'hsl(var(--border))',
       labels: {
         style: {
-          color: 'hsl(var(--muted-foreground))'
+          color: 'hsl(var(--foreground))'
         },
         formatter: function() {
           return this.value?.toLocaleString() || '';
@@ -99,6 +97,10 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
       }
     },
     legend: {
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'bottom',
+      y: -10,
       itemStyle: {
         color: 'hsl(var(--foreground))'
       }
@@ -167,7 +169,7 @@ export const CumulativeChart = ({ data, aggregationPeriod }: CumulativeChartProp
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-[420px]">
           <HighchartsReact
             highcharts={Highcharts}
             options={options}

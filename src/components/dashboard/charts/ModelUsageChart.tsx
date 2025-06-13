@@ -36,7 +36,8 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
       backgroundColor: 'transparent',
       style: {
         fontFamily: 'Inter, sans-serif'
-      }
+      },
+      marginBottom: 100,
     },
     title: {
       text: undefined
@@ -74,6 +75,15 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
     }],
     credits: {
       enabled: false
+    },
+    legend: {
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'bottom',
+      y: -10,
+      itemStyle: {
+        color: 'hsl(var(--foreground))'
+      }
     }
   };
 
@@ -96,7 +106,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-[420px]">
           <HighchartsReact
             highcharts={Highcharts}
             options={options}

@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -10,22 +9,33 @@ interface DashboardMetricsProps {
   originalData: CursorDataRow[];
 }
 
-export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
+export const DashboardMetrics = ({ data, originalData }: DashboardMetricsProps) => {
   const metrics = useMemo(() => {
-    const totalAcceptedLines = data.reduce((sum, row) => {
+    // Calculate totals from original data (not affected by time period)
+    const totalAcceptedLines = originalData.reduce((sum, row) => {
+      // Skip aggregated rows
+      if (row.Email.includes('active users')) return sum;
       return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
     }, 0);
 
-    const totalSuggestedLines = data.reduce((sum, row) => {
+    const activeUsers = new Set(
+      originalData
+        .filter(row => !row.Email.includes('active users')) // Skip aggregated rows
+        .filter(row => row['Is Active'] === 'true')
+        .map(row => row.Email)
+    ).size;
+
+    // Calculate acceptance rate from filtered data (should be affected by time period)
+    const filteredAcceptedLines = data.reduce((sum, row) => {
+      return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
+    }, 0);
+
+    const filteredSuggestedLines = data.reduce((sum, row) => {
       return sum + (parseInt(row['Chat Suggested Lines Added']) || 0);
     }, 0);
 
-    const activeUsers = new Set(
-      data.filter(row => row['Is Active'] === 'true').map(row => row.Email)
-    ).size;
-
-    const acceptanceRate = totalSuggestedLines > 0 
-      ? ((totalAcceptedLines / totalSuggestedLines) * 100).toFixed(1)
+    const acceptanceRate = filteredSuggestedLines > 0 
+      ? ((filteredAcceptedLines / filteredSuggestedLines) * 100).toFixed(1)
       : '0';
 
     // Estimate dev hours saved (assuming 10 lines per minute on average)
@@ -37,14 +47,14 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     };
-  }, [data]);
+  }, [data, originalData]);
 
   const metricCards = [
     {
       title: 'Accepted Lines (Total)',
       value: metrics.totalAcceptedLines,
       gradient: 'from-blue-500 to-blue-600',
-      tooltip: 'Sum of all accepted lines for the current selection. These are lines that were suggested by AI and accepted by users in the filtered data.',
+      tooltip: 'Total sum of all accepted lines. Not affected by time period selection.',
     },
     {
       title: 'Acceptance Rate',
@@ -56,13 +66,13 @@ export const DashboardMetrics = ({ data }: DashboardMetricsProps) => {
       title: 'Equivalent Dev Hours Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
-      tooltip: 'Estimated development hours saved based on accepted lines in the current selection. Calculated assuming 10 lines of code per minute (600 lines per hour).',
+      tooltip: 'Estimated development hours saved based on total accepted lines. Not affected by time period selection.',
     },
     {
       title: 'Active Users',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
-      tooltip: 'Number of unique users marked as active in the current selection (filtered by date range and other filters).',
+      tooltip: 'Total number of unique active users. Not affected by time period selection.',
     },
   ];
 

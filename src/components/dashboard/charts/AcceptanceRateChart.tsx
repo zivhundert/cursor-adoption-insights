@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -54,7 +53,8 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       backgroundColor: 'transparent',
       style: {
         fontFamily: 'Inter, sans-serif'
-      }
+      },
+      marginBottom: 100,
     },
     title: {
       text: undefined
@@ -62,33 +62,27 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
     xAxis: {
       type: 'datetime',
       title: {
-        text: 'Date',
-        style: {
-          color: 'hsl(var(--muted-foreground))'
-        }
+        text: null
       },
       gridLineColor: 'hsl(var(--border))',
       lineColor: 'hsl(var(--border))',
       tickColor: 'hsl(var(--border))',
       labels: {
         style: {
-          color: 'hsl(var(--muted-foreground))'
+          color: 'hsl(var(--foreground))'
         }
       }
     },
     yAxis: {
       title: {
-        text: 'Acceptance Rate (%)',
-        style: {
-          color: 'hsl(var(--muted-foreground))'
-        }
+        text: null
       },
       min: 0,
       max: 100,
       gridLineColor: 'hsl(var(--border))',
       labels: {
         style: {
-          color: 'hsl(var(--muted-foreground))'
+          color: 'hsl(var(--foreground))'
         },
         formatter: function() {
           return this.value + '%';
@@ -107,7 +101,13 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       }
     },
     legend: {
-      enabled: false
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'bottom',
+      y: -10,
+      itemStyle: {
+        color: 'hsl(var(--foreground))'
+      }
     },
     plotOptions: {
       line: {
@@ -162,7 +162,7 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-[420px]">
           <HighchartsReact
             highcharts={Highcharts}
             options={options}

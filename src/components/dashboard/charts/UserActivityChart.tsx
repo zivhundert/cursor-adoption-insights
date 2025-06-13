@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -70,7 +69,8 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
       backgroundColor: 'transparent',
       style: {
         fontFamily: 'Inter, sans-serif'
-      }
+      },
+      marginBottom: 100,
     },
     title: {
       text: undefined
@@ -78,31 +78,25 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
     xAxis: {
       type: 'datetime',
       title: {
-        text: 'Date',
-        style: {
-          color: 'hsl(var(--muted-foreground))'
-        }
+        text: null
       },
       gridLineColor: 'hsl(var(--border))',
       lineColor: 'hsl(var(--border))',
       tickColor: 'hsl(var(--border))',
       labels: {
         style: {
-          color: 'hsl(var(--muted-foreground))'
+          color: 'hsl(var(--foreground))'
         }
       }
     },
     yAxis: {
       title: {
-        text: 'Active Users',
-        style: {
-          color: 'hsl(var(--muted-foreground))'
-        }
+        text: null
       },
       gridLineColor: 'hsl(var(--border))',
       labels: {
         style: {
-          color: 'hsl(var(--muted-foreground))'
+          color: 'hsl(var(--foreground))'
         }
       }
     },
@@ -130,6 +124,15 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
     }],
     credits: {
       enabled: false
+    },
+    legend: {
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'bottom',
+      y: -10,
+      itemStyle: {
+        color: 'hsl(var(--foreground))'
+      }
     }
   };
 
@@ -152,7 +155,7 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80">
+        <div className="h-[420px]">
           <HighchartsReact
             highcharts={Highcharts}
             options={options}

@@ -1,4 +1,3 @@
-
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
@@ -14,14 +13,15 @@ import { AggregationPeriod } from '@/utils/dataAggregation';
 
 interface DashboardChartsProps {
   data: CursorDataRow[];
+  originalData: CursorDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
-export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProps) => {
+export const DashboardCharts = ({ data, originalData, aggregationPeriod }: DashboardChartsProps) => {
   return (
     <div className="space-y-8">
       {/* Main cumulative chart */}
-      <CumulativeChart data={data} aggregationPeriod={aggregationPeriod} />
+      <CumulativeChart originalData={originalData} aggregationPeriod={aggregationPeriod} />
       
       {/* Acceptance Rate chart */}
       <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />
