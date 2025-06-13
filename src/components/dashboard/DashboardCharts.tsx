@@ -1,5 +1,6 @@
 
 import { CumulativeChart } from './charts/CumulativeChart';
+import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
 import { AverageTabsAcceptedChart } from './charts/AverageTabsAcceptedChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
@@ -21,6 +22,9 @@ export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProp
     <div className="space-y-8">
       {/* Main cumulative chart */}
       <CumulativeChart data={data} aggregationPeriod={aggregationPeriod} />
+      
+      {/* Acceptance Rate chart */}
+      <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />
       
       {/* Second row - Two new average charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
