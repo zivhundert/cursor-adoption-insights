@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
-import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -9,7 +8,9 @@ import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
 // Initialize the highcharts-more module (includes arearange)
-HighchartsMore(Highcharts);
+import('highcharts/highcharts-more').then((module) => {
+  module.default(Highcharts);
+});
 
 interface AcceptanceRateChartProps {
   data: CursorDataRow[];
