@@ -38,10 +38,10 @@ export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProp
         <UserActivityChart data={data} aggregationPeriod={aggregationPeriod} />
       </div>
 
-      {/* Fourth row - Word Cloud visualizations */}
+      {/* Fourth row - Word Cloud visualizations - Switched positions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <ApplyExtensionWordCloud data={data} />
         <TabExtensionWordCloud data={data} />
+        <ApplyExtensionWordCloud data={data} />
       </div>
       
       {/* Fifth row - Two column layout - Hide day of week chart for non-daily views */}

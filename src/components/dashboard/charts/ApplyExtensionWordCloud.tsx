@@ -28,8 +28,8 @@ export const ApplyExtensionWordCloud = ({ data }: ApplyExtensionWordCloudProps) 
   return (
     <EnhancedWordCloud 
       data={wordCloudData}
-      title="Most Used Apply Extensions"
-      helpText="Visual representation of the most frequently used apply extensions."
+      title="Programming Language Usage"
+      helpText="Visual representation of the most frequently used programming languages."
       colors={colors}
     />
   );
