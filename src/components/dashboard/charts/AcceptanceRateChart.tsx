@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
-import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -9,7 +8,7 @@ import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
 // Initialize the highcharts-more module (includes arearange)
-HighchartsMore(Highcharts);
+require('highcharts/highcharts-more')(Highcharts);
 
 interface AcceptanceRateChartProps {
   data: CursorDataRow[];
@@ -122,7 +121,8 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
         color: 'hsl(var(--foreground))'
       },
       formatter: function() {
-        const point = this.points ? this.points[0] : this;
+        const points = this.points || [this];
+        const point = points[0];
         const pointData = point.options as any;
         return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
                 Range: <b>${pointData.low?.toFixed(1)}% - ${pointData.high?.toFixed(1)}%</b><br/>
