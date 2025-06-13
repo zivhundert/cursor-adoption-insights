@@ -119,10 +119,11 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
         color: 'hsl(var(--foreground))'
       },
       formatter: function() {
-        const point = this.point as any;
+        const point = this.points ? this.points[0] : this;
+        const pointData = point.options as any;
         return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
-                Range: <b>${point.low?.toFixed(1)}% - ${point.high?.toFixed(1)}%</b><br/>
-                Average: <b>${point.options.overallRate?.toFixed(1)}%</b>`;
+                Range: <b>${pointData.low?.toFixed(1)}% - ${pointData.high?.toFixed(1)}%</b><br/>
+                Average: <b>${pointData.overallRate?.toFixed(1)}%</b>`;
       }
     },
     legend: {
