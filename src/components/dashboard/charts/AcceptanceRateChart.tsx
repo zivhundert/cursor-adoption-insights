@@ -1,12 +1,15 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
+import HighchartsMore from 'highcharts/highcharts-more';
 import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
+
+// Initialize the highcharts-more module (includes arearange)
+HighchartsMore(Highcharts);
 
 interface AcceptanceRateChartProps {
   data: CursorDataRow[];
