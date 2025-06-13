@@ -14,14 +14,15 @@ import { AggregationPeriod } from '@/utils/dataAggregation';
 interface DashboardChartsProps {
   data: CursorDataRow[];
   originalData: CursorDataRow[];
+  baseFilteredData: CursorDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
-export const DashboardCharts = ({ data, originalData, aggregationPeriod }: DashboardChartsProps) => {
+export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod }: DashboardChartsProps) => {
   return (
     <div className="space-y-8">
       {/* Main cumulative chart */}
-      <CumulativeChart originalData={originalData} aggregationPeriod={aggregationPeriod} />
+      <CumulativeChart baseFilteredData={baseFilteredData} aggregationPeriod={aggregationPeriod} />
       
       {/* Acceptance Rate chart */}
       <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />
