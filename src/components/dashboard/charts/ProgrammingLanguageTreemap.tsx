@@ -1,12 +1,14 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-require('highcharts/modules/treemap')(Highcharts);
+import treemapModule from 'highcharts/modules/treemap';
 import { CursorDataRow } from '@/pages/Index';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+// Initialize the treemap module
+treemapModule(Highcharts);
 
 interface ProgrammingLanguageTreemapProps {
   data: CursorDataRow[];
