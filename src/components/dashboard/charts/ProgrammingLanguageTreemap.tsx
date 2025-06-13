@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import HighchartsTreemap from 'highcharts/modules/treemap';
+import TreemapModule from 'highcharts/modules/treemap';
 import { CursorDataRow } from '@/pages/Index';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpCircle } from 'lucide-react';
@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 // Initialize the treemap module
 if (typeof Highcharts === 'object') {
-  HighchartsTreemap(Highcharts);
+  TreemapModule(Highcharts);
 }
 
 interface ProgrammingLanguageTreemapProps {
