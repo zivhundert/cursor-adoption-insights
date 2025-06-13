@@ -7,20 +7,19 @@ import { CursorDataRow } from '@/pages/Index';
 interface DashboardMetricsProps {
   data: CursorDataRow[];
   originalData: CursorDataRow[];
-  baseFilteredData: CursorDataRow[]; // Data filtered by user/date but not by time period
 }
 
-export const DashboardMetrics = ({ data, originalData, baseFilteredData }: DashboardMetricsProps) => {
+export const DashboardMetrics = ({ data, originalData }: DashboardMetricsProps) => {
   const metrics = useMemo(() => {
-    // Use baseFilteredData for totals (respects user/date filters but not time period)
-    const totalAcceptedLines = baseFilteredData.reduce((sum, row) => {
+    // Calculate totals from original data (not affected by time period)
+    const totalAcceptedLines = originalData.reduce((sum, row) => {
       // Skip aggregated rows
       if (row.Email.includes('active users')) return sum;
       return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
     }, 0);
 
     const activeUsers = new Set(
-      baseFilteredData
+      originalData
         .filter(row => !row.Email.includes('active users')) // Skip aggregated rows
         .filter(row => row['Is Active'] === 'true')
         .map(row => row.Email)
@@ -48,14 +47,14 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     };
-  }, [data, originalData, baseFilteredData]);
+  }, [data, originalData]);
 
   const metricCards = [
     {
       title: 'Accepted Lines (Total)',
       value: metrics.totalAcceptedLines,
       gradient: 'from-blue-500 to-blue-600',
-      tooltip: 'Total sum of all accepted lines for the selected filters. Not affected by time period selection.',
+      tooltip: 'Total sum of all accepted lines. Not affected by time period selection.',
     },
     {
       title: 'Acceptance Rate',
@@ -67,13 +66,13 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       title: 'Equivalent Dev Hours Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
-      tooltip: 'Estimated development hours saved based on accepted lines for the selected filters. Not affected by time period selection.',
+      tooltip: 'Estimated development hours saved based on total accepted lines. Not affected by time period selection.',
     },
     {
       title: 'Active Users',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
-      tooltip: 'Number of unique active users for the selected filters. Not affected by time period selection.',
+      tooltip: 'Total number of unique active users. Not affected by time period selection.',
     },
   ];
 
