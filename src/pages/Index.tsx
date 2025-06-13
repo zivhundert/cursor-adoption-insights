@@ -29,6 +29,7 @@ export interface CursorDataRow {
 const Index = () => {
   const [data, setData] = useState<CursorDataRow[]>([]);
   const [filteredData, setFilteredData] = useState<CursorDataRow[]>([]);
+  const [baseFilteredData, setBaseFilteredData] = useState<CursorDataRow[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,6 +54,7 @@ const Index = () => {
 
       setData(parsedData);
       setFilteredData(parsedData);
+      setBaseFilteredData(parsedData);
       toast({
         title: "File uploaded successfully",
         description: `Processed ${parsedData.length} rows of active user data`,
@@ -96,7 +98,10 @@ const Index = () => {
       filtered = filtered.filter(row => row['Most Used Model'] === filters.selectedModel);
     }
 
-    // Apply aggregation
+    // Store base filtered data (without time period aggregation)
+    setBaseFilteredData(filtered);
+
+    // Apply aggregation for charts that need it
     const aggregatedData = aggregateDataByPeriod(filtered, filters.aggregationPeriod);
     
     setAggregationPeriod(filters.aggregationPeriod);
@@ -106,6 +111,7 @@ const Index = () => {
   const handleReloadCSV = () => {
     setData([]);
     setFilteredData([]);
+    setBaseFilteredData([]);
     setAggregationPeriod('day');
   };
 
@@ -120,9 +126,9 @@ const Index = () => {
           </div>
         ) : (
           <div className="mt-8 space-y-8">
-            <DashboardMetrics data={filteredData} originalData={data} />
+            <DashboardMetrics data={filteredData} originalData={data} baseFilteredData={baseFilteredData} />
             <DashboardFilters data={data} onFiltersChange={handleFiltersChange} />
-            <DashboardCharts data={filteredData} originalData={data} aggregationPeriod={aggregationPeriod} />
+            <DashboardCharts data={filteredData} originalData={data} baseFilteredData={baseFilteredData} aggregationPeriod={aggregationPeriod} />
           </div>
         )}
       </div>

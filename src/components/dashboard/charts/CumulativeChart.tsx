@@ -9,44 +9,59 @@ import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregati
 import { startOfWeek, startOfMonth, format } from 'date-fns';
 
 interface CumulativeChartProps {
-  originalData: CursorDataRow[];
+  baseFilteredData: CursorDataRow[];
   aggregationPeriod: AggregationPeriod;
 }
 
-export const CumulativeChart = ({ originalData, aggregationPeriod }: CumulativeChartProps) => {
+export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: CumulativeChartProps) => {
   const chartData = useMemo(() => {
-    // Group originalData by the selected period
+    // Group baseFilteredData by the selected period
     const groupKey = (date: Date) => {
       if (aggregationPeriod === 'week') {
-        return format(startOfWeek(date, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+        return startOfWeek(date, { weekStartsOn: 1 }).getTime();
       } else if (aggregationPeriod === 'month') {
-        return format(startOfMonth(date), 'yyyy-MM-dd');
+        return startOfMonth(date).getTime();
+      } else {
+        return date.getTime();
       }
-      return format(date, 'yyyy-MM-dd');
     };
 
-    const grouped: Record<string, { accepted: number; suggested: number }> = {};
-    originalData.forEach(row => {
-      const key = groupKey(new Date(row.Date));
-      grouped[key] = grouped[key] || { accepted: 0, suggested: 0 };
-      grouped[key].accepted += parseInt(row['Chat Accepted Lines Added']) || 0;
-      grouped[key].suggested += parseInt(row['Chat Suggested Lines Added']) || 0;
-    });
+    // Filter out aggregated rows and group by period
+    const periodData = new Map<number, { accepted: number; suggested: number }>();
+    
+    baseFilteredData
+      .filter(row => !row.Email.includes('active users')) // Skip aggregated rows
+      .forEach(row => {
+        const date = new Date(row.Date);
+        const key = groupKey(date);
+        const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
+        const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
+        
+        if (!periodData.has(key)) {
+          periodData.set(key, { accepted: 0, suggested: 0 });
+        }
+        const existing = periodData.get(key)!;
+        existing.accepted += acceptedLines;
+        existing.suggested += suggestedLines;
+      });
 
-    // Sort keys and calculate cumulative sums
-    const sortedKeys = Object.keys(grouped).sort();
+    // Convert to sorted array and calculate cumulative sums
+    const sortedData = Array.from(periodData.entries())
+      .sort(([a], [b]) => a - b);
+
     let cumulativeAccepted = 0;
     let cumulativeSuggested = 0;
-    return sortedKeys.map(key => {
-      cumulativeAccepted += grouped[key].accepted;
-      cumulativeSuggested += grouped[key].suggested;
+    
+    return sortedData.map(([timestamp, { accepted, suggested }]) => {
+      cumulativeAccepted += accepted;
+      cumulativeSuggested += suggested;
       return {
-        date: new Date(key).getTime(),
+        date: timestamp,
         cumulativeAccepted,
         cumulativeSuggested,
       };
     });
-  }, [originalData, aggregationPeriod]);
+  }, [baseFilteredData, aggregationPeriod]);
 
   const getPeriodText = () => {
     switch (aggregationPeriod) {
