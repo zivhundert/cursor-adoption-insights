@@ -7,7 +7,7 @@ import { ModelUsageChart } from './charts/ModelUsageChart';
 import { TopContributorsTable } from './charts/TopContributorsTable';
 import { UserActivityChart } from './charts/UserActivityChart';
 import { DayOfWeekChart } from './charts/DayOfWeekChart';
-import { ApplyExtensionWordCloud } from './charts/ApplyExtensionWordCloud';
+import { ProgrammingLanguageTreemap } from './charts/ProgrammingLanguageTreemap';
 import { TabExtensionWordCloud } from './charts/TabExtensionWordCloud';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
@@ -38,10 +38,10 @@ export const DashboardCharts = ({ data, aggregationPeriod }: DashboardChartsProp
         <UserActivityChart data={data} aggregationPeriod={aggregationPeriod} />
       </div>
 
-      {/* Fourth row - Word Cloud visualizations - Switched positions */}
+      {/* Fourth row - Treemap and Word Cloud visualizations */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <TabExtensionWordCloud data={data} />
-        <ApplyExtensionWordCloud data={data} />
+        <ProgrammingLanguageTreemap data={data} />
       </div>
       
       {/* Fifth row - Two column layout - Hide day of week chart for non-daily views */}
