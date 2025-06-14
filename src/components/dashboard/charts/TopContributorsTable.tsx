@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -28,6 +27,34 @@ interface ContributorWithSegment {
   cmdKRequests: number;
   segment: PerformanceSegment;
 }
+
+// Added: sorting options
+type SortableColumn =
+  | "email"
+  | "segment"
+  | "acceptedLines"
+  | "suggestedLines"
+  | "acceptanceRate"
+  | "chatTotalApplies"
+  | "tabsAccepted"
+  | "editRequests"
+  | "askRequests"
+  | "agentRequests"
+  | "cmdKRequests";
+
+const columnLabels: Record<SortableColumn, string> = {
+  email: "Name",
+  segment: "Performance",
+  acceptedLines: "Accepted Lines",
+  suggestedLines: "Suggested Lines",
+  acceptanceRate: "Acceptance Rate",
+  chatTotalApplies: "Chat Total Applies",
+  tabsAccepted: "Tabs Accepted",
+  editRequests: "Edit Requests",
+  askRequests: "Ask Requests",
+  agentRequests: "Agent Requests",
+  cmdKRequests: "Cmd+K Requests",
+};
 
 const getPerformanceSegment = (acceptanceRate: number, chatTotalApplies: number): PerformanceSegment => {
   if (acceptanceRate > 40 && chatTotalApplies > 200) return 'Power User';
@@ -75,9 +102,24 @@ const getSegmentDescription = (segment: PerformanceSegment) => {
   }
 };
 
+// sort helper for segments (lower = higher priority)
+const segmentSortOrder: Record<PerformanceSegment, number> = {
+  'Power User': 0,
+  'Engaged Developer': 1,
+  'Growing User': 2,
+  'Early Explorer': 3,
+};
+
 export const TopContributorsTable = ({ data, isFiltered = false }: TopContributorsTableProps) => {
   const [showAll, setShowAll] = useState(false);
 
+  // Sorting state: column, and direction ('asc' | 'desc')
+  const [sortConfig, setSortConfig] = useState<{ column: SortableColumn; direction: "asc" | "desc" }>({
+    column: "segment",
+    direction: "asc",
+  });
+
+  // Memoize allContributors as before
   const allContributors = useMemo(() => {
     // Filter out aggregated summary rows (those with special email markers)
     const userRows = data.filter(row => !row.Email.includes('active users'));
@@ -129,22 +171,83 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies);
     });
 
-    return Array.from(userStats.values())
-      .sort((a, b) => {
-        // Sort by segment priority first, then by accepted lines
-        const segmentOrder = { 'Power User': 0, 'Engaged Developer': 1, 'Growing User': 2, 'Early Explorer': 3 };
-        const segmentDiff = segmentOrder[a.segment] - segmentOrder[b.segment];
-        if (segmentDiff !== 0) return segmentDiff;
-        return b.acceptedLines - a.acceptedLines;
-      });
+    return Array.from(userStats.values());
   }, [data]);
 
+  // Sorting logic, memoized for performance
+  const sortedContributors = useMemo(() => {
+    const sorted = [...allContributors];
+    switch (sortConfig.column) {
+      case "email":
+        sorted.sort((a, b) =>
+          sortConfig.direction === "asc"
+            ? a.email.localeCompare(b.email)
+            : b.email.localeCompare(a.email)
+        );
+        break;
+      case "segment":
+        sorted.sort((a, b) => {
+          const diff = segmentSortOrder[a.segment] - segmentSortOrder[b.segment];
+          return sortConfig.direction === "asc" ? diff : -diff;
+        });
+        break;
+      case "acceptedLines":
+      case "suggestedLines":
+      case "chatTotalApplies":
+      case "tabsAccepted":
+      case "editRequests":
+      case "askRequests":
+      case "agentRequests":
+      case "cmdKRequests":
+        sorted.sort((a, b) =>
+          sortConfig.direction === "asc"
+            ? a[sortConfig.column] - b[sortConfig.column]
+            : b[sortConfig.column] - a[sortConfig.column]
+        );
+        break;
+      case "acceptanceRate":
+        sorted.sort((a, b) =>
+          sortConfig.direction === "asc"
+            ? a.acceptanceRate - b.acceptanceRate
+            : b.acceptanceRate - a.acceptanceRate
+        );
+        break;
+      default:
+        break;
+    }
+    return sorted;
+  }, [allContributors, sortConfig]);
+
   // Don't render the table if there's only one user
-  if (allContributors.length <= 1) {
+  if (sortedContributors.length <= 1) {
     return null;
   }
 
-  const displayedContributors = showAll ? allContributors : allContributors.slice(0, 7);
+  const displayedContributors = showAll ? sortedContributors : sortedContributors.slice(0, 7);
+
+  // Handle header click to sort columns
+  function handleSort(column: SortableColumn) {
+    setSortConfig(prev => {
+      if (prev.column === column) {
+        // Toggle direction
+        return { column, direction: prev.direction === "asc" ? "desc" : "asc" };
+      }
+      // Otherwise set new column, default to descending for numbers, ascending for names/segments
+      if (column === "email" || column === "segment") {
+        return { column, direction: "asc" };
+      }
+      return { column, direction: "desc" };
+    });
+  }
+
+  // Simple sort icon
+  function SortIcon({ active, direction }: { active: boolean; direction: "asc" | "desc" }) {
+    return (
+      <span className="inline-block w-3 ml-1">
+        {active ? (direction === "asc" ? "▲" : "▼") : ""}
+      </span>
+    );
+  }
 
   return (
     <Card>
@@ -191,21 +294,99 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Performance</TableHead>
-                <TableHead className="text-right">Accepted Lines</TableHead>
-                <TableHead className="text-right">Suggested Lines</TableHead>
-                <TableHead className="text-right">Acceptance Rate</TableHead>
-                <TableHead className="text-right">Chat Total Applies</TableHead>
-                <TableHead className="text-right">Tabs Accepted</TableHead>
-                <TableHead className="text-right">Edit Requests</TableHead>
-                <TableHead className="text-right">Ask Requests</TableHead>
-                <TableHead className="text-right">Agent Requests</TableHead>
-                <TableHead className="text-right">Cmd+K Requests</TableHead>
+                {/* Each TableHead becomes sortable */}
+                <TableHead
+                  className="cursor-pointer select-none"
+                  onClick={() => handleSort('email')}
+                  aria-sort={sortConfig.column === 'email' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.email}
+                  <SortIcon active={sortConfig.column === 'email'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="cursor-pointer select-none"
+                  onClick={() => handleSort('segment')}
+                  aria-sort={sortConfig.column === 'segment' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.segment}
+                  <SortIcon active={sortConfig.column === 'segment'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('acceptedLines')}
+                  aria-sort={sortConfig.column === 'acceptedLines' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.acceptedLines}
+                  <SortIcon active={sortConfig.column === 'acceptedLines'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('suggestedLines')}
+                  aria-sort={sortConfig.column === 'suggestedLines' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.suggestedLines}
+                  <SortIcon active={sortConfig.column === 'suggestedLines'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('acceptanceRate')}
+                  aria-sort={sortConfig.column === 'acceptanceRate' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.acceptanceRate}
+                  <SortIcon active={sortConfig.column === 'acceptanceRate'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('chatTotalApplies')}
+                  aria-sort={sortConfig.column === 'chatTotalApplies' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.chatTotalApplies}
+                  <SortIcon active={sortConfig.column === 'chatTotalApplies'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('tabsAccepted')}
+                  aria-sort={sortConfig.column === 'tabsAccepted' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.tabsAccepted}
+                  <SortIcon active={sortConfig.column === 'tabsAccepted'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('editRequests')}
+                  aria-sort={sortConfig.column === 'editRequests' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.editRequests}
+                  <SortIcon active={sortConfig.column === 'editRequests'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('askRequests')}
+                  aria-sort={sortConfig.column === 'askRequests' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.askRequests}
+                  <SortIcon active={sortConfig.column === 'askRequests'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('agentRequests')}
+                  aria-sort={sortConfig.column === 'agentRequests' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.agentRequests}
+                  <SortIcon active={sortConfig.column === 'agentRequests'} direction={sortConfig.direction} />
+                </TableHead>
+                <TableHead
+                  className="text-right cursor-pointer select-none"
+                  onClick={() => handleSort('cmdKRequests')}
+                  aria-sort={sortConfig.column === 'cmdKRequests' ? sortConfig.direction : undefined}
+                >
+                  {columnLabels.cmdKRequests}
+                  <SortIcon active={sortConfig.column === 'cmdKRequests'} direction={sortConfig.direction} />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {displayedContributors.map((contributor, index) => (
+              {displayedContributors.map((contributor) => (
                 <TableRow key={contributor.email}>
                   <TableCell className="font-medium">{contributor.email}</TableCell>
                   <TableCell>
@@ -243,3 +424,5 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
     </Card>
   );
 };
+
+// Note: This file is quite large (over 250 lines) and should be considered for refactoring into smaller files and isolated components like SortableTableHead, etc.
