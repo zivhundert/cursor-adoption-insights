@@ -1,3 +1,4 @@
+
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
@@ -8,6 +9,7 @@ import { ChatRequestTypesChart } from './charts/ChatRequestTypesChart';
 import { DayOfWeekChart } from './charts/DayOfWeekChart';
 import { ProgrammingLanguageTreemap } from './charts/ProgrammingLanguageTreemap';
 import { TabExtensionWordCloud } from './charts/TabExtensionWordCloud';
+import { ClientVersionChart } from './charts/ClientVersionChart';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
@@ -48,12 +50,17 @@ export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregat
         <ProgrammingLanguageTreemap data={data} />
       </div>
       
-      {/* Fifth row - Two column layout - Hide day of week chart for non-daily views */}
+      {/* Fifth row - Day of Week Chart and Client Version Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {aggregationPeriod === 'day' && <DayOfWeekChart data={data} />}
         <div className={aggregationPeriod === 'day' ? "lg:col-span-1" : "lg:col-span-2"}>
-          <TopContributorsTable data={data} isFiltered={isFiltered} />
+          <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />
         </div>
+      </div>
+
+      {/* Sixth row - AI Adoption Champions Table (full width) */}
+      <div className="grid grid-cols-1">
+        <TopContributorsTable data={data} isFiltered={isFiltered} />
       </div>
     </div>
   );

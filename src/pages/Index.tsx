@@ -25,6 +25,7 @@ export interface CursorDataRow {
   'Most Used Model': string;
   'Most Used Apply Extension': string;
   'Most Used Tab Extension': string;
+  'Client Version': string;
 }
 
 const Index = () => {
