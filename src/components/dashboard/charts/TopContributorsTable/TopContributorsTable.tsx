@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -25,7 +24,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
   );
   const sortedContributors = useSortedContributors(allContributors, sortConfig);
 
-  if (sortedContributors.length <= 1) {
+  if (sortedContributors.length < 1) {
     return null;
   }
 
@@ -73,30 +72,28 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <SortableTableHead column="email" label={columnLabels.email} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="segment" label={columnLabels.segment} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="acceptedLines" label={columnLabels.acceptedLines} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="suggestedLines" label={columnLabels.suggestedLines} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="acceptanceRate" label={columnLabels.acceptanceRate} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="chatTotalApplies" label={columnLabels.chatTotalApplies} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="tabsAccepted" label={columnLabels.tabsAccepted} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="editRequests" label={columnLabels.editRequests} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="askRequests" label={columnLabels.askRequests} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="agentRequests" label={columnLabels.agentRequests} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="userROI" label={columnLabels.userROI} sortConfig={sortConfig} onSort={handleSort} />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {displayedContributors.map((contributor) => (
-                <ContributorRow key={contributor.email} contributor={contributor} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <SortableTableHead column="email" label={columnLabels.email} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="segment" label={columnLabels.segment} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="acceptedLines" label={columnLabels.acceptedLines} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="suggestedLines" label={columnLabels.suggestedLines} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="acceptanceRate" label={columnLabels.acceptanceRate} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="chatTotalApplies" label={columnLabels.chatTotalApplies} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="tabsAccepted" label={columnLabels.tabsAccepted} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="editRequests" label={columnLabels.editRequests} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="askRequests" label={columnLabels.askRequests} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="agentRequests" label={columnLabels.agentRequests} sortConfig={sortConfig} onSort={handleSort} />
+              <SortableTableHead column="userROI" label={columnLabels.userROI} sortConfig={sortConfig} onSort={handleSort} />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {displayedContributors.map((contributor) => (
+              <ContributorRow key={contributor.email} contributor={contributor} />
+            ))}
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );
