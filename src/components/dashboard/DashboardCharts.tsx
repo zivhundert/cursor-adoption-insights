@@ -4,7 +4,7 @@ import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
 import { AverageTabsAcceptedChart } from './charts/AverageTabsAcceptedChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
-import { TopContributorsTable } from './charts/TopContributorsTable';
+import { TopContributorsTable } from './charts/TopContributorsTable/TopContributorsTable';
 import { ChatRequestTypesChart } from './charts/ChatRequestTypesChart';
 import { DayOfWeekChart } from './charts/DayOfWeekChart';
 import { ProgrammingLanguageTreemap } from './charts/ProgrammingLanguageTreemap';

@@ -42,10 +42,11 @@ export const useSortedContributors = (
         );
         break;
       case "acceptanceRate":
+      case "userROI":
         sorted.sort((a, b) =>
           sortConfig.direction === "asc"
-            ? a.acceptanceRate - b.acceptanceRate
-            : b.acceptanceRate - a.acceptanceRate
+            ? a[sortConfig.column] - b[sortConfig.column]
+            : b[sortConfig.column] - a[sortConfig.column]
         );
         break;
       default:
