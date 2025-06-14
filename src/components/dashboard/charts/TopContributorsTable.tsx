@@ -1,3 +1,4 @@
+
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -19,14 +20,19 @@ interface ContributorWithSegment {
   acceptedLines: number;
   suggestedLines: number;
   acceptanceRate: number;
-  totalApplies: number;
+  chatTotalApplies: number;
+  tabsAccepted: number;
+  editRequests: number;
+  askRequests: number;
+  agentRequests: number;
+  cmdKRequests: number;
   segment: PerformanceSegment;
 }
 
-const getPerformanceSegment = (acceptanceRate: number, totalApplies: number): PerformanceSegment => {
-  if (acceptanceRate > 40 && totalApplies > 200) return 'Power User';
-  if (acceptanceRate > 25 && totalApplies > 50) return 'Engaged Developer';
-  if (acceptanceRate > 15 || totalApplies > 10) return 'Growing User';
+const getPerformanceSegment = (acceptanceRate: number, chatTotalApplies: number): PerformanceSegment => {
+  if (acceptanceRate > 40 && chatTotalApplies > 200) return 'Power User';
+  if (acceptanceRate > 25 && chatTotalApplies > 50) return 'Engaged Developer';
+  if (acceptanceRate > 15 || chatTotalApplies > 10) return 'Growing User';
   return 'Early Explorer';
 };
 
@@ -82,7 +88,11 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       const email = row.Email;
       const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
       const suggestedLines = parseInt(row['Chat Suggested Lines Added']) || 0;
+      const tabsAccepted = parseInt(row['Tabs Accepted']) || 0;
+      const editRequests = parseInt(row['Edit Requests']) || 0;
       const askRequests = parseInt(row['Ask Requests']) || 0;
+      const agentRequests = parseInt(row['Agent Requests']) || 0;
+      const cmdKRequests = parseInt(row['Cmd+K Requests']) || 0;
       
       if (!userStats.has(email)) {
         userStats.set(email, {
@@ -90,7 +100,12 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
           acceptedLines: 0,
           suggestedLines: 0,
           acceptanceRate: 0,
-          totalApplies: 0,
+          chatTotalApplies: 0,
+          tabsAccepted: 0,
+          editRequests: 0,
+          askRequests: 0,
+          agentRequests: 0,
+          cmdKRequests: 0,
           segment: 'Early Explorer',
         });
       }
@@ -98,7 +113,12 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       const stats = userStats.get(email)!;
       stats.acceptedLines += acceptedLines;
       stats.suggestedLines += suggestedLines;
-      stats.totalApplies += acceptedLines; // Using accepted lines as proxy for total applies
+      stats.chatTotalApplies += acceptedLines; // Using accepted lines as proxy for total applies
+      stats.tabsAccepted += tabsAccepted;
+      stats.editRequests += editRequests;
+      stats.askRequests += askRequests;
+      stats.agentRequests += agentRequests;
+      stats.cmdKRequests += cmdKRequests;
     });
 
     // Calculate acceptance rates and segments
@@ -106,7 +126,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       stats.acceptanceRate = stats.suggestedLines > 0 
         ? (stats.acceptedLines / stats.suggestedLines) * 100
         : 0;
-      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.totalApplies);
+      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies);
     });
 
     return Array.from(userStats.values())
@@ -138,14 +158,18 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <HelpCircle className="h-4 w-4 text-muted-foreground" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Users ranked by performance segment and accepted lines.</p>
+                  <p>Users ranked by performance segment and comprehensive activity metrics.</p>
                   <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Performance Segments:</strong></p>
-                    <p>⚡ Power User: Rate {'>'} 40% & Applies {'>'} 200</p>
-                    <p>✅ Engaged Developer: Rate {'>'} 25% & Applies {'>'} 50</p>
-                    <p>📈 Growing User: Rate {'>'} 15% or Applies {'>'} 10</p>
+                    <p>⚡ Power User: Rate {'>'} 40% & Chat Applies {'>'} 200</p>
+                    <p>✅ Engaged Developer: Rate {'>'} 25% & Chat Applies {'>'} 50</p>
+                    <p>📈 Growing User: Rate {'>'} 15% or Chat Applies {'>'} 10</p>
                     <p>⚠️ Early Explorer: Below thresholds</p>
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-2">
+                    <p><strong>Metrics include:</strong></p>
+                    <p>Chat metrics, Tabs, Edit/Ask/Agent requests, Cmd+K usage</p>
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -163,44 +187,58 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Performance</TableHead>
-              <TableHead className="text-right">Accepted Lines</TableHead>
-              <TableHead className="text-right">Suggested Lines</TableHead>
-              <TableHead className="text-right">Acceptance Rate</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {displayedContributors.map((contributor, index) => (
-              <TableRow key={contributor.email}>
-                <TableCell className="font-medium">{contributor.email}</TableCell>
-                <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <div className="flex items-center gap-2">
-                          {getSegmentIcon(contributor.segment)}
-                          <Badge className={getSegmentBadgeStyle(contributor.segment)}>
-                            {contributor.segment}
-                          </Badge>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{getSegmentDescription(contributor.segment)}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TableCell>
-                <TableCell className="text-right">{contributor.acceptedLines.toLocaleString()}</TableCell>
-                <TableCell className="text-right">{contributor.suggestedLines.toLocaleString()}</TableCell>
-                <TableCell className="text-right">{contributor.acceptanceRate.toFixed(1)}%</TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Performance</TableHead>
+                <TableHead className="text-right">Accepted Lines</TableHead>
+                <TableHead className="text-right">Suggested Lines</TableHead>
+                <TableHead className="text-right">Acceptance Rate</TableHead>
+                <TableHead className="text-right">Chat Total Applies</TableHead>
+                <TableHead className="text-right">Tabs Accepted</TableHead>
+                <TableHead className="text-right">Edit Requests</TableHead>
+                <TableHead className="text-right">Ask Requests</TableHead>
+                <TableHead className="text-right">Agent Requests</TableHead>
+                <TableHead className="text-right">Cmd+K Requests</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {displayedContributors.map((contributor, index) => (
+                <TableRow key={contributor.email}>
+                  <TableCell className="font-medium">{contributor.email}</TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <div className="flex items-center gap-2">
+                            {getSegmentIcon(contributor.segment)}
+                            <Badge className={getSegmentBadgeStyle(contributor.segment)}>
+                              {contributor.segment}
+                            </Badge>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{getSegmentDescription(contributor.segment)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell className="text-right">{contributor.acceptedLines.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.suggestedLines.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.acceptanceRate.toFixed(1)}%</TableCell>
+                  <TableCell className="text-right">{contributor.chatTotalApplies.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.tabsAccepted.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.editRequests.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.askRequests.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.agentRequests.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">{contributor.cmdKRequests.toLocaleString()}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
