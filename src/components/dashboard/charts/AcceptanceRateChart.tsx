@@ -147,7 +147,7 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-xl font-semibold">
-            Acceptance Rate Over Time ({getPeriodText()})
+            AI Adoption Quality Trend ({getPeriodText()})
           </CardTitle>
           <TooltipProvider>
             <UITooltip>

@@ -91,7 +91,7 @@ export const ModelUsageChart = ({ data }: ModelUsageChartProps) => {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Model Usage Distribution</CardTitle>
+          <CardTitle className="text-xl font-semibold">AI Model Usage</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>

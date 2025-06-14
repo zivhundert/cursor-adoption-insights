@@ -122,7 +122,7 @@ export const AverageAskRequestsChart = ({ data, aggregationPeriod }: AverageAskR
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Average Ask Requests ({getPeriodText()})</CardTitle>
+          <CardTitle className="text-xl font-semibold">AI Chat Usage per Developer ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>

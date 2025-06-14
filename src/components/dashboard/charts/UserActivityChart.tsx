@@ -140,7 +140,7 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Active Users ({getPeriodText()})</CardTitle>
+          <CardTitle className="text-xl font-semibold">Daily Team Engagement ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>

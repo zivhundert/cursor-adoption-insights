@@ -168,7 +168,7 @@ export const CumulativeChart = ({ baseFilteredData, aggregationPeriod }: Cumulat
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Cumulative Accepted Lines ({getPeriodText()})</CardTitle>
+          <CardTitle className="text-xl font-semibold">AI Code Generation Growth ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>

@@ -122,7 +122,7 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Average Tabs Accepted ({getPeriodText()})</CardTitle>
+          <CardTitle className="text-xl font-semibold">Code Completions per Developer ({getPeriodText()})</CardTitle>
           <TooltipProvider>
             <UITooltip>
               <TooltipTrigger>
