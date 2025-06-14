@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ interface FormFields {
 
 export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange }) => {
   const { settings, updateSetting, resetDefaults } = useSettings();
-  const { register, handleSubmit, reset, watch, formState: { errors, isDirty } } = useForm<FormFields>({
+  const { register, handleSubmit, reset, control, formState: { errors, isDirty } } = useForm<FormFields>({
     defaultValues: { linesPerMinute: settings.linesPerMinute, theme: settings.theme },
     mode: "onBlur",
   });
@@ -73,20 +73,26 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
           </div>
           <div>
             <Label className="mb-1 block">Theme</Label>
-            <RadioGroup 
-              defaultValue={settings.theme}
-              {...register("theme")}
-              className="flex gap-6"
-            >
-              <div>
-                <RadioGroupItem value="light" id="theme-light" {...register("theme")}/>
-                <Label htmlFor="theme-light" className="ml-2">Light</Label>
-              </div>
-              <div>
-                <RadioGroupItem value="dark" id="theme-dark" {...register("theme")}/>
-                <Label htmlFor="theme-dark" className="ml-2">Dark</Label>
-              </div>
-            </RadioGroup>
+            <Controller
+              control={control}
+              name="theme"
+              render={({ field }) => (
+                <RadioGroup
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  className="flex gap-6"
+                >
+                  <div>
+                    <RadioGroupItem value="light" id="theme-light"/>
+                    <Label htmlFor="theme-light" className="ml-2">Light</Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem value="dark" id="theme-dark"/>
+                    <Label htmlFor="theme-dark" className="ml-2">Dark</Label>
+                  </div>
+                </RadioGroup>
+              )}
+            />
           </div>
           <div className="flex gap-2 justify-between">
             <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light" }); resetDefaults(); }}>
