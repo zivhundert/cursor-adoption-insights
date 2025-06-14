@@ -46,13 +46,17 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
     // Estimate dev hours saved (dynamic lines per minute)
     const estimatedHoursSaved = Math.round(totalAcceptedLines / (settings.linesPerMinute * 60));
 
+    // Calculate money saved (new metric)
+    const estimatedMoneySaved = estimatedHoursSaved * settings.pricePerHour;
+
     return {
       totalAcceptedLines: totalAcceptedLines.toLocaleString(),
       activeUsers,
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
+      estimatedMoneySaved: `$${estimatedMoneySaved.toLocaleString()}`,
     };
-  }, [data, originalData, baseFilteredData, settings.linesPerMinute]);
+  }, [data, originalData, baseFilteredData, settings.linesPerMinute, settings.pricePerHour]);
 
   const metricCards = [
     {
@@ -76,6 +80,13 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
         Formula: Total Accepted Lines ÷ (Lines per minute × 60) = Hours Saved. Not affected by time period selection.`,
     },
     {
+      title: 'Money Saved',
+      value: metrics.estimatedMoneySaved,
+      gradient: 'from-green-500 to-green-600',
+      tooltip: `Estimated money saved based on development time saved and your hourly rate of $${settings.pricePerHour}. 
+        Formula: Hours Saved × Price per Hour = Money Saved. Not affected by time period selection.`,
+    },
+    {
       title: 'Team Members Using Cursor',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
@@ -84,7 +95,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
       {metricCards.map((metric, index) => (
         <Card key={index} className="overflow-hidden">
           <CardHeader className={`bg-gradient-to-br ${metric.gradient} text-white pb-2`}>

@@ -16,25 +16,35 @@ export interface DashboardSettingsSheetProps {
 interface FormFields {
   linesPerMinute: number;
   theme: "light" | "dark";
+  pricePerHour: number;
 }
 
 export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange }) => {
   const { settings, updateSetting, resetDefaults } = useSettings();
   const { register, handleSubmit, reset, control, formState: { errors, isDirty } } = useForm<FormFields>({
-    defaultValues: { linesPerMinute: settings.linesPerMinute, theme: settings.theme },
+    defaultValues: { 
+      linesPerMinute: settings.linesPerMinute, 
+      theme: settings.theme,
+      pricePerHour: settings.pricePerHour 
+    },
     mode: "onBlur",
   });
 
-  // Reset form when sheet opens or theme changes
+  // Reset form when sheet opens or settings change
   React.useEffect(() => {
     if (open) {
-      reset({ linesPerMinute: settings.linesPerMinute, theme: settings.theme });
+      reset({ 
+        linesPerMinute: settings.linesPerMinute, 
+        theme: settings.theme,
+        pricePerHour: settings.pricePerHour 
+      });
     }
-  }, [open, settings.linesPerMinute, settings.theme, reset]);
+  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, reset]);
 
   const onSubmit = (values: FormFields) => {
     updateSetting("linesPerMinute", values.linesPerMinute);
     updateSetting("theme", values.theme);
+    updateSetting("pricePerHour", values.pricePerHour);
     onOpenChange(false);
   };
 
@@ -72,6 +82,29 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
             )}
           </div>
           <div>
+            <Label htmlFor="pricePerHour">Price per hour ($)</Label>
+            <Input
+              id="pricePerHour"
+              type="number"
+              step={1}
+              min={1}
+              max={500}
+              {...register("pricePerHour", {
+                required: true,
+                valueAsNumber: true,
+                min: 1,
+                max: 500,
+              })}
+              className="mt-1"
+            />
+            <div className="text-xs text-muted-foreground">
+              The hourly rate used for calculating money saved (in USD). Default: $55
+            </div>
+            {errors.pricePerHour && (
+              <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 500.</div>
+            )}
+          </div>
+          <div>
             <Label className="mb-1 block">Theme</Label>
             <Controller
               control={control}
@@ -95,7 +128,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
             />
           </div>
           <div className="flex gap-2 justify-between">
-            <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light" }); resetDefaults(); }}>
+            <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55 }); resetDefaults(); }}>
               Reset to Defaults
             </Button>
             <Button type="submit" variant="default" disabled={!isDirty}>
