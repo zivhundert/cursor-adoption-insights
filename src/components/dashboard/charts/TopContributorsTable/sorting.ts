@@ -1,4 +1,5 @@
 
+
 import { useMemo } from 'react';
 import { ContributorWithSegment, SortableColumn, segmentSortOrder } from './types';
 
@@ -42,11 +43,17 @@ export const useSortedContributors = (
         );
         break;
       case "acceptanceRate":
+        sorted.sort((a, b) =>
+          sortConfig.direction === "asc"
+            ? a.acceptanceRate - b.acceptanceRate
+            : b.acceptanceRate - a.acceptanceRate
+        );
+        break;
       case "userROI":
         sorted.sort((a, b) =>
           sortConfig.direction === "asc"
-            ? a[sortConfig.column] - b[sortConfig.column]
-            : b[sortConfig.column] - a[sortConfig.column]
+            ? a.userROI - b.userROI
+            : b.userROI - a.userROI
         );
         break;
       default:
@@ -56,3 +63,4 @@ export const useSortedContributors = (
     return sorted;
   }, [contributors, sortConfig]);
 };
+
