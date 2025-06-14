@@ -17,10 +17,10 @@ interface DashboardChartsProps {
   originalData: CursorDataRow[];
   baseFilteredData: CursorDataRow[];
   aggregationPeriod: AggregationPeriod;
-  selectedUser?: string;
+  selectedUsers?: string[];
 }
 
-export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod, selectedUser }: DashboardChartsProps) => {
+export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod, selectedUsers }: DashboardChartsProps) => {
   return (
     <div className="space-y-8">
       {/* Main cumulative chart */}

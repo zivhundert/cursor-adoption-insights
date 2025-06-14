@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
@@ -31,7 +32,7 @@ const Index = () => {
   const [filteredData, setFilteredData] = useState<CursorDataRow[]>([]);
   const [baseFilteredData, setBaseFilteredData] = useState<CursorDataRow[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
-  const [selectedUser, setSelectedUser] = useState<string>('all');
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = async (file: File) => {
@@ -73,7 +74,7 @@ const Index = () => {
 
   const handleFiltersChange = (filters: {
     dateRange: { from?: Date; to?: Date };
-    selectedUser: string;
+    selectedUsers: string[];
     selectedModel: string;
     aggregationPeriod: AggregationPeriod;
   }) => {
@@ -89,9 +90,9 @@ const Index = () => {
       });
     }
 
-    // Filter by user
-    if (filters.selectedUser !== 'all') {
-      filtered = filtered.filter(row => row.Email === filters.selectedUser);
+    // Filter by users (multiple selection)
+    if (filters.selectedUsers.length > 0) {
+      filtered = filtered.filter(row => filters.selectedUsers.includes(row.Email));
     }
 
     // Filter by model
@@ -106,7 +107,7 @@ const Index = () => {
     const aggregatedData = aggregateDataByPeriod(filtered, filters.aggregationPeriod);
     
     setAggregationPeriod(filters.aggregationPeriod);
-    setSelectedUser(filters.selectedUser);
+    setSelectedUsers(filters.selectedUsers);
     setFilteredData(aggregatedData);
   };
 
@@ -115,7 +116,7 @@ const Index = () => {
     setFilteredData([]);
     setBaseFilteredData([]);
     setAggregationPeriod('day');
-    setSelectedUser('all');
+    setSelectedUsers([]);
   };
 
   return (
@@ -136,7 +137,7 @@ const Index = () => {
               originalData={data} 
               baseFilteredData={baseFilteredData} 
               aggregationPeriod={aggregationPeriod}
-              selectedUser={selectedUser}
+              selectedUsers={selectedUsers}
             />
           </div>
         )}
