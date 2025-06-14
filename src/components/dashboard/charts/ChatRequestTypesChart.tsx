@@ -20,6 +20,7 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
       cmdK: number;
       ask: number;
       edit: number;
+      bugbot: number;
     }>();
 
     // Filter out aggregated rows and process individual user data
@@ -34,6 +35,7 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
           cmdK: 0,
           ask: 0,
           edit: 0,
+          bugbot: 0,
         });
       }
       
@@ -42,6 +44,7 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
       dayData.cmdK += parseInt(row['Cmd+K Requests']) || 0;
       dayData.ask += parseInt(row['Ask Requests']) || 0;
       dayData.edit += parseInt(row['Edit Requests']) || 0;
+      dayData.bugbot += parseInt(row['Bugbot Requests']) || 0;
     });
 
     // Convert to chart series format
@@ -53,6 +56,7 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
       cmdK: dates.map(date => periodData.get(date)!.cmdK),
       ask: dates.map(date => periodData.get(date)!.ask),
       edit: dates.map(date => periodData.get(date)!.edit),
+      bugbot: dates.map(date => periodData.get(date)!.bugbot),
     };
   }, [data]);
 
@@ -148,6 +152,12 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
         data: chartData.edit.map((value, index) => [chartData.dates[index], value]),
         color: '#10B981', // Green
       },
+      {
+        name: 'Bugbot',
+        type: 'column',
+        data: chartData.bugbot.map((value, index) => [chartData.dates[index], value]),
+        color: '#8B5CF6', // Purple
+      },
     ],
     credits: {
       enabled: false
@@ -175,7 +185,7 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
               </TooltipTrigger>
               <TooltipContent>
                 <p>Breakdown of different chat request types over time.</p>
-                <p className="text-sm text-muted-foreground mt-1">Shows Agent, Cmd+K, Ask, and Edit requests</p>
+                <p className="text-sm text-muted-foreground mt-1">Shows Agent, Cmd+K, Ask, Edit, and Bugbot requests</p>
               </TooltipContent>
             </UITooltip>
           </TooltipProvider>
