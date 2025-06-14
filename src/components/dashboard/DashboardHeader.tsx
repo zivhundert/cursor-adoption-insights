@@ -1,5 +1,5 @@
 
-import { BarChart3, RefreshCcw, settings } from 'lucide-react';
+import { BarChart3, RefreshCcw, Settings } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { LinkedInFollowButton } from "@/components/LinkedInFollowButton";
@@ -29,7 +29,7 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
           </Button>
         )}
         <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Dashboard settings" className="p-2">
-          <settings className="w-5 h-5 text-muted-foreground" />
+          <Settings className="w-5 h-5 text-muted-foreground" />
         </Button>
         <LinkedInFollowButton />
         <ThemeToggle />
