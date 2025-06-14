@@ -62,7 +62,7 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-xl font-semibold">Top Contributors</CardTitle>
+            <CardTitle className="text-xl font-semibold">AI Adoption Champions</CardTitle>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
