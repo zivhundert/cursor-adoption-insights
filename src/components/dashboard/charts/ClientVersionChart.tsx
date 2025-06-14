@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -171,7 +170,7 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       },
       shared: false,
       useHTML: true,
-      formatter: function() {
+      formatter: function(this: Highcharts.TooltipFormatterContextObject) {
         const point = this.point as any;
         const users = point.users || [];
         const version = point.version || this.series.name;
