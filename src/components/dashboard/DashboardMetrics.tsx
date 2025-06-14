@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -64,12 +63,14 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       value: metrics.totalAcceptedLines,
       gradient: 'from-blue-500 to-blue-600',
       tooltip: 'Total sum of all accepted lines for the selected filters. Not affected by time period selection.',
+      size: 'large'
     },
     {
       title: 'AI Suggestion Acceptance Rate',
       value: metrics.acceptanceRate,
       gradient: 'from-emerald-500 to-emerald-600',
       tooltip: 'Percentage of suggested lines that were accepted in the current selection. Formula: (Accepted Lines / Suggested Lines) × 100',
+      size: 'large'
     },
     {
       title: 'Development Time Saved (Hours)',
@@ -78,6 +79,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       tooltip: `Estimated development hours saved based on accepted lines for the selected filters. 
         Calculation uses your team's current lines per minute value of ${settings.linesPerMinute}. 
         Formula: Total Accepted Lines ÷ (Lines per minute × 60) = Hours Saved. Not affected by time period selection.`,
+      size: 'large'
     },
     {
       title: 'Money Saved',
@@ -85,19 +87,21 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       gradient: 'from-green-500 to-green-600',
       tooltip: `Estimated money saved based on development time saved and your hourly rate of $${settings.pricePerHour}. 
         Formula: Hours Saved × Price per Hour = Money Saved. Not affected by time period selection.`,
+      size: 'large'
     },
     {
-      title: 'Team Members Using Cursor',
+      title: 'Active Users',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
       tooltip: 'Number of unique active users for the selected filters. Not affected by time period selection.',
+      size: 'small'
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
       {metricCards.map((metric, index) => (
-        <Card key={index} className="overflow-hidden">
+        <Card key={index} className={`overflow-hidden ${metric.size === 'small' ? 'lg:col-span-1' : 'lg:col-span-1'}`}>
           <CardHeader className={`bg-gradient-to-br ${metric.gradient} text-white pb-2`}>
             <div className="flex items-center gap-2">
               <CardTitle className="text-sm font-medium opacity-90">
