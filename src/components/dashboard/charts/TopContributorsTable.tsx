@@ -55,6 +55,11 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
       .sort((a, b) => b.acceptedLines - a.acceptedLines);
   }, [data]);
 
+  // Don't render the table if there's only one user
+  if (allContributors.length <= 1) {
+    return null;
+  }
+
   const displayedContributors = showAll ? allContributors : allContributors.slice(0, 7);
 
   return (
