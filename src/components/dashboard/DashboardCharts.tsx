@@ -1,4 +1,3 @@
-
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
@@ -21,6 +20,8 @@ interface DashboardChartsProps {
 }
 
 export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod, selectedUsers }: DashboardChartsProps) => {
+  const isFiltered = selectedUsers && selectedUsers.length > 0;
+
   return (
     <div className="space-y-8">
       {/* Main cumulative chart */}
@@ -51,7 +52,7 @@ export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregat
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {aggregationPeriod === 'day' && <DayOfWeekChart data={data} />}
         <div className={aggregationPeriod === 'day' ? "lg:col-span-1" : "lg:col-span-2"}>
-          <TopContributorsTable data={data} />
+          <TopContributorsTable data={data} isFiltered={isFiltered} />
         </div>
       </div>
     </div>

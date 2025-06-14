@@ -9,9 +9,10 @@ import { CursorDataRow } from '@/pages/Index';
 
 interface TopContributorsTableProps {
   data: CursorDataRow[];
+  isFiltered?: boolean;
 }
 
-export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
+export const TopContributorsTable = ({ data, isFiltered = false }: TopContributorsTableProps) => {
   const [showAll, setShowAll] = useState(false);
 
   const allContributors = useMemo(() => {
@@ -80,13 +81,15 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowAll(!showAll)}
-          >
-            {showAll ? 'Show Top 7' : 'Show All'}
-          </Button>
+          {!isFiltered && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowAll(!showAll)}
+            >
+              {showAll ? 'Show Top 7' : 'Show All'}
+            </Button>
+          )}
         </div>
       </CardHeader>
       <CardContent>
