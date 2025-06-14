@@ -87,6 +87,7 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       
       return {
         name: version,
+        type: 'column' as const,
         data: versionData,
         color: color,
         stack: 'versions'
