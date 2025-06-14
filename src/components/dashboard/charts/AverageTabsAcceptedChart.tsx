@@ -47,7 +47,7 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
 
   const options: Highcharts.Options = {
     chart: {
-      type: 'column',
+      type: 'line',
       backgroundColor: 'transparent',
       style: {
         fontFamily: 'Inter, sans-serif'
@@ -94,14 +94,14 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
       }
     },
     plotOptions: {
-      column: {
+      line: {
         color: '#7c3aed',
-        borderRadius: 4
+        marker: { enabled: true },
       }
     },
     series: [{
       name: 'Average Tabs Accepted',
-      type: 'column',
+      type: 'line',
       data: chartData
     }],
     credits: {

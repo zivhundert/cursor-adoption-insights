@@ -47,7 +47,7 @@ export const AverageAskRequestsChart = ({ data, aggregationPeriod }: AverageAskR
 
   const options: Highcharts.Options = {
     chart: {
-      type: 'column',
+      type: 'line', // CHANGED FROM 'column' TO 'line'
       backgroundColor: 'transparent',
       style: {
         fontFamily: 'Inter, sans-serif'
@@ -94,14 +94,14 @@ export const AverageAskRequestsChart = ({ data, aggregationPeriod }: AverageAskR
       }
     },
     plotOptions: {
-      column: {
+      line: {
         color: '#16a34a',
-        borderRadius: 4
+        marker: { enabled: true },
       }
     },
     series: [{
       name: 'Average Ask Requests',
-      type: 'column',
+      type: 'line',
       data: chartData
     }],
     credits: {
