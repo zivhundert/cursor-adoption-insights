@@ -81,7 +81,6 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
       title: {
         text: null
       },
-      categories: chartData.dates,
       gridLineColor: 'hsl(var(--border))',
       lineColor: 'hsl(var(--border))',
       tickColor: 'hsl(var(--border))',
