@@ -26,9 +26,13 @@ export const SortableTableHead = ({
   onSort, 
   className = "" 
 }: SortableTableHeadProps) => {
+  // Determine alignment based on column type
+  const isTextColumn = column === 'email' || column === 'segment';
+  const alignmentClass = isTextColumn ? 'text-left' : 'text-center';
+  
   return (
     <TableHead
-      className={`cursor-pointer select-none ${className}`}
+      className={`cursor-pointer select-none ${alignmentClass} ${className}`}
       onClick={() => onSort(column)}
       aria-sort={getAriaSort(column, sortConfig)}
     >

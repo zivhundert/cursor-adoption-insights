@@ -13,6 +13,7 @@ export interface ContributorWithSegment {
   editRequests: number;
   askRequests: number;
   agentRequests: number;
+  userROI: number;
   segment: PerformanceSegment;
 }
 
@@ -26,7 +27,8 @@ export type SortableColumn =
   | "tabsAccepted"
   | "editRequests"
   | "askRequests"
-  | "agentRequests";
+  | "agentRequests"
+  | "userROI";
 
 export interface TopContributorsTableProps {
   data: CursorDataRow[];
@@ -44,6 +46,7 @@ export const columnLabels: Record<SortableColumn, string> = {
   editRequests: "Edit Requests",
   askRequests: "Ask Requests",
   agentRequests: "Agent Requests",
+  userROI: "User ROI",
 };
 
 export const segmentSortOrder: Record<PerformanceSegment, number> = {

@@ -4,7 +4,7 @@ import { CursorDataRow } from '@/pages/Index';
 import { ContributorWithSegment } from './types';
 import { getPerformanceSegment } from './performanceSegments';
 
-export const useContributorData = (data: CursorDataRow[]) => {
+export const useContributorData = (data: CursorDataRow[], linesPerMinute: number, pricePerHour: number, cursorPricePerUser: number) => {
   return useMemo(() => {
     const userRows = data.filter(row => !row.Email.includes('active users'));
     const userStats = new Map<string, ContributorWithSegment>();
@@ -29,6 +29,7 @@ export const useContributorData = (data: CursorDataRow[]) => {
           editRequests: 0,
           askRequests: 0,
           agentRequests: 0,
+          userROI: 0,
           segment: 'Early Explorer',
         });
       }
@@ -48,8 +49,17 @@ export const useContributorData = (data: CursorDataRow[]) => {
         ? (stats.acceptedLines / stats.suggestedLines) * 100
         : 0;
       stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies);
+      
+      // Calculate User ROI
+      const estimatedHoursSaved = stats.acceptedLines / (linesPerMinute * 60);
+      const individualMoneySaved = estimatedHoursSaved * pricePerHour;
+      const annualCursorCostPerUser = cursorPricePerUser * 12;
+      
+      stats.userROI = annualCursorCostPerUser > 0 
+        ? (individualMoneySaved / annualCursorCostPerUser) * 100
+        : 0;
     });
     
     return Array.from(userStats.values());
-  }, [data]);
+  }, [data, linesPerMinute, pricePerHour, cursorPricePerUser]);
 };

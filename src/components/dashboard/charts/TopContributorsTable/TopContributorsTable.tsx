@@ -10,12 +10,19 @@ import { useSortedContributors } from './sorting';
 import { useTableSorting, useDisplaySettings } from './hooks';
 import { SortableTableHead } from './components/SortableTableHead';
 import { ContributorRow } from './components/ContributorRow';
+import { useSettings } from "@/contexts/SettingsContext";
 
 export const TopContributorsTable = ({ data, isFiltered = false }: TopContributorsTableProps) => {
   const { showAll, toggleShowAll } = useDisplaySettings();
   const { sortConfig, handleSort } = useTableSorting();
+  const { settings } = useSettings();
   
-  const allContributors = useContributorData(data);
+  const allContributors = useContributorData(
+    data, 
+    settings.linesPerMinute, 
+    settings.pricePerHour, 
+    settings.cursorPricePerUser
+  );
   const sortedContributors = useSortedContributors(allContributors, sortConfig);
 
   if (sortedContributors.length <= 1) {
@@ -38,6 +45,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TooltipContent>
                   <p>Users ranked by performance segment and comprehensive activity metrics.</p>
                   <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
+                  <p className="text-sm text-muted-foreground mt-1">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Performance Segments:</strong></p>
                     <p>⚡ Power User: Rate {'>'} 40% & Chat Applies {'>'} 200</p>
@@ -47,7 +55,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   </div>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Metrics include:</strong></p>
-                    <p>Chat metrics, Tabs, Edit/Ask/Agent requests</p>
+                    <p>Chat metrics, Tabs, Edit/Ask/Agent requests, Individual ROI</p>
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -71,14 +79,15 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
               <TableRow>
                 <SortableTableHead column="email" label={columnLabels.email} sortConfig={sortConfig} onSort={handleSort} />
                 <SortableTableHead column="segment" label={columnLabels.segment} sortConfig={sortConfig} onSort={handleSort} />
-                <SortableTableHead column="acceptedLines" label={columnLabels.acceptedLines} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="suggestedLines" label={columnLabels.suggestedLines} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="acceptanceRate" label={columnLabels.acceptanceRate} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="chatTotalApplies" label={columnLabels.chatTotalApplies} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="tabsAccepted" label={columnLabels.tabsAccepted} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="editRequests" label={columnLabels.editRequests} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="askRequests" label={columnLabels.askRequests} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
-                <SortableTableHead column="agentRequests" label={columnLabels.agentRequests} sortConfig={sortConfig} onSort={handleSort} className="text-right" />
+                <SortableTableHead column="acceptedLines" label={columnLabels.acceptedLines} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="suggestedLines" label={columnLabels.suggestedLines} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="acceptanceRate" label={columnLabels.acceptanceRate} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="chatTotalApplies" label={columnLabels.chatTotalApplies} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="tabsAccepted" label={columnLabels.tabsAccepted} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="editRequests" label={columnLabels.editRequests} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="askRequests" label={columnLabels.askRequests} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="agentRequests" label={columnLabels.agentRequests} sortConfig={sortConfig} onSort={handleSort} />
+                <SortableTableHead column="userROI" label={columnLabels.userROI} sortConfig={sortConfig} onSort={handleSort} />
               </TableRow>
             </TableHeader>
             <TableBody>

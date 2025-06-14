@@ -22,6 +22,7 @@ export const ContributorRow = ({ contributor }: ContributorRowProps) => {
       <TableCell className="text-right">{contributor.editRequests.toLocaleString()}</TableCell>
       <TableCell className="text-right">{contributor.askRequests.toLocaleString()}</TableCell>
       <TableCell className="text-right">{contributor.agentRequests.toLocaleString()}</TableCell>
+      <TableCell className="text-right">{contributor.userROI.toFixed(1)}%</TableCell>
     </TableRow>
   );
 };
