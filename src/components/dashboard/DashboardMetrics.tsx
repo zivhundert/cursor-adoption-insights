@@ -1,16 +1,20 @@
+
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface DashboardMetricsProps {
   data: CursorDataRow[];
   originalData: CursorDataRow[];
-  baseFilteredData: CursorDataRow[]; // Data filtered by user/date but not by time period
+  baseFilteredData: CursorDataRow[];
 }
 
 export const DashboardMetrics = ({ data, originalData, baseFilteredData }: DashboardMetricsProps) => {
+  const { settings } = useSettings();
+
   const metrics = useMemo(() => {
     // Use baseFilteredData for totals (respects user/date filters but not time period)
     const totalAcceptedLines = baseFilteredData.reduce((sum, row) => {
@@ -39,8 +43,8 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       ? ((filteredAcceptedLines / filteredSuggestedLines) * 100).toFixed(1)
       : '0';
 
-    // Estimate dev hours saved (assuming 10 lines per minute on average)
-    const estimatedHoursSaved = Math.round(totalAcceptedLines / (10 * 60));
+    // Estimate dev hours saved (dynamic lines per minute)
+    const estimatedHoursSaved = Math.round(totalAcceptedLines / (settings.linesPerMinute * 60));
 
     return {
       totalAcceptedLines: totalAcceptedLines.toLocaleString(),
@@ -48,7 +52,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     };
-  }, [data, originalData, baseFilteredData]);
+  }, [data, originalData, baseFilteredData, settings.linesPerMinute]);
 
   const metricCards = [
     {
@@ -67,7 +71,9 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       title: 'Development Time Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
-      tooltip: 'Estimated development hours saved based on accepted lines for the selected filters. Calculation assumes an average coding speed of 10 lines per minute. Formula: Total Accepted Lines ÷ (10 × 60) = Hours Saved. Not affected by time period selection.',
+      tooltip: `Estimated development hours saved based on accepted lines for the selected filters. 
+        Calculation uses your team's current lines per minute value of ${settings.linesPerMinute}. 
+        Formula: Total Accepted Lines ÷ (Lines per minute × 60) = Hours Saved. Not affected by time period selection.`,
     },
     {
       title: 'Team Members Using Cursor',

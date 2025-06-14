@@ -1,7 +1,10 @@
-import { BarChart3, RefreshCcw } from 'lucide-react';
+
+import { BarChart3, RefreshCcw, settings } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { LinkedInFollowButton } from "@/components/LinkedInFollowButton";
+import { useState } from "react";
+import { DashboardSettings } from "./DashboardSettings";
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
@@ -9,6 +12,8 @@ interface DashboardHeaderProps {
 }
 
 export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: DashboardHeaderProps) => {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   return (
     <header className="text-center relative">
       <div className="absolute top-0 right-0 flex items-center gap-2 z-10">
@@ -23,6 +28,9 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
             Load New CSV
           </Button>
         )}
+        <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Dashboard settings" className="p-2">
+          <settings className="w-5 h-5 text-muted-foreground" />
+        </Button>
         <LinkedInFollowButton />
         <ThemeToggle />
       </div>
@@ -37,6 +45,7 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
         Your complete dashboard for Cursor team performance, adoption patterns, and productivity insights
       </p>
+      <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );
 };
