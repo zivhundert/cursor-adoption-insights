@@ -28,7 +28,7 @@ export const SortableTableHead = ({
 }: SortableTableHeadProps) => {
   // Determine alignment based on column type
   const isTextColumn = column === 'email' || column === 'segment';
-  const alignmentClass = isTextColumn ? '!text-left' : '!text-center';
+  const alignmentClass = isTextColumn ? 'text-left' : 'text-center';
   
   return (
     <TableHead
