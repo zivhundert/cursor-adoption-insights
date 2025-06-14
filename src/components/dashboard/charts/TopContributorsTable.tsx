@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -13,7 +12,7 @@ interface TopContributorsTableProps {
   isFiltered?: boolean;
 }
 
-type PerformanceSegment = 'Power User' | 'Regular User' | 'Developing User' | 'At Risk';
+type PerformanceSegment = 'Power User' | 'Engaged Developer' | 'Growing User' | 'Early Explorer';
 
 interface ContributorWithSegment {
   email: string;
@@ -26,20 +25,20 @@ interface ContributorWithSegment {
 
 const getPerformanceSegment = (acceptanceRate: number, totalApplies: number): PerformanceSegment => {
   if (acceptanceRate > 40 && totalApplies > 200) return 'Power User';
-  if (acceptanceRate > 25 && totalApplies > 50) return 'Regular User';
-  if (acceptanceRate > 15 || totalApplies > 10) return 'Developing User';
-  return 'At Risk';
+  if (acceptanceRate > 25 && totalApplies > 50) return 'Engaged Developer';
+  if (acceptanceRate > 15 || totalApplies > 10) return 'Growing User';
+  return 'Early Explorer';
 };
 
 const getSegmentIcon = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Power User':
       return <Lightning className="h-4 w-4 text-yellow-500" />;
-    case 'Regular User':
+    case 'Engaged Developer':
       return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case 'Developing User':
+    case 'Growing User':
       return <TrendingUp className="h-4 w-4 text-blue-500" />;
-    case 'At Risk':
+    case 'Early Explorer':
       return <AlertTriangle className="h-4 w-4 text-orange-500" />;
   }
 };
@@ -48,11 +47,11 @@ const getSegmentBadgeVariant = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Power User':
       return 'default';
-    case 'Regular User':
+    case 'Engaged Developer':
       return 'secondary';
-    case 'Developing User':
+    case 'Growing User':
       return 'outline';
-    case 'At Risk':
+    case 'Early Explorer':
       return 'destructive';
   }
 };
@@ -61,12 +60,12 @@ const getSegmentDescription = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Power User':
       return 'Acceptance rate > 40% and total applies > 200';
-    case 'Regular User':
+    case 'Engaged Developer':
       return 'Acceptance rate > 25% and total applies > 50';
-    case 'Developing User':
+    case 'Growing User':
       return 'Acceptance rate > 15% or total applies > 10';
-    case 'At Risk':
-      return 'Below developing user thresholds';
+    case 'Early Explorer':
+      return 'Below growing user thresholds';
   }
 };
 
@@ -92,7 +91,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
           suggestedLines: 0,
           acceptanceRate: 0,
           totalApplies: 0,
-          segment: 'At Risk',
+          segment: 'Early Explorer',
         });
       }
       
@@ -113,7 +112,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
     return Array.from(userStats.values())
       .sort((a, b) => {
         // Sort by segment priority first, then by accepted lines
-        const segmentOrder = { 'Power User': 0, 'Regular User': 1, 'Developing User': 2, 'At Risk': 3 };
+        const segmentOrder = { 'Power User': 0, 'Engaged Developer': 1, 'Growing User': 2, 'Early Explorer': 3 };
         const segmentDiff = segmentOrder[a.segment] - segmentOrder[b.segment];
         if (segmentDiff !== 0) return segmentDiff;
         return b.acceptedLines - a.acceptedLines;
@@ -143,10 +142,10 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Performance Segments:</strong></p>
-                    <p>⚡ Power User: Rate > 40% & Applies > 200</p>
-                    <p>✅ Regular User: Rate > 25% & Applies > 50</p>
-                    <p>📈 Developing User: Rate > 15% or Applies > 10</p>
-                    <p>⚠️ At Risk: Below thresholds</p>
+                    <p>⚡ Power User: Rate {'>'} 40% & Applies {'>'} 200</p>
+                    <p>✅ Engaged Developer: Rate {'>'} 25% & Applies {'>'} 50</p>
+                    <p>📈 Growing User: Rate {'>'} 15% or Applies {'>'} 10</p>
+                    <p>⚠️ Early Explorer: Below thresholds</p>
                   </div>
                 </TooltipContent>
               </Tooltip>
