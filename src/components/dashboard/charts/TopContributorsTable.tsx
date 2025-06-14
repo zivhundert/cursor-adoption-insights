@@ -24,11 +24,9 @@ interface ContributorWithSegment {
   editRequests: number;
   askRequests: number;
   agentRequests: number;
-  cmdKRequests: number;
   segment: PerformanceSegment;
 }
 
-// Added: sorting options
 type SortableColumn =
   | "email"
   | "segment"
@@ -39,8 +37,7 @@ type SortableColumn =
   | "tabsAccepted"
   | "editRequests"
   | "askRequests"
-  | "agentRequests"
-  | "cmdKRequests";
+  | "agentRequests";
 
 const columnLabels: Record<SortableColumn, string> = {
   email: "Name",
@@ -53,7 +50,6 @@ const columnLabels: Record<SortableColumn, string> = {
   editRequests: "Edit Requests",
   askRequests: "Ask Requests",
   agentRequests: "Agent Requests",
-  cmdKRequests: "Cmd+K Requests",
 };
 
 const getPerformanceSegment = (acceptanceRate: number, chatTotalApplies: number): PerformanceSegment => {
@@ -110,22 +106,22 @@ const segmentSortOrder: Record<PerformanceSegment, number> = {
   'Early Explorer': 3,
 };
 
+// Helper for correct aria-sort values
+function getAriaSort(col: SortableColumn, sortConfig: { column: SortableColumn; direction: "asc" | "desc" }) {
+  if (col !== sortConfig.column) return "none";
+  return sortConfig.direction === "asc" ? "ascending" : "descending";
+}
+
 export const TopContributorsTable = ({ data, isFiltered = false }: TopContributorsTableProps) => {
   const [showAll, setShowAll] = useState(false);
-
-  // Sorting state: column, and direction ('asc' | 'desc')
   const [sortConfig, setSortConfig] = useState<{ column: SortableColumn; direction: "asc" | "desc" }>({
     column: "segment",
     direction: "asc",
   });
 
-  // Memoize allContributors as before
   const allContributors = useMemo(() => {
-    // Filter out aggregated summary rows (those with special email markers)
     const userRows = data.filter(row => !row.Email.includes('active users'));
-    
     const userStats = new Map<string, ContributorWithSegment>();
-    
     userRows.forEach(row => {
       const email = row.Email;
       const acceptedLines = parseInt(row['Chat Accepted Lines Added']) || 0;
@@ -135,7 +131,6 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       const askRequests = parseInt(row['Ask Requests']) || 0;
       const agentRequests = parseInt(row['Agent Requests']) || 0;
       const cmdKRequests = parseInt(row['Cmd+K Requests']) || 0;
-      
       if (!userStats.has(email)) {
         userStats.set(email, {
           email,
@@ -147,34 +142,28 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
           editRequests: 0,
           askRequests: 0,
           agentRequests: 0,
-          cmdKRequests: 0,
           segment: 'Early Explorer',
         });
       }
-      
       const stats = userStats.get(email)!;
       stats.acceptedLines += acceptedLines;
       stats.suggestedLines += suggestedLines;
-      stats.chatTotalApplies += acceptedLines; // Using accepted lines as proxy for total applies
+      stats.chatTotalApplies += acceptedLines;
       stats.tabsAccepted += tabsAccepted;
       stats.editRequests += editRequests;
       stats.askRequests += askRequests;
       stats.agentRequests += agentRequests;
-      stats.cmdKRequests += cmdKRequests;
     });
-
-    // Calculate acceptance rates and segments
     userStats.forEach(stats => {
-      stats.acceptanceRate = stats.suggestedLines > 0 
+      stats.acceptanceRate = stats.suggestedLines > 0
         ? (stats.acceptedLines / stats.suggestedLines) * 100
         : 0;
       stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies);
     });
-
     return Array.from(userStats.values());
   }, [data]);
 
-  // Sorting logic, memoized for performance
+  // Fixed numeric sorting
   const sortedContributors = useMemo(() => {
     const sorted = [...allContributors];
     switch (sortConfig.column) {
@@ -198,11 +187,10 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       case "editRequests":
       case "askRequests":
       case "agentRequests":
-      case "cmdKRequests":
         sorted.sort((a, b) =>
           sortConfig.direction === "asc"
-            ? a[sortConfig.column] - b[sortConfig.column]
-            : b[sortConfig.column] - a[sortConfig.column]
+            ? Number(a[sortConfig.column]) - Number(b[sortConfig.column])
+            : Number(b[sortConfig.column]) - Number(a[sortConfig.column])
         );
         break;
       case "acceptanceRate":
@@ -218,21 +206,16 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
     return sorted;
   }, [allContributors, sortConfig]);
 
-  // Don't render the table if there's only one user
   if (sortedContributors.length <= 1) {
     return null;
   }
-
   const displayedContributors = showAll ? sortedContributors : sortedContributors.slice(0, 7);
 
-  // Handle header click to sort columns
   function handleSort(column: SortableColumn) {
     setSortConfig(prev => {
       if (prev.column === column) {
-        // Toggle direction
         return { column, direction: prev.direction === "asc" ? "desc" : "asc" };
       }
-      // Otherwise set new column, default to descending for numbers, ascending for names/segments
       if (column === "email" || column === "segment") {
         return { column, direction: "asc" };
       }
@@ -240,7 +223,6 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
     });
   }
 
-  // Simple sort icon
   function SortIcon({ active, direction }: { active: boolean; direction: "asc" | "desc" }) {
     return (
       <span className="inline-block w-3 ml-1">
@@ -272,7 +254,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   </div>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Metrics include:</strong></p>
-                    <p>Chat metrics, Tabs, Edit/Ask/Agent requests, Cmd+K usage</p>
+                    <p>Chat metrics, Tabs, Edit/Ask/Agent requests</p>
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -294,11 +276,10 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
           <Table>
             <TableHeader>
               <TableRow>
-                {/* Each TableHead becomes sortable */}
                 <TableHead
                   className="cursor-pointer select-none"
                   onClick={() => handleSort('email')}
-                  aria-sort={sortConfig.column === 'email' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('email', sortConfig)}
                 >
                   {columnLabels.email}
                   <SortIcon active={sortConfig.column === 'email'} direction={sortConfig.direction} />
@@ -306,7 +287,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="cursor-pointer select-none"
                   onClick={() => handleSort('segment')}
-                  aria-sort={sortConfig.column === 'segment' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('segment', sortConfig)}
                 >
                   {columnLabels.segment}
                   <SortIcon active={sortConfig.column === 'segment'} direction={sortConfig.direction} />
@@ -314,7 +295,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('acceptedLines')}
-                  aria-sort={sortConfig.column === 'acceptedLines' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('acceptedLines', sortConfig)}
                 >
                   {columnLabels.acceptedLines}
                   <SortIcon active={sortConfig.column === 'acceptedLines'} direction={sortConfig.direction} />
@@ -322,7 +303,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('suggestedLines')}
-                  aria-sort={sortConfig.column === 'suggestedLines' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('suggestedLines', sortConfig)}
                 >
                   {columnLabels.suggestedLines}
                   <SortIcon active={sortConfig.column === 'suggestedLines'} direction={sortConfig.direction} />
@@ -330,7 +311,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('acceptanceRate')}
-                  aria-sort={sortConfig.column === 'acceptanceRate' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('acceptanceRate', sortConfig)}
                 >
                   {columnLabels.acceptanceRate}
                   <SortIcon active={sortConfig.column === 'acceptanceRate'} direction={sortConfig.direction} />
@@ -338,7 +319,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('chatTotalApplies')}
-                  aria-sort={sortConfig.column === 'chatTotalApplies' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('chatTotalApplies', sortConfig)}
                 >
                   {columnLabels.chatTotalApplies}
                   <SortIcon active={sortConfig.column === 'chatTotalApplies'} direction={sortConfig.direction} />
@@ -346,7 +327,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('tabsAccepted')}
-                  aria-sort={sortConfig.column === 'tabsAccepted' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('tabsAccepted', sortConfig)}
                 >
                   {columnLabels.tabsAccepted}
                   <SortIcon active={sortConfig.column === 'tabsAccepted'} direction={sortConfig.direction} />
@@ -354,7 +335,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('editRequests')}
-                  aria-sort={sortConfig.column === 'editRequests' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('editRequests', sortConfig)}
                 >
                   {columnLabels.editRequests}
                   <SortIcon active={sortConfig.column === 'editRequests'} direction={sortConfig.direction} />
@@ -362,7 +343,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('askRequests')}
-                  aria-sort={sortConfig.column === 'askRequests' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('askRequests', sortConfig)}
                 >
                   {columnLabels.askRequests}
                   <SortIcon active={sortConfig.column === 'askRequests'} direction={sortConfig.direction} />
@@ -370,18 +351,10 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 <TableHead
                   className="text-right cursor-pointer select-none"
                   onClick={() => handleSort('agentRequests')}
-                  aria-sort={sortConfig.column === 'agentRequests' ? sortConfig.direction : undefined}
+                  aria-sort={getAriaSort('agentRequests', sortConfig)}
                 >
                   {columnLabels.agentRequests}
                   <SortIcon active={sortConfig.column === 'agentRequests'} direction={sortConfig.direction} />
-                </TableHead>
-                <TableHead
-                  className="text-right cursor-pointer select-none"
-                  onClick={() => handleSort('cmdKRequests')}
-                  aria-sort={sortConfig.column === 'cmdKRequests' ? sortConfig.direction : undefined}
-                >
-                  {columnLabels.cmdKRequests}
-                  <SortIcon active={sortConfig.column === 'cmdKRequests'} direction={sortConfig.direction} />
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -414,7 +387,6 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <TableCell className="text-right">{contributor.editRequests.toLocaleString()}</TableCell>
                   <TableCell className="text-right">{contributor.askRequests.toLocaleString()}</TableCell>
                   <TableCell className="text-right">{contributor.agentRequests.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">{contributor.cmdKRequests.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
