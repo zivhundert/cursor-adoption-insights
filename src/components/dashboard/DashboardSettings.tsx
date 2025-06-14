@@ -1,10 +1,11 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSettings } from "@/contexts/SettingsContext";
 
 export interface DashboardSettingsSheetProps {
@@ -14,24 +15,26 @@ export interface DashboardSettingsSheetProps {
 
 interface FormFields {
   linesPerMinute: number;
+  theme: "light" | "dark";
 }
 
 export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange }) => {
   const { settings, updateSetting, resetDefaults } = useSettings();
   const { register, handleSubmit, reset, watch, formState: { errors, isDirty } } = useForm<FormFields>({
-    defaultValues: { linesPerMinute: settings.linesPerMinute },
+    defaultValues: { linesPerMinute: settings.linesPerMinute, theme: settings.theme },
     mode: "onBlur",
   });
 
-  // Reset form when sheet opens
+  // Reset form when sheet opens or theme changes
   React.useEffect(() => {
     if (open) {
-      reset({ linesPerMinute: settings.linesPerMinute });
+      reset({ linesPerMinute: settings.linesPerMinute, theme: settings.theme });
     }
-  }, [open, settings.linesPerMinute, reset]);
+  }, [open, settings.linesPerMinute, settings.theme, reset]);
 
   const onSubmit = (values: FormFields) => {
     updateSetting("linesPerMinute", values.linesPerMinute);
+    updateSetting("theme", values.theme);
     onOpenChange(false);
   };
 
@@ -68,8 +71,25 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 100.</div>
             )}
           </div>
+          <div>
+            <Label className="mb-1 block">Theme</Label>
+            <RadioGroup 
+              defaultValue={settings.theme}
+              {...register("theme")}
+              className="flex gap-6"
+            >
+              <div>
+                <RadioGroupItem value="light" id="theme-light" {...register("theme")}/>
+                <Label htmlFor="theme-light" className="ml-2">Light</Label>
+              </div>
+              <div>
+                <RadioGroupItem value="dark" id="theme-dark" {...register("theme")}/>
+                <Label htmlFor="theme-dark" className="ml-2">Dark</Label>
+              </div>
+            </RadioGroup>
+          </div>
           <div className="flex gap-2 justify-between">
-            <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10 }); resetDefaults(); }}>
+            <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light" }); resetDefaults(); }}>
               Reset to Defaults
             </Button>
             <Button type="submit" variant="default" disabled={!isDirty}>
