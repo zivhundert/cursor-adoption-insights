@@ -31,11 +31,11 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
           <BarChart3 className="w-6 h-6 text-white" />
         </div>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-          Cursor Adoption & Impact
+          AI Development Intelligence
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Visualize your team's AI coding assistant usage and productivity metrics from Cursor admin panel data
+        Your complete dashboard for Cursor team performance, adoption patterns, and productivity insights
       </p>
     </header>
   );
