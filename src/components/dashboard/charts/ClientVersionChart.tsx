@@ -100,8 +100,10 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
   const options: Highcharts.Options = {
     chart: {
       type: 'column',
-      height: 400,
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
+      style: {
+        fontFamily: 'Inter, sans-serif'
+      }
     },
     title: {
       text: undefined
@@ -110,6 +112,14 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       categories: chartData.categories,
       title: {
         text: 'Time Period'
+      },
+      gridLineColor: 'hsl(var(--border))',
+      lineColor: 'hsl(var(--border))',
+      tickColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--foreground))'
+        }
       }
     },
     yAxis: {
@@ -117,6 +127,12 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       max: 100,
       title: {
         text: 'Percentage (%)'
+      },
+      gridLineColor: 'hsl(var(--border))',
+      labels: {
+        style: {
+          color: 'hsl(var(--foreground))'
+        }
       },
       stackLabels: {
         enabled: false
@@ -127,10 +143,16 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       verticalAlign: 'bottom',
       layout: 'horizontal',
       itemStyle: {
-        fontSize: '12px'
+        fontSize: '12px',
+        color: 'hsl(var(--foreground))'
       }
     },
     tooltip: {
+      backgroundColor: 'hsl(var(--background))',
+      borderColor: 'hsl(var(--border))',
+      style: {
+        color: 'hsl(var(--foreground))'
+      },
       pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.1f}%</b><br/>',
       shared: true
     },
@@ -168,10 +190,12 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
         </div>
       </CardHeader>
       <CardContent>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-        />
+        <div className="h-[420px]">
+          <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+          />
+        </div>
       </CardContent>
     </Card>
   );
