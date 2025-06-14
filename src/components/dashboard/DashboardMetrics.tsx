@@ -68,7 +68,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       tooltip: 'Percentage of suggested lines that were accepted in the current selection. Formula: (Accepted Lines / Suggested Lines) × 100',
     },
     {
-      title: 'Development Time Saved',
+      title: 'Development Time Saved (Hours)',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
       tooltip: `Estimated development hours saved based on accepted lines for the selected filters. 
