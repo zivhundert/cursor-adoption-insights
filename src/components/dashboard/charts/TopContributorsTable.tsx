@@ -1,10 +1,11 @@
+
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, Lightning, CheckCircle, TrendingUp, AlertTriangle } from 'lucide-react';
+import { HelpCircle, Zap, CheckCircle, TrendingUp, AlertTriangle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 
 interface TopContributorsTableProps {
@@ -33,7 +34,7 @@ const getPerformanceSegment = (acceptanceRate: number, totalApplies: number): Pe
 const getSegmentIcon = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Power User':
-      return <Lightning className="h-4 w-4 text-yellow-500" />;
+      return <Zap className="h-4 w-4 text-yellow-500" />;
     case 'Engaged Developer':
       return <CheckCircle className="h-4 w-4 text-green-500" />;
     case 'Growing User':
