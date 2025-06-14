@@ -44,27 +44,27 @@ const getSegmentIcon = (segment: PerformanceSegment) => {
   }
 };
 
-const getSegmentBadgeVariant = (segment: PerformanceSegment) => {
+const getSegmentBadgeStyle = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Power User':
-      return 'default';
+      return 'bg-green-200/70 text-green-800 border-green-300/50';
     case 'Engaged Developer':
-      return 'secondary';
+      return 'bg-yellow-200/70 text-yellow-800 border-yellow-300/50';
     case 'Growing User':
-      return 'outline';
+      return 'bg-orange-200/70 text-orange-800 border-orange-300/50';
     case 'Early Explorer':
-      return 'destructive';
+      return 'bg-gray-100/70 text-gray-800 border-gray-300/50';
   }
 };
 
 const getSegmentDescription = (segment: PerformanceSegment) => {
   switch (segment) {
     case 'Power User':
-      return 'Acceptance rate > 40% and total applies > 200';
+      return 'Acceptance rate {\'>'} 40% and total applies {\'>'} 200';
     case 'Engaged Developer':
-      return 'Acceptance rate > 25% and total applies > 50';
+      return 'Acceptance rate {\'>'} 25% and total applies {\'>'} 50';
     case 'Growing User':
-      return 'Acceptance rate > 15% or total applies > 10';
+      return 'Acceptance rate {\'>'} 15% or total applies {\'>'} 10';
     case 'Early Explorer':
       return 'Below growing user thresholds';
   }
@@ -143,9 +143,9 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Performance Segments:</strong></p>
-                    <p>⚡ Power User: Rate {'>'} 40% & Applies {'>'} 200</p>
-                    <p>✅ Engaged Developer: Rate {'>'} 25% & Applies {'>'} 50</p>
-                    <p>📈 Growing User: Rate {'>'} 15% or Applies {'>'} 10</p>
+                    <p>⚡ Power User: Rate {\'>'} 40% & Applies {\'>'} 200</p>
+                    <p>✅ Engaged Developer: Rate {\'>'} 25% & Applies {\'>'} 50</p>
+                    <p>📈 Growing User: Rate {\'>'} 15% or Applies {\'>'} 10</p>
                     <p>⚠️ Early Explorer: Below thresholds</p>
                   </div>
                 </TooltipContent>
@@ -184,7 +184,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                       <TooltipTrigger>
                         <div className="flex items-center gap-2">
                           {getSegmentIcon(contributor.segment)}
-                          <Badge variant={getSegmentBadgeVariant(contributor.segment)}>
+                          <Badge className={getSegmentBadgeStyle(contributor.segment)}>
                             {contributor.segment}
                           </Badge>
                         </div>
