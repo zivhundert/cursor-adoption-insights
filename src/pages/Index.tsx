@@ -31,6 +31,7 @@ const Index = () => {
   const [filteredData, setFilteredData] = useState<CursorDataRow[]>([]);
   const [baseFilteredData, setBaseFilteredData] = useState<CursorDataRow[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
+  const [selectedUser, setSelectedUser] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = async (file: File) => {
@@ -105,6 +106,7 @@ const Index = () => {
     const aggregatedData = aggregateDataByPeriod(filtered, filters.aggregationPeriod);
     
     setAggregationPeriod(filters.aggregationPeriod);
+    setSelectedUser(filters.selectedUser);
     setFilteredData(aggregatedData);
   };
 
@@ -113,6 +115,7 @@ const Index = () => {
     setFilteredData([]);
     setBaseFilteredData([]);
     setAggregationPeriod('day');
+    setSelectedUser('all');
   };
 
   return (
@@ -128,7 +131,13 @@ const Index = () => {
           <div className="mt-8 space-y-8">
             <DashboardMetrics data={filteredData} originalData={data} baseFilteredData={baseFilteredData} />
             <DashboardFilters data={data} onFiltersChange={handleFiltersChange} />
-            <DashboardCharts data={filteredData} originalData={data} baseFilteredData={baseFilteredData} aggregationPeriod={aggregationPeriod} />
+            <DashboardCharts 
+              data={filteredData} 
+              originalData={data} 
+              baseFilteredData={baseFilteredData} 
+              aggregationPeriod={aggregationPeriod}
+              selectedUser={selectedUser}
+            />
           </div>
         )}
       </div>

@@ -6,6 +6,7 @@ import { AverageTabsAcceptedChart } from './charts/AverageTabsAcceptedChart';
 import { ModelUsageChart } from './charts/ModelUsageChart';
 import { TopContributorsTable } from './charts/TopContributorsTable';
 import { UserActivityChart } from './charts/UserActivityChart';
+import { ChatRequestTypesChart } from './charts/ChatRequestTypesChart';
 import { DayOfWeekChart } from './charts/DayOfWeekChart';
 import { ProgrammingLanguageTreemap } from './charts/ProgrammingLanguageTreemap';
 import { TabExtensionWordCloud } from './charts/TabExtensionWordCloud';
@@ -17,9 +18,12 @@ interface DashboardChartsProps {
   originalData: CursorDataRow[];
   baseFilteredData: CursorDataRow[];
   aggregationPeriod: AggregationPeriod;
+  selectedUser?: string;
 }
 
-export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod }: DashboardChartsProps) => {
+export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod, selectedUser }: DashboardChartsProps) => {
+  const isSpecificUserSelected = selectedUser && selectedUser !== 'all';
+
   return (
     <div className="space-y-8">
       {/* Main cumulative chart */}
@@ -28,10 +32,14 @@ export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregat
       {/* Acceptance Rate chart */}
       <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />
       
-      {/* Second row - Model Usage and User Activity charts */}
+      {/* Second row - Model Usage and User Activity/Chat Request Types charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ModelUsageChart data={data} />
-        <UserActivityChart data={data} aggregationPeriod={aggregationPeriod} />
+        {isSpecificUserSelected ? (
+          <ChatRequestTypesChart data={data} aggregationPeriod={aggregationPeriod} />
+        ) : (
+          <UserActivityChart data={data} aggregationPeriod={aggregationPeriod} />
+        )}
       </div>
       
       {/* Third row - Average charts */}
