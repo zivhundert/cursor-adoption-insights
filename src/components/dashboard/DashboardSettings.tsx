@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -17,6 +16,7 @@ interface FormFields {
   linesPerMinute: number;
   theme: "light" | "dark";
   pricePerHour: number;
+  cursorPricePerUser: number;
 }
 
 export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open, onOpenChange }) => {
@@ -25,7 +25,8 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
     defaultValues: { 
       linesPerMinute: settings.linesPerMinute, 
       theme: settings.theme,
-      pricePerHour: settings.pricePerHour 
+      pricePerHour: settings.pricePerHour,
+      cursorPricePerUser: settings.cursorPricePerUser
     },
     mode: "onBlur",
   });
@@ -36,15 +37,17 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
       reset({ 
         linesPerMinute: settings.linesPerMinute, 
         theme: settings.theme,
-        pricePerHour: settings.pricePerHour 
+        pricePerHour: settings.pricePerHour,
+        cursorPricePerUser: settings.cursorPricePerUser
       });
     }
-  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, reset]);
+  }, [open, settings.linesPerMinute, settings.theme, settings.pricePerHour, settings.cursorPricePerUser, reset]);
 
   const onSubmit = (values: FormFields) => {
     updateSetting("linesPerMinute", values.linesPerMinute);
     updateSetting("theme", values.theme);
     updateSetting("pricePerHour", values.pricePerHour);
+    updateSetting("cursorPricePerUser", values.cursorPricePerUser);
     onOpenChange(false);
   };
 
@@ -105,6 +108,29 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
             )}
           </div>
           <div>
+            <Label htmlFor="cursorPricePerUser">Cursor price per user per month ($)</Label>
+            <Input
+              id="cursorPricePerUser"
+              type="number"
+              step={1}
+              min={1}
+              max={200}
+              {...register("cursorPricePerUser", {
+                required: true,
+                valueAsNumber: true,
+                min: 1,
+                max: 200,
+              })}
+              className="mt-1"
+            />
+            <div className="text-xs text-muted-foreground">
+              The monthly cost per user for Cursor subscriptions (in USD). Default: $32
+            </div>
+            {errors.cursorPricePerUser && (
+              <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 200.</div>
+            )}
+          </div>
+          <div>
             <Label className="mb-1 block">Theme</Label>
             <Controller
               control={control}
@@ -128,7 +154,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
             />
           </div>
           <div className="flex gap-2 justify-between">
-            <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55 }); resetDefaults(); }}>
+            <Button type="button" variant="secondary" onClick={() => { reset({ linesPerMinute: 10, theme: "light", pricePerHour: 55, cursorPricePerUser: 32 }); resetDefaults(); }}>
               Reset to Defaults
             </Button>
             <Button type="submit" variant="default" disabled={!isDirty}>

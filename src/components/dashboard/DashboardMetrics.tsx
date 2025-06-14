@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -45,8 +46,16 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
     // Estimate dev hours saved (dynamic lines per minute)
     const estimatedHoursSaved = Math.round(totalAcceptedLines / (settings.linesPerMinute * 60));
 
-    // Calculate money saved (new metric)
+    // Calculate money saved (existing metric)
     const estimatedMoneySaved = estimatedHoursSaved * settings.pricePerHour;
+
+    // Calculate annual Cursor cost
+    const annualCursorCost = activeUsers * settings.cursorPricePerUser * 12;
+
+    // Calculate ROI as a percentage
+    const roi = annualCursorCost > 0 
+      ? ((estimatedMoneySaved / annualCursorCost) * 100).toFixed(1)
+      : '0';
 
     return {
       totalAcceptedLines: totalAcceptedLines.toLocaleString(),
@@ -54,8 +63,9 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       acceptanceRate: `${acceptanceRate}%`,
       estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
       estimatedMoneySaved: `$${estimatedMoneySaved.toLocaleString()}`,
+      roi: `${roi}%`,
     };
-  }, [data, originalData, baseFilteredData, settings.linesPerMinute, settings.pricePerHour]);
+  }, [data, originalData, baseFilteredData, settings.linesPerMinute, settings.pricePerHour, settings.cursorPricePerUser]);
 
   const metricCards = [
     {
@@ -90,6 +100,15 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       size: 'large'
     },
     {
+      title: 'ROI (Return on Investment)',
+      value: metrics.roi,
+      gradient: 'from-purple-500 to-purple-600',
+      tooltip: `Return on Investment comparing money saved vs annual Cursor costs. 
+        Formula: (Money Saved ÷ Annual Cursor Cost) × 100. 
+        Annual cost = ${metrics.activeUsers} users × $${settings.cursorPricePerUser}/month × 12 months = $${(metrics.activeUsers * settings.cursorPricePerUser * 12).toLocaleString()}.`,
+      size: 'large'
+    },
+    {
       title: 'Active Users',
       value: metrics.activeUsers.toString(),
       gradient: 'from-indigo-500 to-indigo-600',
@@ -99,7 +118,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-6">
       {metricCards.map((metric, index) => (
         <Card key={index} className={`overflow-hidden ${metric.size === 'small' ? 'lg:col-span-1' : 'lg:col-span-1'}`}>
           <CardHeader className={`bg-gradient-to-br ${metric.gradient} text-white pb-2`}>

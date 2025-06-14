@@ -1,10 +1,10 @@
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Settings = {
   linesPerMinute: number;
   theme: "light" | "dark";
   pricePerHour: number;
+  cursorPricePerUser: number;
 };
 
 type SettingsContextType = {
@@ -18,6 +18,7 @@ const DEFAULT_SETTINGS: Settings = {
   linesPerMinute: 10,
   theme: "light",
   pricePerHour: 55,
+  cursorPricePerUser: 32,
 };
 
 const LOCALSTORAGE_KEY = "dashboard_settings_v1";
