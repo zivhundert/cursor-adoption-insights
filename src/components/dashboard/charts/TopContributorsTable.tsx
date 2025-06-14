@@ -55,7 +55,7 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
       .sort((a, b) => b.acceptedLines - a.acceptedLines);
   }, [data]);
 
-  const displayedContributors = showAll ? allContributors : allContributors.slice(0, 10);
+  const displayedContributors = showAll ? allContributors : allContributors.slice(0, 7);
 
   return (
     <Card>
@@ -80,7 +80,7 @@ export const TopContributorsTable = ({ data }: TopContributorsTableProps) => {
             size="sm"
             onClick={() => setShowAll(!showAll)}
           >
-            {showAll ? 'Show Top 10' : 'Show All'}
+            {showAll ? 'Show Top 7' : 'Show All'}
           </Button>
         </div>
       </CardHeader>
