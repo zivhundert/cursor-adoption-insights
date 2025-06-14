@@ -171,7 +171,7 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       shared: false,
       useHTML: true,
       formatter: function() {
-        const point = this.point as any;
+        const point = this as any;
         const series = this.series as any;
         const users = point.users || [];
         const version = point.version || series.name;
