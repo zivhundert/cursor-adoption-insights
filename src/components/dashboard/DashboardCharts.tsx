@@ -1,3 +1,4 @@
+
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
@@ -27,16 +28,16 @@ export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregat
       {/* Acceptance Rate chart */}
       <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />
       
-      {/* Second row - Two new average charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <AverageAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />
-        <AverageTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />
-      </div>
-      
-      {/* Third row - Two column layout */}
+      {/* Second row - Model Usage and User Activity charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <ModelUsageChart data={data} />
         <UserActivityChart data={data} aggregationPeriod={aggregationPeriod} />
+      </div>
+      
+      {/* Third row - Average charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <AverageAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />
+        <AverageTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />
       </div>
 
       {/* Fourth row - Treemap and Word Cloud visualizations */}
