@@ -48,9 +48,8 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
       stats.acceptanceRate = stats.suggestedLines > 0
         ? (stats.acceptedLines / stats.suggestedLines) * 100
         : 0;
-      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies);
       
-      // Calculate User ROI
+      // Calculate User ROI first
       const estimatedHoursSaved = stats.acceptedLines / (linesPerMinute * 60);
       const individualMoneySaved = estimatedHoursSaved * pricePerHour;
       const annualCursorCostPerUser = cursorPricePerUser * 12;
@@ -58,6 +57,9 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
       stats.userROI = annualCursorCostPerUser > 0 
         ? (individualMoneySaved / annualCursorCostPerUser) * 100
         : 0;
+      
+      // Then determine segment using ROI
+      stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies, stats.userROI);
     });
     
     return Array.from(userStats.values());

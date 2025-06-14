@@ -48,9 +48,9 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <p className="text-sm text-muted-foreground mt-1">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
                   <div className="text-sm text-muted-foreground mt-2">
                     <p><strong>Performance Segments:</strong></p>
-                    <p>⚡ Power User: Rate {'>'} 40% & Chat Applies {'>'} 200</p>
-                    <p>✅ Engaged Developer: Rate {'>'} 25% & Chat Applies {'>'} 50</p>
-                    <p>📈 Growing User: Rate {'>'} 15% or Chat Applies {'>'} 10</p>
+                    <p>⚡ Power User: Rate {'>'} 40% & Chat Applies {'>'} 200 & ROI {'>'} 100%</p>
+                    <p>✅ Engaged Developer: Rate {'>'} 25% & Chat Applies {'>'} 50 & ROI {'>'} 70%</p>
+                    <p>📈 Growing User: Rate {'>'} 15% or Chat Applies {'>'} 10 or ROI {'>'} 25%</p>
                     <p>⚠️ Early Explorer: Below thresholds</p>
                   </div>
                   <div className="text-sm text-muted-foreground mt-2">
