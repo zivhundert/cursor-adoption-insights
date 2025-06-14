@@ -67,7 +67,7 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       title: 'Development Time Saved',
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
-      tooltip: 'Estimated development hours saved based on accepted lines for the selected filters. Not affected by time period selection.',
+      tooltip: 'Estimated development hours saved based on accepted lines for the selected filters. Calculation assumes an average coding speed of 10 lines per minute. Formula: Total Accepted Lines ÷ (10 × 60) = Hours Saved. Not affected by time period selection.',
     },
     {
       title: 'Team Members Using Cursor',
