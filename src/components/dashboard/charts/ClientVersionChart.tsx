@@ -18,13 +18,14 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
     // Filter out aggregated summary rows
     const userRows = data.filter(row => !row.Email.includes('active users'));
     
-    // Group data by date and count versions
-    const dateVersionMap = new Map<string, Map<string, number>>();
+    // Group data by date and count versions with user information
+    const dateVersionMap = new Map<string, Map<string, { count: number, users: string[] }>>();
     const allVersions = new Set<string>();
     
     userRows.forEach(row => {
       const date = row.Date;
       const version = row['Client Version'];
+      const userEmail = row.Email;
       
       if (!version || version.trim() === '') return;
       
@@ -35,7 +36,15 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       }
       
       const versionMap = dateVersionMap.get(date)!;
-      versionMap.set(version, (versionMap.get(version) || 0) + 1);
+      if (!versionMap.has(version)) {
+        versionMap.set(version, { count: 0, users: [] });
+      }
+      
+      const versionData = versionMap.get(version)!;
+      versionData.count += 1;
+      if (!versionData.users.includes(userEmail)) {
+        versionData.users.push(userEmail);
+      }
     });
     
     // Sort dates
@@ -67,10 +76,17 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
     const series = sortedVersions.map((version, index) => {
       const versionData = sortedDates.map(date => {
         const versionMap = dateVersionMap.get(date)!;
-        const versionCount = versionMap.get(version) || 0;
-        const totalCount = Array.from(versionMap.values()).reduce((sum, count) => sum + count, 0);
+        const versionInfo = versionMap.get(version) || { count: 0, users: [] };
+        const totalCount = Array.from(versionMap.values()).reduce((sum, info) => sum + info.count, 0);
         
-        return totalCount > 0 ? (versionCount / totalCount) * 100 : 0;
+        const percentage = totalCount > 0 ? (versionInfo.count / totalCount) * 100 : 0;
+        
+        return {
+          y: percentage,
+          users: versionInfo.users,
+          count: versionInfo.count,
+          version: version
+        };
       });
       
       // Color scheme: older versions (gold/amber), middle (blue), newer (green)
@@ -153,8 +169,36 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       style: {
         color: 'hsl(var(--foreground))'
       },
-      pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.1f}%</b><br/>',
-      shared: true
+      shared: false,
+      useHTML: true,
+      formatter: function() {
+        const point = this.point as any;
+        const users = point.users || [];
+        const version = point.version || this.series.name;
+        const percentage = point.y || 0;
+        const count = point.count || 0;
+        
+        let usersList = '';
+        if (users.length > 0) {
+          const displayUsers = users.slice(0, 10); // Show first 10 users
+          const remainingCount = users.length - displayUsers.length;
+          
+          usersList = displayUsers.join('<br/>');
+          if (remainingCount > 0) {
+            usersList += `<br/><i>... and ${remainingCount} more user${remainingCount > 1 ? 's' : ''}</i>`;
+          }
+        }
+        
+        return `
+          <div style="padding: 8px; min-width: 200px;">
+            <strong style="color: ${this.series.color};">${version}</strong><br/>
+            <span style="font-size: 12px; color: hsl(var(--muted-foreground));">
+              ${percentage.toFixed(1)}% (${count} user${count !== 1 ? 's' : ''})
+            </span>
+            ${usersList ? `<br/><br/><strong>Users:</strong><br/><span style="font-size: 11px;">${usersList}</span>` : ''}
+          </div>
+        `;
+      }
     },
     plotOptions: {
       column: {
@@ -183,7 +227,7 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
               </TooltipTrigger>
               <TooltipContent>
                 <p>Distribution of Cursor client versions used over time.</p>
-                <p className="text-sm text-muted-foreground mt-1">Shows percentage adoption of different client versions.</p>
+                <p className="text-sm text-muted-foreground mt-1">Hover over bars to see which users are using each version.</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
