@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -173,8 +172,9 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       useHTML: true,
       formatter: function() {
         const point = this.point as any;
+        const series = this.series as any;
         const users = point.users || [];
-        const version = point.version || this.series.name;
+        const version = point.version || series.name;
         const percentage = point.y || 0;
         const count = point.count || 0;
         
@@ -191,7 +191,7 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
         
         return `
           <div style="padding: 8px; min-width: 200px;">
-            <strong style="color: ${this.series.color};">${version}</strong><br/>
+            <strong style="color: ${series.color};">${version}</strong><br/>
             <span style="font-size: 12px; color: hsl(var(--muted-foreground));">
               ${percentage.toFixed(1)}% (${count} user${count !== 1 ? 's' : ''})
             </span>
