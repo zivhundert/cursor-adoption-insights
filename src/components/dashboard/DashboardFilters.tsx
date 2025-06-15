@@ -1,15 +1,11 @@
 
-import { useState, useMemo } from 'react';
-import { CalendarRange, Users, Filter, BarChart3, Check, X } from 'lucide-react';
+import { useState } from 'react';
+import { Filter } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { format, parseISO, isValid, compareAsc, compareDesc } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { DateRangePicker } from './filters/DateRangePicker';
+import { UserSelector } from './filters/UserSelector';
+import { AggregationPeriodSelector } from './filters/AggregationPeriodSelector';
+import { FilterActions } from './filters/FilterActions';
 import type { CursorDataRow } from '@/pages/Index';
 import type { DateRange } from 'react-day-picker';
 import type { AggregationPeriod } from '@/utils/dataAggregation';
@@ -23,62 +19,12 @@ interface DashboardFiltersProps {
   }) => void;
 }
 
-// --- Helper function to extract and sort all valid dates in the data ---
-function extractDateRange(data: CursorDataRow[]) {
-  const validDates = data
-    .map(row => {
-      const date = new Date(row.Date);
-      return isValid(date) ? date : null;
-    })
-    .filter(Boolean) as Date[];
-
-  if (validDates.length === 0) return { minDate: undefined, maxDate: undefined };
-  validDates.sort(compareAsc);
-  return { minDate: validDates[0], maxDate: validDates[validDates.length - 1] };
-}
-
-// Helper to zero out the time – useful for date comparison
-function toDateOnly(d: Date) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
-
 export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProps) => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
-  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   const uniqueUsers = Array.from(new Set(data.map(row => row.Email))).sort();
-
-  // Calculate minDate and maxDate only when data changes
-  const { minDate, maxDate } = useMemo(() => extractDateRange(data), [data]);
-
-  const handleUserToggle = (user: string) => {
-    if (user === 'all') {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(prev =>
-        prev.includes(user)
-          ? prev.filter(u => u !== user)
-          : [...prev, user]
-      );
-    }
-  };
-
-  const handleSelectAllUsers = () => {
-    setSelectedUsers([...uniqueUsers]);
-  };
-
-  const handleClearAllUsers = () => {
-    setSelectedUsers([]);
-  };
-
-  const getUserDisplayText = () => {
-    if (selectedUsers.length === 0) return 'All Users';
-    if (selectedUsers.length === 1) return selectedUsers[0];
-    if (selectedUsers.length <= 3) return selectedUsers.join(', ');
-    return `${selectedUsers.slice(0, 2).join(', ')}, +${selectedUsers.length - 2} more`;
-  };
 
   const handleFilterChange = () => {
     onFiltersChange({
@@ -102,12 +48,6 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
     });
   };
 
-  // Helper for user-friendly date range display
-  const dataRangeLabel =
-    minDate && maxDate
-      ? `${format(minDate, "LLL dd, yyyy")} to ${format(maxDate, "LLL dd, yyyy")}`
-      : "No data dates available";
-
   return (
     <Card>
       <CardHeader>
@@ -118,181 +58,27 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Date Range Picker */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Date Range</label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !dateRange?.from && "text-muted-foreground"
-                  )}
-                  disabled={!minDate || !maxDate}
-                >
-                  <CalendarRange className="mr-2 h-4 w-4" />
-                  {dateRange?.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, "LLL dd, y")} -{" "}
-                        {format(dateRange.to, "LLL dd, y")}
-                      </>
-                    ) : (
-                      format(dateRange.from, "LLL dd, y")
-                    )
-                  ) : (
-                    <span>Pick a date range</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <div>
-                  <CalendarComponent
-                    initialFocus
-                    mode="range"
-                    defaultMonth={minDate}
-                    selected={dateRange}
-                    onSelect={setDateRange}
-                    numberOfMonths={2}
-                    className="pointer-events-auto"
-                    disabled={date =>
-                      !minDate ||
-                      !maxDate ||
-                      toDateOnly(date) < toDateOnly(minDate) ||
-                      toDateOnly(date) > toDateOnly(maxDate)
-                    }
-                  />
-                  <div className="text-xs text-muted-foreground p-2 pt-0">
-                    {minDate && maxDate && (
-                      <span>
-                        Data available between <b>{dataRangeLabel}</b>
-                      </span>
-                    )}
-                    {(!minDate || !maxDate) && (
-                      <span>No data dates available.</span>
-                    )}
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Aggregation Period */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Time Period</label>
-            <Select value={aggregationPeriod} onValueChange={(value: AggregationPeriod) => setAggregationPeriod(value)}>
-              <SelectTrigger>
-                <BarChart3 className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Select period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="day">Daily</SelectItem>
-                <SelectItem value="week">Weekly</SelectItem>
-                <SelectItem value="month">Monthly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Multi-User Filter */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Users {selectedUsers.length > 0 && `(${selectedUsers.length} selected)`}
-            </label>
-            <Popover open={isUserDropdownOpen} onOpenChange={setIsUserDropdownOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start text-left font-normal"
-                >
-                  <Users className="mr-2 h-4 w-4" />
-                  <span className="truncate">{getUserDisplayText()}</span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="start">
-                <div className="p-4 space-y-4">
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleSelectAllUsers}
-                      className="flex-1"
-                    >
-                      <Check className="w-4 h-4 mr-1" />
-                      Select All
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleClearAllUsers}
-                      className="flex-1"
-                    >
-                      <X className="w-4 h-4 mr-1" />
-                      Clear All
-                    </Button>
-                  </div>
-
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
-                    <div className="flex items-center space-x-2 p-2 hover:bg-muted rounded">
-                      <Checkbox
-                        id="all-users"
-                        checked={selectedUsers.length === 0}
-                        onCheckedChange={() => handleUserToggle('all')}
-                      />
-                      <label htmlFor="all-users" className="text-sm font-medium cursor-pointer">
-                        All Users
-                      </label>
-                    </div>
-
-                    {uniqueUsers.map(user => (
-                      <div key={user} className="flex items-center space-x-2 p-2 hover:bg-muted rounded">
-                        <Checkbox
-                          id={user}
-                          checked={selectedUsers.includes(user)}
-                          onCheckedChange={() => handleUserToggle(user)}
-                        />
-                        <label htmlFor={user} className="text-sm cursor-pointer truncate">
-                          {user}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-
-                  {selectedUsers.length > 0 && (
-                    <div className="border-t pt-3">
-                      <div className="text-sm font-medium mb-2">Selected Users:</div>
-                      <div className="flex flex-wrap gap-1">
-                        {selectedUsers.map(user => (
-                          <Badge
-                            key={user}
-                            variant="secondary"
-                            className="text-xs cursor-pointer"
-                            onClick={() => handleUserToggle(user)}
-                          >
-                            {user}
-                            <X className="w-3 h-3 ml-1" />
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Actions</label>
-            <div className="flex gap-2">
-              <Button onClick={handleFilterChange} className="flex-1">
-                Apply
-              </Button>
-              <Button onClick={clearFilters} variant="outline" className="flex-1">
-                Clear
-              </Button>
-            </div>
-          </div>
+          <DateRangePicker
+            data={data}
+            value={dateRange}
+            onChange={setDateRange}
+          />
+          
+          <AggregationPeriodSelector
+            value={aggregationPeriod}
+            onChange={setAggregationPeriod}
+          />
+          
+          <UserSelector
+            users={uniqueUsers}
+            selectedUsers={selectedUsers}
+            onChange={setSelectedUsers}
+          />
+          
+          <FilterActions
+            onApply={handleFilterChange}
+            onClear={clearFilters}
+          />
         </div>
       </CardContent>
     </Card>
