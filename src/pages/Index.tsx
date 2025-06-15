@@ -63,8 +63,18 @@ const Index = () => {
           </p>
         </div>
         
-        {/* Welcome message for new users - shows on upload screen */}
-        {originalData.length === 0 && (
+        {/* Welcome messages - conditional based on data */}
+        {originalData.length > 0 ? (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mb-8 text-blue-900">
+            <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
+            <ul className="list-disc text-base text-left ml-6 mt-2">
+              <li><b>See cost savings</b> and time saved by your developers using AI.</li>
+              <li><b>Spot your AI Champions</b> and help others grow.</li>
+              <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
+            </ul>
+            <div className="text-sm mt-2">Not sure how to interpret metrics? Hover <span className="inline-block align-text-bottom"><Settings className="h-4 w-4 inline" /></span> or question marks for insights.</div>
+          </div>
+        ) : (
           <div className="bg-teal-50 border border-teal-200 rounded-xl px-6 py-5 mb-8 max-w-2xl mx-auto text-teal-900 text-base flex flex-col gap-2">
             <b>First time here?</b> Upload your team's exported Cursor usage file below to start.
             <ul className="list-disc ml-6 text-sm">
@@ -77,7 +87,7 @@ const Index = () => {
         
         {/* Onboarding panel for new users */}
         {originalData.length === 0 && (
-          <div className="mt-12">
+          <div className="mt-8">
             <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
           </div>
         )}
