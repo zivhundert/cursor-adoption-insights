@@ -4,7 +4,7 @@ import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
 import { useDashboardData } from '@/hooks/useDashboardData';
-import { Settings } from 'lucide-react';
+import { Settings, BarChart3 } from 'lucide-react';
 
 export interface CursorDataRow {
   Date: string;
@@ -64,23 +64,43 @@ const Index = () => {
         
         {originalData.length > 0 && (
           <div className="mt-8 space-y-8">
-            <DashboardMetrics 
-              data={filteredData} 
-              originalData={originalData} 
-              baseFilteredData={baseFilteredData} 
-            />
-            <DashboardFilters 
-              data={originalData} 
-              onFiltersChange={updateFilters} 
-            />
-            <div data-export="dashboard-charts">
-              <DashboardCharts 
+            {/* Dedicated export container with title, subtitle and data */}
+            <div data-export="dashboard-export">
+              {/* Export-friendly header with title and subtitle only */}
+              <div className="text-center mb-8">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+                    AI Development Intelligence
+                  </h1>
+                </div>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
+                </p>
+              </div>
+              
+              <DashboardMetrics 
                 data={filteredData} 
                 originalData={originalData} 
                 baseFilteredData={baseFilteredData} 
-                aggregationPeriod={filters.aggregationPeriod}
-                selectedUsers={filters.selectedUsers}
               />
+              <div className="mt-8">
+                <DashboardFilters 
+                  data={originalData} 
+                  onFiltersChange={updateFilters} 
+                />
+              </div>
+              <div className="mt-8">
+                <DashboardCharts 
+                  data={filteredData} 
+                  originalData={originalData} 
+                  baseFilteredData={baseFilteredData} 
+                  aggregationPeriod={filters.aggregationPeriod}
+                  selectedUsers={filters.selectedUsers}
+                />
+              </div>
             </div>
           </div>
         )}

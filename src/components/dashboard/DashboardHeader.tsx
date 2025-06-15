@@ -1,4 +1,5 @@
-import { BarChart3, RefreshCcw, Settings } from 'lucide-react';
+
+import { RefreshCcw, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LinkedInFollowButton } from "@/components/LinkedInFollowButton";
 import { useState } from "react";
@@ -38,26 +39,20 @@ export const DashboardHeader = ({
           <Settings className="w-5 h-5 text-muted-foreground" />
         </Button>
       </div>
-      <div className="flex items-center justify-center gap-3 mb-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
-          <BarChart3 className="w-6 h-6 text-white" />
+      
+      {/* Welcome message - this will be excluded from export */}
+      {showReloadButton && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
+          <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
+          <ul className="list-disc text-base text-left ml-6 mt-2">
+            <li><b>See cost savings</b> and time saved by your developers using AI.</li>
+            <li><b>Spot your AI Champions</b> and help others grow.</li>
+            <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
+          </ul>
+          <div className="text-sm mt-2">Not sure how to interpret metrics? Hover <span className="inline-block align-text-bottom"><Settings className="h-4 w-4 inline" /></span> or question marks for insights.</div>
         </div>
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-          AI Development Intelligence
-        </h1>
-      </div>
-      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Unlock your team’s full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
-      </p>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
-        <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
-        <ul className="list-disc text-base text-left ml-6 mt-2">
-          <li><b>See cost savings</b> and time saved by your developers using AI.</li>
-          <li><b>Spot your AI Champions</b> and help others grow.</li>
-          <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
-        </ul>
-        <div className="text-sm mt-2">Not sure how to interpret metrics? Hover <span className="inline-block align-text-bottom"><Settings className="h-4 w-4 inline" /></span> or question marks for insights.</div>
-      </div>
+      )}
+      
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );
