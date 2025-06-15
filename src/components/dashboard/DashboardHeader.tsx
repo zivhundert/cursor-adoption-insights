@@ -41,7 +41,7 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Unlock your team’s full coding potential. Track real, business-driven metrics, improve productivity, and maximize ROI of AI tools like Cursor. 
+        Unlock your team’s full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
       </p>
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
         <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
