@@ -1,6 +1,7 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHeader, TableRow } from '@/components/ui/table';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
 import { TopContributorsTableProps, columnLabels } from './types';
@@ -36,29 +37,29 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CardTitle className="text-xl font-semibold">AI Adoption Champions</CardTitle>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                </TooltipTrigger>
-                <TooltipContent>
+            <Popover>
+              <PopoverTrigger>
+                <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="space-y-2">
                   <p>Users ranked by performance segment and comprehensive activity metrics.</p>
-                  <p className="text-sm text-muted-foreground mt-1">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
-                  <p className="text-sm text-muted-foreground mt-1">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
-                  <div className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
+                  <p className="text-sm text-muted-foreground">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
+                  <div className="text-sm text-muted-foreground">
                     <p><strong>Performance Segments:</strong></p>
                     <p>⚡ Power User: Rate {'>'} 40% & Chat Applies {'>'} 200 & ROI {'>'} 100%</p>
                     <p>✅ Engaged Developer: Rate {'>'} 25% & Chat Applies {'>'} 50 & ROI {'>'} 70%</p>
                     <p>📈 Growing User: Rate {'>'} 15% or Chat Applies {'>'} 10 or ROI {'>'} 25%</p>
                     <p>⚠️ Early Explorer: Below thresholds</p>
                   </div>
-                  <div className="text-sm text-muted-foreground mt-2">
+                  <div className="text-sm text-muted-foreground">
                     <p><strong>Metrics include:</strong></p>
                     <p>Chat metrics, Tabs, Edit/Ask/Agent requests, Individual ROI</p>
                   </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           {!isFiltered && (
             <Button 

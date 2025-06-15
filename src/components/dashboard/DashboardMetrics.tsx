@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { useSettings } from "@/contexts/SettingsContext";
@@ -119,16 +119,14 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
               <CardTitle className="text-sm font-medium opacity-90 leading-tight flex-1">
                 {metric.title}
               </CardTitle>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger className="shrink-0">
-                    <HelpCircle className="h-4 w-4 text-white opacity-75" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">{metric.tooltip}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Popover>
+                <PopoverTrigger className="shrink-0">
+                  <HelpCircle className="h-4 w-4 text-white opacity-75 hover:opacity-100 hover:scale-110 transition-all cursor-pointer" />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <p className="max-w-xs">{metric.tooltip}</p>
+                </PopoverContent>
+              </Popover>
             </div>
           </CardHeader>
           <CardContent className="pt-6 pb-6 flex items-center justify-center min-h-[80px]">
