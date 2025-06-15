@@ -1,12 +1,11 @@
-
 import { CursorDataRow } from '@/pages/Index';
 
-// UPDATED: Use new, business-friendly, motivational segment names (no emoji).
-export type PerformanceSegment = 
+// Option 2: Consistent, motivational, AI-focused names.
+export type PerformanceSegment =
   | 'AI Champion'
-  | 'Productive Developer'
-  | 'Learning & Growing'
-  | 'Getting Started';
+  | 'AI Producer'
+  | 'AI Explorer'
+  | 'AI Starter';
 
 export interface ContributorWithSegment {
   email: string;
@@ -56,7 +55,7 @@ export const columnLabels: Record<SortableColumn, string> = {
 
 export const segmentSortOrder: Record<PerformanceSegment, number> = {
   'AI Champion': 0,
-  'Productive Developer': 1,
-  'Learning & Growing': 2,
-  'Getting Started': 3,
+  'AI Producer': 1,
+  'AI Explorer': 2,
+  'AI Starter': 3,
 };

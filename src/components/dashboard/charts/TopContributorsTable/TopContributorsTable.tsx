@@ -46,12 +46,12 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <p>Users ranked by performance segment and comprehensive activity metrics.</p>
                   <p className="text-sm text-muted-foreground">Acceptance Rate = (Accepted Lines / Suggested Lines) × 100</p>
                   <p className="text-sm text-muted-foreground">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground space-y-1">
                     <p><strong>Performance Segments:</strong></p>
-                    <p>⚡ Power User: Rate {'>'} 40% & Chat Applies {'>'} 200 & ROI {'>'} 100%</p>
-                    <p>✅ Engaged Developer: Rate {'>'} 25% & Chat Applies {'>'} 50 & ROI {'>'} 70%</p>
-                    <p>📈 Growing User: Rate {'>'} 15% or Chat Applies {'>'} 10 or ROI {'>'} 25%</p>
-                    <p>⚠️ Early Explorer: Below thresholds</p>
+                    <p>🚀 <span className="font-medium">AI Champion:</span> Top-tier AI adopter, leading by example and delivering outstanding value.</p>
+                    <p>✨ <span className="font-medium">AI Producer:</span> Active and effective, regularly using AI to drive efficiency.</p>
+                    <p>📈 <span className="font-medium">AI Explorer:</span> Exploring AI, growing skills, and boosting your results.</p>
+                    <p>🌱 <span className="font-medium">AI Starter:</span> Just getting started on your AI productivity journey.</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
                     <p><strong>Metrics include:</strong></p>

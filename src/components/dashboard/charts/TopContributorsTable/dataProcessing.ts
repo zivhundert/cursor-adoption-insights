@@ -29,7 +29,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
           askRequests: 0,
           agentRequests: 0,
           userROI: 0,
-          segment: 'Getting Started 🌱', // updated default to valid value
+          segment: 'AI Starter', // default to new Option 2
         });
       }
       
