@@ -1,9 +1,10 @@
+
 import { useMemo } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
+import { Options as HighchartsOptions } from 'highcharts';
+import { ChartContainer } from '@/components/common/ChartContainer';
+import { BaseHighchart } from '@/components/common/BaseHighchart';
+import { getLineChartConfig } from '@/config/chartConfigs';
+import { createDateTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
@@ -47,66 +48,23 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
     }
   };
 
-  const options: Highcharts.Options = {
-    chart: {
-      type: 'line',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      },
-      marginBottom: 100,
-    },
-    title: {
-      text: undefined
-    },
-    xAxis: {
-      type: 'datetime',
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      lineColor: 'hsl(var(--border))',
-      tickColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
-    },
+  const options: Partial<HighchartsOptions> = {
+    ...getLineChartConfig(),
     yAxis: {
-      title: {
-        text: null
-      },
+      ...getLineChartConfig().yAxis,
       min: 0,
       max: 100,
-      gridLineColor: 'hsl(var(--border))',
       labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        },
+        ...getLineChartConfig().yAxis?.labels,
         formatter: function() {
           return this.value + '%';
         }
       }
     },
     tooltip: {
-      backgroundColor: 'hsl(var(--background))',
-      borderColor: 'hsl(var(--border))',
-      style: {
-        color: 'hsl(var(--foreground))'
-      },
       formatter: function() {
-        return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
+        return `Date: ${new Date(this.x as number).toLocaleDateString()}<br/>
                 Acceptance Rate: <b>${(this.y as number).toFixed(1)}%</b>`;
-      }
-    },
-    legend: {
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'bottom',
-      y: -10,
-      itemStyle: {
-        color: 'hsl(var(--foreground))'
       }
     },
     plotOptions: {
@@ -136,37 +94,15 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
           lineWidth: 2
         }
       }
-    ],
-    credits: {
-      enabled: false
-    }
+    ]
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">
-            AI Adoption Quality Trend ({getPeriodText()})
-          </CardTitle>
-          <Popover>
-            <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Shows the percentage of suggested lines that were accepted over time.</p>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[420px]">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer
+      title={`AI Adoption Quality Trend (${getPeriodText()})`}
+      helpText="Shows the percentage of suggested lines that were accepted over time."
+    >
+      <BaseHighchart options={options} />
+    </ChartContainer>
   );
 };
