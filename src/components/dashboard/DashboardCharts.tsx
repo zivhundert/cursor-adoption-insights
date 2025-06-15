@@ -173,13 +173,14 @@ export const DashboardCharts = React.memo(({
     );
   };
 
-  // Ensure consistent vertical spacing between all chart rows, including after the first rows
+  // Filter out null rows and ensure consistent spacing
+  const renderedRows = chartRows.map(renderChartRow).filter(row => row !== null);
+
   return (
-    <div className="flex flex-col gap-8">
-      {chartRows.map(renderChartRow)}
+    <div className="space-y-8">
+      {renderedRows}
     </div>
   );
 });
 
 DashboardCharts.displayName = 'DashboardCharts';
-
