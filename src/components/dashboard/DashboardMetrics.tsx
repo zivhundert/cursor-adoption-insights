@@ -1,7 +1,7 @@
+
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
+import { MetricCard } from '@/components/common/MetricCard';
+import { calculateMetrics } from '@/utils/metricsCalculator';
 import { CursorDataRow } from '@/pages/Index';
 import { useSettings } from "@/contexts/SettingsContext";
 
@@ -15,56 +15,12 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
   const { settings } = useSettings();
 
   const metrics = useMemo(() => {
-    // Use baseFilteredData for totals (respects user/date filters but not time period)
-    const totalAcceptedLines = baseFilteredData.reduce((sum, row) => {
-      // Skip aggregated rows
-      if (row.Email.includes('active users')) return sum;
-      return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
-    }, 0);
-
-    const activeUsers = new Set(
-      baseFilteredData
-        .filter(row => !row.Email.includes('active users')) // Skip aggregated rows
-        .filter(row => row['Is Active'] === 'true')
-        .map(row => row.Email)
-    ).size;
-
-    // Calculate acceptance rate from filtered data (should be affected by time period)
-    const filteredAcceptedLines = data.reduce((sum, row) => {
-      return sum + (parseInt(row['Chat Accepted Lines Added']) || 0);
-    }, 0);
-
-    const filteredSuggestedLines = data.reduce((sum, row) => {
-      return sum + (parseInt(row['Chat Suggested Lines Added']) || 0);
-    }, 0);
-
-    const acceptanceRate = filteredSuggestedLines > 0 
-      ? ((filteredAcceptedLines / filteredSuggestedLines) * 100).toFixed(1)
-      : '0';
-
-    // Estimate dev hours saved (dynamic lines per minute)
-    const estimatedHoursSaved = Math.round(totalAcceptedLines / (settings.linesPerMinute * 60));
-
-    // Calculate money saved (existing metric)
-    const estimatedMoneySaved = estimatedHoursSaved * settings.pricePerHour;
-
-    // Calculate annual Cursor cost
-    const annualCursorCost = activeUsers * settings.cursorPricePerUser * 12;
-
-    // Calculate ROI as a percentage
-    const roi = annualCursorCost > 0 
-      ? ((estimatedMoneySaved / annualCursorCost) * 100).toFixed(1)
-      : '0';
-
-    return {
-      totalAcceptedLines: totalAcceptedLines.toLocaleString(),
-      activeUsers,
-      acceptanceRate: `${acceptanceRate}%`,
-      estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
-      estimatedMoneySaved: `$${estimatedMoneySaved.toLocaleString()}`,
-      roi: `${roi}%`,
-    };
-  }, [data, originalData, baseFilteredData, settings.linesPerMinute, settings.pricePerHour, settings.cursorPricePerUser]);
+    return calculateMetrics(data, baseFilteredData, {
+      linesPerMinute: settings.linesPerMinute,
+      pricePerHour: settings.pricePerHour,
+      cursorPricePerUser: settings.cursorPricePerUser
+    });
+  }, [data, baseFilteredData, settings]);
 
   const metricCards = [
     {
@@ -96,11 +52,11 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
       value: metrics.estimatedHoursSaved,
       gradient: 'from-teal-500 to-teal-600',
       tooltip: <>
-        <strong>What it means:</strong> Total developer hours saved by using AI-powered suggestions, based on your team’s coding speed.
+        <strong>What it means:</strong> Total developer hours saved by using AI-powered suggestions, based on your team's coding speed.
         <br/><br/>
         <strong>Why it matters:</strong> Reclaim time for innovation and complex problem solving.
         <br/><br/>
-        <strong>Tip:</strong> Adjust your team’s “Coding Speed” in settings for precise reporting.
+        <strong>Tip:</strong> Adjust your team's "Coding Speed" in settings for precise reporting.
         <br/><br/>
         <em>(Not affected by time period selection)</em>
       </>
@@ -152,28 +108,13 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
       {metricCards.map((metric, index) => (
-        <Card key={index} className="overflow-hidden h-full">
-          <CardHeader className={`bg-gradient-to-br ${metric.gradient} text-white pb-3 min-h-[80px] flex flex-col justify-center`}>
-            <div className="flex items-start justify-between gap-2">
-              <CardTitle className="text-sm font-medium opacity-90 leading-tight flex-1">
-                {metric.title}
-              </CardTitle>
-              <Popover>
-                <PopoverTrigger className="shrink-0">
-                  <HelpCircle className="h-4 w-4 text-white opacity-75 hover:opacity-100 hover:scale-110 transition-all cursor-pointer" />
-                </PopoverTrigger>
-                <PopoverContent>
-                  <p className="max-w-xs">{metric.tooltip}</p>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-6 pb-6 flex items-center justify-center min-h-[80px]">
-            <div className="text-3xl font-bold text-foreground text-center">
-              {metric.value}
-            </div>
-          </CardContent>
-        </Card>
+        <MetricCard
+          key={index}
+          title={metric.title}
+          value={metric.value}
+          gradient={metric.gradient}
+          tooltip={metric.tooltip}
+        />
       ))}
     </div>
   );
