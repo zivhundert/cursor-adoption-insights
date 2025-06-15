@@ -76,29 +76,51 @@ export const exportToPDF = async (data: CursorDataRow[], filters: any) => {
     yPosition += 8;
   });
   
+  // Add some space before charts
+  yPosition += 10;
+  
   // Capture dashboard charts as image and add to PDF
   try {
-    const dashboardElement = document.querySelector('[data-export="dashboard-charts"]');
+    const dashboardElement = document.querySelector('[data-export="dashboard-charts"]') as HTMLElement;
     if (dashboardElement) {
-      const canvas = await html2canvas(dashboardElement as HTMLElement, {
-        scale: 1,
+      console.log('Capturing dashboard charts for PDF...');
+      
+      // Wait a bit for charts to fully render
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const canvas = await html2canvas(dashboardElement, {
+        scale: 1.5,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: dashboardElement.scrollWidth,
+        height: dashboardElement.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
       });
       
       const imgData = canvas.toDataURL('image/png');
       const imgWidth = pageWidth - 40;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       
+      console.log(`Chart image dimensions: ${imgWidth}x${imgHeight}`);
+      
+      // Check if we need a new page for the charts
       if (yPosition + imgHeight > pageHeight - 20) {
         pdf.addPage();
         yPosition = 20;
+        pdf.setFontSize(14);
+        pdf.setTextColor(40, 40, 40);
+        pdf.text('Dashboard Charts:', 20, yPosition);
+        yPosition += 15;
       }
       
       pdf.addImage(imgData, 'PNG', 20, yPosition, imgWidth, imgHeight);
+    } else {
+      console.warn('Dashboard charts element not found');
     }
   } catch (error) {
-    console.warn('Could not capture charts for PDF export:', error);
+    console.error('Error capturing charts for PDF export:', error);
   }
   
   // Save the PDF
@@ -106,12 +128,12 @@ export const exportToPDF = async (data: CursorDataRow[], filters: any) => {
 };
 
 export const exportToImage = async () => {
-  const element = document.querySelector('[data-export="dashboard-main"]');
+  const element = document.querySelector('[data-export="dashboard-main"]') as HTMLElement;
   if (!element) {
     throw new Error('Dashboard element not found');
   }
 
-  const canvas = await html2canvas(element as HTMLElement, {
+  const canvas = await html2canvas(element, {
     scale: 2,
     useCORS: true,
     allowTaint: true,
@@ -122,51 +144,4 @@ export const exportToImage = async () => {
   link.download = `ai-intelligence-dashboard-${new Date().toISOString().split('T')[0]}.png`;
   link.href = canvas.toDataURL();
   link.click();
-};
-
-export const exportToCSV = (data: CursorDataRow[], originalData: CursorDataRow[], filters: any) => {
-  // Create CSV headers
-  const headers = Object.keys(data[0] || {});
-  
-  // Convert data to CSV format
-  const csvContent = [
-    headers.join(','),
-    ...data.map(row => 
-      headers.map(header => {
-        const value = row[header as keyof CursorDataRow];
-        return typeof value === 'string' && value.includes(',') ? `"${value}"` : value;
-      }).join(',')
-    )
-  ].join('\n');
-  
-  // Create and download file
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `ai-intelligence-data-${new Date().toISOString().split('T')[0]}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-export const generateShareableLink = (filters: any) => {
-  const baseUrl = window.location.origin + window.location.pathname;
-  const params = new URLSearchParams();
-  
-  if (filters.dateRange.from) {
-    params.set('from', filters.dateRange.from.toISOString().split('T')[0]);
-  }
-  if (filters.dateRange.to) {
-    params.set('to', filters.dateRange.to.toISOString().split('T')[0]);
-  }
-  if (filters.selectedUsers.length > 0) {
-    params.set('users', filters.selectedUsers.join(','));
-  }
-  if (filters.aggregationPeriod !== 'day') {
-    params.set('period', filters.aggregationPeriod);
-  }
-  
-  return params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 };

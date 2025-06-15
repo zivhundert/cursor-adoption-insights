@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Download, FileText, Image, Database, Share2 } from 'lucide-react';
+import { Download, FileText, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,8 +13,6 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { exportToPDF } from '@/utils/exportUtils';
 import { exportToImage } from '@/utils/exportUtils';
-import { exportToCSV } from '@/utils/exportUtils';
-import { generateShareableLink } from '@/utils/exportUtils';
 import { CursorDataRow } from '@/pages/Index';
 
 interface ExportButtonProps {
@@ -69,39 +67,6 @@ export const ExportButton = ({ data, originalData, filters }: ExportButtonProps)
     }
   };
 
-  const handleExportCSV = () => {
-    try {
-      exportToCSV(data, originalData, filters);
-      toast({
-        title: "CSV Export Successful",
-        description: "Your data has been downloaded as CSV.",
-      });
-    } catch (error) {
-      toast({
-        title: "Export Failed",
-        description: "There was an error exporting the CSV data.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleGenerateLink = () => {
-    try {
-      const shareableLink = generateShareableLink(filters);
-      navigator.clipboard.writeText(shareableLink);
-      toast({
-        title: "Shareable Link Copied",
-        description: "The link to your filtered dashboard has been copied to clipboard.",
-      });
-    } catch (error) {
-      toast({
-        title: "Share Failed",
-        description: "There was an error generating the shareable link.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -122,18 +87,6 @@ export const ExportButton = ({ data, originalData, filters }: ExportButtonProps)
         <DropdownMenuItem onClick={handleExportImage}>
           <Image className="w-4 h-4 mr-2" />
           Export as Image
-        </DropdownMenuItem>
-        
-        <DropdownMenuItem onClick={handleExportCSV}>
-          <Database className="w-4 h-4 mr-2" />
-          Export Data (CSV)
-        </DropdownMenuItem>
-        
-        <DropdownMenuSeparator />
-        
-        <DropdownMenuItem onClick={handleGenerateLink}>
-          <Share2 className="w-4 h-4 mr-2" />
-          Copy Shareable Link
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
