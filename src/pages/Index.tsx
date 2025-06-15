@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
@@ -7,6 +6,7 @@ import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
 import { toast } from '@/hooks/use-toast';
 import { aggregateDataByPeriod, type AggregationPeriod } from '@/utils/dataAggregation';
+import { Settings } from 'lucide-react';
 
 export interface CursorDataRow {
   Date: string;

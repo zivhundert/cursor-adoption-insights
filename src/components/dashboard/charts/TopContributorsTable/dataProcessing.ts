@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { CursorDataRow } from '@/pages/Index';
 import { ContributorWithSegment } from './types';
@@ -30,7 +29,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
           askRequests: 0,
           agentRequests: 0,
           userROI: 0,
-          segment: 'Early Explorer',
+          segment: 'Getting Started 🌱', // updated default to valid value
         });
       }
       
