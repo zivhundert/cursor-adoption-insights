@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { CalendarRange, Users, Filter, BarChart3, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -159,8 +160,8 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                     disabled={date =>
                       !minDate ||
                       !maxDate ||
-                      date < minDate ||
-                      date > maxDate
+                      date.getTime() < minDate.getTime() ||
+                      date.getTime() > maxDate.getTime()
                     }
                   />
                   <div className="text-xs text-muted-foreground p-2 pt-0">
