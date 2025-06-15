@@ -40,7 +40,7 @@ export const DashboardHeader = ({
         </Button>
       </div>
       
-      {/* Welcome message - positioned after title/subtitle */}
+      {/* Welcome message for dashboard users - shows when data is loaded */}
       {showReloadButton && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
           <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
