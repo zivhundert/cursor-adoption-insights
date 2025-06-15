@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -86,7 +85,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="linesPerMinute">Lines per minute</Label>
+                  <Label htmlFor="linesPerMinute">Team Coding Speed (lines/minute)</Label>
                   <Input
                     id="linesPerMinute"
                     type="number"
@@ -110,7 +109,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                 </div>
                 
                 <div>
-                  <Label htmlFor="pricePerHour">Price per hour ($)</Label>
+                  <Label htmlFor="pricePerHour">Developer Hourly Rate ($)</Label>
                   <Input
                     id="pricePerHour"
                     type="number"
@@ -134,7 +133,7 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                 </div>
                 
                 <div>
-                  <Label htmlFor="cursorPricePerUser">Cursor price per user per month ($)</Label>
+                  <Label htmlFor="cursorPricePerUser">Cursor Subscription Cost ($/user/month)</Label>
                   <Input
                     id="cursorPricePerUser"
                     type="number"

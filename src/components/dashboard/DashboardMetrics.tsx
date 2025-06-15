@@ -88,14 +88,14 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
         Formula: Total Accepted Lines ÷ (Lines per minute × 60) = Hours Saved. Not affected by time period selection.`
     },
     {
-      title: 'Money Saved',
+      title: 'Development Cost Savings',
       value: metrics.estimatedMoneySaved,
       gradient: 'from-green-500 to-green-600',
       tooltip: `Estimated money saved based on development time saved and your hourly rate of $${settings.pricePerHour}. 
         Formula: Hours Saved × Price per Hour = Money Saved. Not affected by time period selection.`
     },
     {
-      title: 'ROI (Return on Investment)',
+      title: 'ROI - Cursor Investment Return',
       value: metrics.roi,
       gradient: 'from-purple-500 to-purple-600',
       tooltip: `Return on Investment comparing money saved vs annual Cursor costs. 
