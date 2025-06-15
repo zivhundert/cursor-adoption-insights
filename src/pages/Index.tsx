@@ -1,4 +1,3 @@
-
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
@@ -41,8 +40,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <DashboardHeader showReloadButton={originalData.length > 0} onReloadCSV={handleReloadCSV} />
+      <div className="container mx-auto px-4 py-8" data-export="dashboard-main">
+        <DashboardHeader 
+          showReloadButton={originalData.length > 0} 
+          onReloadCSV={handleReloadCSV}
+          showExportButton={originalData.length > 0}
+          exportData={{
+            data: filteredData,
+            originalData,
+            filters
+          }}
+        />
         
         {/* Onboarding panel for new users */}
         {originalData.length === 0 && (
@@ -70,13 +78,15 @@ const Index = () => {
               data={originalData} 
               onFiltersChange={updateFilters} 
             />
-            <DashboardCharts 
-              data={filteredData} 
-              originalData={originalData} 
-              baseFilteredData={baseFilteredData} 
-              aggregationPeriod={filters.aggregationPeriod}
-              selectedUsers={filters.selectedUsers}
-            />
+            <div data-export="dashboard-charts">
+              <DashboardCharts 
+                data={filteredData} 
+                originalData={originalData} 
+                baseFilteredData={baseFilteredData} 
+                aggregationPeriod={filters.aggregationPeriod}
+                selectedUsers={filters.selectedUsers}
+              />
+            </div>
           </div>
         )}
       </div>

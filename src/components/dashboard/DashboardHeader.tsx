@@ -1,16 +1,32 @@
-
 import { BarChart3, RefreshCcw, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LinkedInFollowButton } from "@/components/LinkedInFollowButton";
 import { useState } from "react";
 import { DashboardSettings } from "./DashboardSettings";
+import { ExportButton } from "./ExportButton";
+import { CursorDataRow } from '@/pages/Index';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
   onReloadCSV?: () => void;
+  showExportButton?: boolean;
+  exportData?: {
+    data: CursorDataRow[];
+    originalData: CursorDataRow[];
+    filters: {
+      dateRange: { from?: Date; to?: Date };
+      selectedUsers: string[];
+      aggregationPeriod: string;
+    };
+  };
 }
 
-export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ 
+  showReloadButton = false, 
+  onReloadCSV,
+  showExportButton = false,
+  exportData
+}: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
@@ -26,6 +42,13 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
             <RefreshCcw className="w-4 h-4" />
             Load New CSV
           </Button>
+        )}
+        {showExportButton && exportData && (
+          <ExportButton 
+            data={exportData.data}
+            originalData={exportData.originalData}
+            filters={exportData.filters}
+          />
         )}
         <LinkedInFollowButton />
         <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Dashboard settings" className="p-2">
