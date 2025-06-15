@@ -4,28 +4,17 @@ import { LinkedInFollowButton } from "@/components/LinkedInFollowButton";
 import { useState } from "react";
 import { DashboardSettings } from "./DashboardSettings";
 import { ExportButton } from "./ExportButton";
-import { CursorDataRow } from '@/pages/Index';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
   onReloadCSV?: () => void;
   showExportButton?: boolean;
-  exportData?: {
-    data: CursorDataRow[];
-    originalData: CursorDataRow[];
-    filters: {
-      dateRange: { from?: Date; to?: Date };
-      selectedUsers: string[];
-      aggregationPeriod: string;
-    };
-  };
 }
 
 export const DashboardHeader = ({ 
   showReloadButton = false, 
   onReloadCSV,
-  showExportButton = false,
-  exportData
+  showExportButton = false
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -43,13 +32,7 @@ export const DashboardHeader = ({
             Load New CSV
           </Button>
         )}
-        {showExportButton && exportData && (
-          <ExportButton 
-            data={exportData.data}
-            originalData={exportData.originalData}
-            filters={exportData.filters}
-          />
-        )}
+        {showExportButton && <ExportButton />}
         <LinkedInFollowButton />
         <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Dashboard settings" className="p-2">
           <Settings className="w-5 h-5 text-muted-foreground" />

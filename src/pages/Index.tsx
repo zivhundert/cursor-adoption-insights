@@ -45,11 +45,6 @@ const Index = () => {
           showReloadButton={originalData.length > 0} 
           onReloadCSV={handleReloadCSV}
           showExportButton={originalData.length > 0}
-          exportData={{
-            data: filteredData,
-            originalData,
-            filters
-          }}
         />
         
         {/* Onboarding panel for new users */}
