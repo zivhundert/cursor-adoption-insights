@@ -1,3 +1,4 @@
+
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
@@ -47,6 +48,21 @@ const Index = () => {
           showExportButton={originalData.length > 0}
         />
         
+        {/* Title and subtitle - always visible */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
+              AI Development Intelligence
+            </h1>
+          </div>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
+          </p>
+        </div>
+        
         {/* Onboarding panel for new users */}
         {originalData.length === 0 && (
           <div className="mt-12">
@@ -64,23 +80,8 @@ const Index = () => {
         
         {originalData.length > 0 && (
           <div className="mt-8 space-y-8">
-            {/* Dedicated export container with title, subtitle and data */}
+            {/* Dedicated export container with only metrics, filters, and charts */}
             <div data-export="dashboard-export">
-              {/* Export-friendly header with title and subtitle only */}
-              <div className="text-center mb-8">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-white" />
-                  </div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
-                    AI Development Intelligence
-                  </h1>
-                </div>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
-                </p>
-              </div>
-              
               <DashboardMetrics 
                 data={filteredData} 
                 originalData={originalData} 
