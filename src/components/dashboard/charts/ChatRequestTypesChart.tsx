@@ -1,9 +1,10 @@
+
 import { useMemo } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
+import { Options as HighchartsOptions } from 'highcharts';
+import { ChartContainer } from '@/components/common/ChartContainer';
+import { BaseHighchart } from '@/components/common/BaseHighchart';
+import { getColumnChartConfig, CHART_COLORS } from '@/config/chartConfigs';
+import { createDateTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
 import { type AggregationPeriod } from '@/utils/dataAggregation';
 
@@ -67,56 +68,23 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
     }
   };
 
-  const options: Highcharts.Options = {
-    chart: {
-      type: 'column',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      },
-      marginBottom: 100,
-    },
-    title: {
-      text: undefined
-    },
+  const options: Partial<HighchartsOptions> = {
+    ...getColumnChartConfig(),
     xAxis: {
-      type: 'datetime',
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      lineColor: 'hsl(var(--border))',
-      tickColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
+      ...getColumnChartConfig().xAxis,
+      type: 'datetime'
     },
     yAxis: {
+      ...getColumnChartConfig().yAxis,
       title: {
         text: 'Usage',
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      },
-      gridLineColor: 'hsl(var(--border))',
-      labels: {
         style: {
           color: 'hsl(var(--foreground))'
         }
       }
     },
     tooltip: {
-      backgroundColor: 'hsl(var(--background))',
-      borderColor: 'hsl(var(--border))',
-      style: {
-        color: 'hsl(var(--foreground))'
-      },
-      formatter: function() {
-        return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
-                ${this.series.name}: <b>${this.y}</b>`;
-      }
+      formatter: createDateTooltipFormatter('Requests')
     },
     plotOptions: {
       column: {
@@ -131,72 +99,42 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
         name: 'Agent',
         type: 'column',
         data: chartData.agent.map((value, index) => [chartData.dates[index], value]),
-        color: '#F59E0B', // Yellow/Gold
+        color: CHART_COLORS.secondary[0], // Yellow/Gold
       },
       {
         name: 'Cmd+K',
         type: 'column',
         data: chartData.cmdK.map((value, index) => [chartData.dates[index], value]),
-        color: '#EC4899', // Pink
+        color: CHART_COLORS.secondary[1], // Pink
       },
       {
         name: 'Ask',
         type: 'column',
         data: chartData.ask.map((value, index) => [chartData.dates[index], value]),
-        color: '#3B82F6', // Blue
+        color: CHART_COLORS.secondary[2], // Blue
       },
       {
         name: 'Edit',
         type: 'column',
         data: chartData.edit.map((value, index) => [chartData.dates[index], value]),
-        color: '#10B981', // Green
+        color: CHART_COLORS.secondary[3], // Green
       },
       {
         name: 'Bugbot',
         type: 'column',
         data: chartData.bugbot.map((value, index) => [chartData.dates[index], value]),
-        color: '#8B5CF6', // Purple
+        color: CHART_COLORS.secondary[4], // Purple
       },
-    ],
-    credits: {
-      enabled: false
-    },
-    legend: {
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'bottom',
-      y: -10,
-      itemStyle: {
-        color: 'hsl(var(--foreground))'
-      }
-    }
+    ]
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Chat Request Types ({getPeriodText()})</CardTitle>
-          <Popover>
-            <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Breakdown of different chat request types over time.</p>
-              <p className="text-sm text-muted-foreground mt-1">Shows Agent, Cmd+K, Ask, Edit, and Bugbot requests</p>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[420px]">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer
+      title={`Chat Request Types (${getPeriodText()})`}
+      helpText="Breakdown of different chat request types over time. Shows Agent, Cmd+K, Ask, Edit, and Bugbot requests"
+    >
+      <BaseHighchart options={options} />
+    </ChartContainer>
   );
 };
 

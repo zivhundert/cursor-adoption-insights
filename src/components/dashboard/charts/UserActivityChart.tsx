@@ -1,11 +1,12 @@
+
 import { useMemo } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
+import { Options as HighchartsOptions } from 'highcharts';
+import { ChartContainer } from '@/components/common/ChartContainer';
+import { BaseHighchart } from '@/components/common/BaseHighchart';
+import { getColumnChartConfig, CHART_COLORS } from '@/config/chartConfigs';
+import { createDateTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
-import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
+import { type AggregationPeriod } from '@/utils/dataAggregation';
 
 interface UserActivityChartProps {
   data: CursorDataRow[];
@@ -63,104 +64,35 @@ export const UserActivityChart = ({ data, aggregationPeriod }: UserActivityChart
     }
   };
 
-  const options: Highcharts.Options = {
-    chart: {
-      type: 'column',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      },
-      marginBottom: 100,
-    },
-    title: {
-      text: undefined
-    },
+  const options: Partial<HighchartsOptions> = {
+    ...getColumnChartConfig(),
     xAxis: {
-      type: 'datetime',
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      lineColor: 'hsl(var(--border))',
-      tickColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
-    },
-    yAxis: {
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
+      ...getColumnChartConfig().xAxis,
+      type: 'datetime'
     },
     tooltip: {
-      backgroundColor: 'hsl(var(--background))',
-      borderColor: 'hsl(var(--border))',
-      style: {
-        color: 'hsl(var(--foreground))'
-      },
-      formatter: function() {
-        return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
-                Active Users: <b>${this.y}</b>`;
-      }
+      formatter: createDateTooltipFormatter('Active Users')
     },
     plotOptions: {
       column: {
-        color: '#8884d8',
-        borderRadius: 4
+        ...getColumnChartConfig().plotOptions?.column,
+        color: CHART_COLORS.primary[4] // Purple
       }
     },
     series: [{
       name: 'Active Users',
       type: 'column',
       data: chartData
-    }],
-    credits: {
-      enabled: false
-    },
-    legend: {
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'bottom',
-      y: -10,
-      itemStyle: {
-        color: 'hsl(var(--foreground))'
-      }
-    }
+    }]
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Daily Team Engagement ({getPeriodText()})</CardTitle>
-          <Popover>
-            <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Number of active users per {aggregationPeriod}.</p>
-              <p className="text-sm text-muted-foreground mt-1">Counts users where 'Is Active' field is true</p>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[420px]">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer
+      title={`Daily Team Engagement (${getPeriodText()})`}
+      helpText={`Number of active users per ${aggregationPeriod}. Counts users where 'Is Active' field is true`}
+    >
+      <BaseHighchart options={options} />
+    </ChartContainer>
   );
 };
 

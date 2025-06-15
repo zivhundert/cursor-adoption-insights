@@ -1,9 +1,9 @@
+
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
+import { Options as HighchartsOptions } from 'highcharts';
+import { ChartContainer } from '@/components/common/ChartContainer';
+import { BaseHighchart } from '@/components/common/BaseHighchart';
+import { getColumnChartConfig, CHART_COLORS } from '@/config/chartConfigs';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod, formatPeriodLabel } from '@/utils/dataAggregation';
 
@@ -93,11 +93,11 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       let color: string;
       
       if (colorIndex < 0.33) {
-        color = '#F59E0B'; // Amber for older versions
+        color = CHART_COLORS.secondary[0]; // Amber for older versions
       } else if (colorIndex < 0.67) {
-        color = '#3B82F6'; // Blue for middle versions
+        color = CHART_COLORS.secondary[2]; // Blue for middle versions
       } else {
-        color = '#10B981'; // Green for newer versions
+        color = CHART_COLORS.secondary[3]; // Green for newer versions
       }
       
       return {
@@ -112,54 +112,24 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
     return { categories, series };
   }, [data, aggregationPeriod]);
   
-  const options: Highcharts.Options = {
-    chart: {
-      type: 'column',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      }
-    },
-    title: {
-      text: undefined
-    },
+  const options: Partial<HighchartsOptions> = {
+    ...getColumnChartConfig(),
     xAxis: {
+      ...getColumnChartConfig().xAxis,
       categories: chartData.categories,
       title: {
         text: 'Time Period'
-      },
-      gridLineColor: 'hsl(var(--border))',
-      lineColor: 'hsl(var(--border))',
-      tickColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
       }
     },
     yAxis: {
+      ...getColumnChartConfig().yAxis,
       min: 0,
       max: 100,
       title: {
         text: 'Percentage (%)'
       },
-      gridLineColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      },
       stackLabels: {
         enabled: false
-      }
-    },
-    legend: {
-      align: 'center',
-      verticalAlign: 'bottom',
-      layout: 'horizontal',
-      itemStyle: {
-        fontSize: '12px',
-        color: 'hsl(var(--foreground))'
       }
     },
     tooltip: {
@@ -209,36 +179,15 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
         borderWidth: 0
       }
     },
-    series: chartData.series,
-    credits: {
-      enabled: false
-    }
+    series: chartData.series
   };
   
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Client Version Distribution</CardTitle>
-          <Popover>
-            <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Distribution of Cursor client versions used over time.</p>
-              <p className="text-sm text-muted-foreground mt-1">Hover over bars to see which users are using each version.</p>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[420px]">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer
+      title="Client Version Distribution"
+      helpText="Distribution of Cursor client versions used over time. Hover over bars to see which users are using each version."
+    >
+      <BaseHighchart options={options} />
+    </ChartContainer>
   );
 };
