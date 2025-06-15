@@ -2,9 +2,9 @@
 import html2canvas from 'html2canvas';
 
 export const exportToImage = async () => {
-  const element = document.querySelector('[data-export="dashboard-export"]') as HTMLElement;
+  const element = document.querySelector('[data-export="dashboard-main"]') as HTMLElement;
   if (!element) {
-    throw new Error('Dashboard export element not found');
+    throw new Error('Dashboard element not found');
   }
 
   const canvas = await html2canvas(element, {
