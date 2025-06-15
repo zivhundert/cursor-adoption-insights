@@ -10,7 +10,11 @@ export const CHART_COLORS = {
     green: ['#16a34a', '#15803d'],
     purple: ['#7c3aed', '#6d28d9'],
     orange: ['#ea580c', '#c2410c']
-  }
+  },
+  treemap: [
+    '#3B82F6', '#F59E42', '#10B981', '#F43F5E', '#6366F1', '#FBBF24', '#8B5CF6', '#EC4899', '#22D3EE', '#F87171',
+    '#A3E635', '#F472B6', '#FCD34D', '#60A5FA', '#34D399', '#FCA5A5', '#818CF8', '#FDE68A', '#6EE7B7', '#F9A8D4'
+  ]
 };
 
 // Base chart configuration
@@ -138,5 +142,39 @@ export const getPieChartConfig = (): Partial<HighchartsOptions> => ({
         }
       }
     }
+  }
+});
+
+export const getTreemapChartConfig = (): Partial<HighchartsOptions> => ({
+  ...getBaseChartConfig(),
+  chart: {
+    ...getBaseChartConfig().chart,
+    type: 'treemap',
+    marginBottom: 80,
+  },
+  tooltip: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    borderColor: 'transparent',
+    style: {
+      color: '#ffffff'
+    },
+    pointFormat: '<b>{point.name}</b><br/>Usage: {point.percentage}%'
+  },
+  plotOptions: {
+    treemap: {
+      layoutAlgorithm: 'squarified',
+      dataLabels: {
+        enabled: true,
+        format: '{point.name}<br/>{point.percentage}%',
+        style: {
+          color: '#ffffff',
+          textOutline: '1px contrast',
+          fontWeight: 'bold'
+        }
+      }
+    }
+  },
+  legend: {
+    enabled: false
   }
 });

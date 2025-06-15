@@ -1,8 +1,11 @@
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import Highcharts, { Options as HighchartsOptions } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { getBaseChartConfig } from '@/config/chartConfigs';
+
+// Import treemap module
+import 'highcharts/modules/treemap';
 
 interface BaseHighchartProps {
   options: Partial<HighchartsOptions>;
