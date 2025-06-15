@@ -143,14 +143,12 @@ export const DashboardCharts = React.memo(({
   // Helper function to render chart rows
   const renderChartRow = (rowConfig: ChartRowConfig) => {
     const visibleCharts = rowConfig.charts.filter(chart => chart.visible);
-    
     if (visibleCharts.length === 0) return null;
 
     // Handle special case for temporal-and-version row where client version should span full width if day chart is hidden
     if (rowConfig.key === 'temporal-and-version') {
       const dayChartVisible = chartVisibility.dayOfWeekChart && aggregationPeriod === 'day';
       const clientVersionVisible = chartVisibility.clientVersionChart;
-      
       if (clientVersionVisible && !dayChartVisible) {
         return (
           <div key={rowConfig.key} className="grid grid-cols-1">
@@ -161,7 +159,7 @@ export const DashboardCharts = React.memo(({
     }
 
     const gridClass = visibleCharts.some(chart => chart.colSpan === 'full') 
-      ? "grid grid-cols-1" 
+      ? "grid grid-cols-1"
       : "grid grid-cols-1 lg:grid-cols-2 gap-8";
 
     return (
@@ -175,11 +173,13 @@ export const DashboardCharts = React.memo(({
     );
   };
 
+  // Ensure consistent vertical spacing between all chart rows, including after the first rows
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col gap-8">
       {chartRows.map(renderChartRow)}
     </div>
   );
 });
 
 DashboardCharts.displayName = 'DashboardCharts';
+
