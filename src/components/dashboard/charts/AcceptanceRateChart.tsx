@@ -4,7 +4,6 @@ import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
 import { getLineChartConfig } from '@/config/chartConfigs';
-import { createDateTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
 
@@ -55,7 +54,6 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
       min: 0,
       max: 100,
       labels: {
-        ...getLineChartConfig().yAxis?.labels,
         formatter: function() {
           return this.value + '%';
         }
