@@ -20,7 +20,9 @@ export const PerformanceSegmentBadge = ({ segment }: PerformanceSegmentBadgeProp
             </Badge>
           </div>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent
+          className="bg-slate-800 text-slate-100 border border-slate-700 max-w-xs shadow-lg px-4 py-2 rounded-lg font-medium text-sm leading-relaxed"
+        >
           <p>{getSegmentDescription(segment)}</p>
         </TooltipContent>
       </Tooltip>
