@@ -17,7 +17,6 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
     // Filter out aggregated summary rows
     const userRows = data.filter(row => !row.Email.includes('active users'));
     
-    // Group data by date and count versions with user information
     const dateVersionMap = new Map<string, Map<string, { count: number, users: string[] }>>();
     const allVersions = new Set<string>();
     
@@ -46,12 +45,9 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       }
     });
     
-    // Sort dates
     const sortedDates = Array.from(dateVersionMap.keys()).sort();
     
-    // Sort versions (newer versions typically have higher numbers)
     const sortedVersions = Array.from(allVersions).sort((a, b) => {
-      // Extract version numbers for proper sorting
       const aMatch = a.match(/(\d+(?:\.\d+)*)/);
       const bMatch = b.match(/(\d+(?:\.\d+)*)/);
       
@@ -69,7 +65,6 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       return a.localeCompare(b);
     });
     
-    // Calculate percentages for each date
     const categories = sortedDates.map(date => formatPeriodLabel(date, aggregationPeriod));
     
     const series = sortedVersions.map((version, index) => {
@@ -88,16 +83,15 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
         };
       });
       
-      // Color scheme: older versions (gold/amber), middle (blue), newer (green)
       const colorIndex = index / (sortedVersions.length - 1);
       let color: string;
       
       if (colorIndex < 0.33) {
-        color = CHART_COLORS.secondary[0]; // Amber for older versions
+        color = CHART_COLORS.secondary[0];
       } else if (colorIndex < 0.67) {
-        color = CHART_COLORS.secondary[2]; // Blue for middle versions
+        color = CHART_COLORS.secondary[2];
       } else {
-        color = CHART_COLORS.secondary[3]; // Green for newer versions
+        color = CHART_COLORS.secondary[3];
       }
       
       return {
@@ -114,11 +108,23 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
   
   const options: Partial<HighchartsOptions> = {
     ...getColumnChartConfig(),
+    chart: {
+      ...getColumnChartConfig().chart,
+      marginBottom: 150, // Increase bottom margin to prevent overlap
+    },
     xAxis: {
       ...getColumnChartConfig().xAxis,
       categories: chartData.categories,
       title: {
-        text: 'Time Period'
+        text: 'Time Period',
+        margin: 20
+      },
+      labels: {
+        ...getColumnChartConfig().xAxis?.labels,
+        rotation: -45, // Rotate labels to prevent overlap
+        style: {
+          fontSize: '11px'
+        }
       }
     },
     yAxis: {
@@ -130,6 +136,20 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       },
       stackLabels: {
         enabled: false
+      }
+    },
+    legend: {
+      enabled: true,
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'bottom',
+      y: -20, // Position legend above the rotated x-axis labels
+      maxHeight: 60,
+      navigation: {
+        enabled: true
+      },
+      itemStyle: {
+        fontSize: '11px'
       }
     },
     tooltip: {
@@ -150,7 +170,7 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
         
         let usersList = '';
         if (users.length > 0) {
-          const displayUsers = users.slice(0, 10); // Show first 10 users
+          const displayUsers = users.slice(0, 10);
           const remainingCount = users.length - displayUsers.length;
           
           usersList = displayUsers.join('<br/>');
