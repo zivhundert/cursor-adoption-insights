@@ -26,7 +26,11 @@ export const useSortedContributors = (
       case "segment":
         sorted.sort((a, b) => {
           const diff = segmentSortOrder[a.segment] - segmentSortOrder[b.segment];
-          return sortConfig.direction === "asc" ? diff : -diff;
+          if (diff !== 0) {
+            return sortConfig.direction === "asc" ? diff : -diff;
+          }
+          // If equal segment, secondary: acceptedLines DESC (top contributors first within segment)
+          return b.acceptedLines - a.acceptedLines;
         });
         break;
       case "acceptedLines":
