@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
@@ -115,10 +114,6 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
     xAxis: {
       type: 'category',
       categories: chartData.categories,
-      title: {
-        text: 'Time Period',
-        margin: 20
-      },
       labels: {
         rotation: -45,
         style: {
