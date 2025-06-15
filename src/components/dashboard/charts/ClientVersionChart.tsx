@@ -110,22 +110,25 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
     ...getColumnChartConfig(),
     chart: {
       ...getColumnChartConfig().chart,
-      marginBottom: 150, // Increase bottom margin to prevent overlap
+      marginBottom: 150,
     },
     xAxis: {
-      ...getColumnChartConfig().xAxis,
+      type: 'category',
       categories: chartData.categories,
       title: {
         text: 'Time Period',
         margin: 20
       },
       labels: {
-        ...getColumnChartConfig().xAxis?.labels,
-        rotation: -45, // Rotate labels to prevent overlap
+        rotation: -45,
         style: {
-          fontSize: '11px'
+          fontSize: '11px',
+          color: 'hsl(var(--foreground))'
         }
-      }
+      },
+      gridLineColor: 'hsl(var(--border))',
+      lineColor: 'hsl(var(--border))',
+      tickColor: 'hsl(var(--border))'
     },
     yAxis: {
       ...getColumnChartConfig().yAxis,
@@ -143,13 +146,14 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       layout: 'horizontal',
       align: 'center',
       verticalAlign: 'bottom',
-      y: -20, // Position legend above the rotated x-axis labels
+      y: -20,
       maxHeight: 60,
       navigation: {
         enabled: true
       },
       itemStyle: {
-        fontSize: '11px'
+        fontSize: '11px',
+        color: 'hsl(var(--foreground))'
       }
     },
     tooltip: {
