@@ -1,11 +1,12 @@
+
 import { useMemo } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
+import { Options as HighchartsOptions } from 'highcharts';
+import { ChartContainer } from '@/components/common/ChartContainer';
+import { BaseHighchart } from '@/components/common/BaseHighchart';
+import { getLineChartConfig, CHART_COLORS } from '@/config/chartConfigs';
+import { createDateTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
-import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
+import { AggregationPeriod } from '@/utils/dataAggregation';
 
 interface AverageTabsAcceptedChartProps {
   data: CursorDataRow[];
@@ -45,103 +46,36 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
     }
   };
 
-  const options: Highcharts.Options = {
-    chart: {
-      type: 'line',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      },
-      marginBottom: 100,
-    },
-    title: {
-      text: undefined
-    },
-    xAxis: {
-      type: 'datetime',
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      lineColor: 'hsl(var(--border))',
-      tickColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
-    },
-    yAxis: {
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
-    },
+  const options: Partial<HighchartsOptions> = {
+    ...getLineChartConfig(),
     tooltip: {
-      backgroundColor: 'hsl(var(--background))',
-      borderColor: 'hsl(var(--border))',
-      style: {
-        color: 'hsl(var(--foreground))'
-      },
-      formatter: function() {
-        return `Date: ${Highcharts.dateFormat('%Y-%m-%d', this.x as number)}<br/>
-                Average Tabs Accepted: <b>${this.y}</b>`;
-      }
+      formatter: createDateTooltipFormatter('Average Tabs Accepted')
     },
     plotOptions: {
       line: {
-        color: '#7c3aed',
-        marker: { enabled: true },
+        ...getLineChartConfig().plotOptions?.line,
+        color: CHART_COLORS.gradients.purple[0],
+        marker: { 
+          enabled: true,
+          fillColor: CHART_COLORS.gradients.purple[0],
+          lineColor: CHART_COLORS.gradients.purple[1],
+          lineWidth: 2
+        }
       }
     },
     series: [{
       name: 'Average Tabs Accepted',
       type: 'line',
       data: chartData
-    }],
-    credits: {
-      enabled: false
-    },
-    legend: {
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'bottom',
-      y: -10,
-      itemStyle: {
-        color: 'hsl(var(--foreground))'
-      }
-    }
+    }]
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Code Completions per Developer ({getPeriodText()})</CardTitle>
-          <Popover>
-            <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Shows the average Tabs Accepted per user per {getPeriodText().slice(0, -2)} period.</p>
-              <p className="text-sm text-muted-foreground mt-1">Calculated as Total Tabs Accepted ÷ Number of User-Days in period</p>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[420px]">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer
+      title={`Code Completions per Developer (${getPeriodText()})`}
+      helpText={`Shows the average Tabs Accepted per user per ${getPeriodText().slice(0, -2)} period. Calculated as Total Tabs Accepted ÷ Number of User-Days in period`}
+    >
+      <BaseHighchart options={options} />
+    </ChartContainer>
   );
 };

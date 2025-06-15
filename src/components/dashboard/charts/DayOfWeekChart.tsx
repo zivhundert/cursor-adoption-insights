@@ -1,9 +1,10 @@
+
 import { useMemo } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { HelpCircle } from 'lucide-react';
+import { Options as HighchartsOptions } from 'highcharts';
+import { ChartContainer } from '@/components/common/ChartContainer';
+import { BaseHighchart } from '@/components/common/BaseHighchart';
+import { getColumnChartConfig, CHART_COLORS } from '@/config/chartConfigs';
+import { createCategoryTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
 
 interface DayOfWeekChartProps {
@@ -28,106 +29,30 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
     return dayNames.map(day => [day, dayOfWeekActivity.get(day) || 0]);
   }, [data]);
 
-  const options: Highcharts.Options = {
-    chart: {
-      type: 'column',
-      backgroundColor: 'transparent',
-      style: {
-        fontFamily: 'Inter, sans-serif'
-      },
-      marginBottom: 100,
-    },
-    title: {
-      text: undefined
-    },
-    xAxis: {
-      type: 'category',
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      lineColor: 'hsl(var(--border))',
-      tickColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        }
-      }
-    },
-    yAxis: {
-      title: {
-        text: null
-      },
-      gridLineColor: 'hsl(var(--border))',
-      labels: {
-        style: {
-          color: 'hsl(var(--foreground))'
-        },
-        formatter: function() {
-          return this.value?.toLocaleString() || '';
-        }
-      }
-    },
+  const options: Partial<HighchartsOptions> = {
+    ...getColumnChartConfig(),
     tooltip: {
-      backgroundColor: 'hsl(var(--background))',
-      borderColor: 'hsl(var(--border))',
-      style: {
-        color: 'hsl(var(--foreground))'
-      },
-      formatter: function() {
-        return `${this.x}<br/>
-                Accepted Lines: <b>${this.y?.toLocaleString()}</b>`;
-      }
+      formatter: createCategoryTooltipFormatter('Accepted Lines', (value) => value.toLocaleString())
     },
     plotOptions: {
       column: {
-        color: '#0891b2',
-        borderRadius: 4
+        ...getColumnChartConfig().plotOptions?.column,
+        color: CHART_COLORS.gradients.blue[0]
       }
     },
     series: [{
       name: 'Accepted Lines',
       type: 'column',
       data: chartData
-    }],
-    credits: {
-      enabled: false
-    },
-    legend: {
-      layout: 'horizontal',
-      align: 'center',
-      verticalAlign: 'bottom',
-      y: -10,
-      itemStyle: {
-        color: 'hsl(var(--foreground))'
-      }
-    }
+    }]
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-xl font-semibold">Activity by Day of Week</CardTitle>
-          <Popover>
-            <PopoverTrigger>
-              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              <p>Total accepted lines grouped by day of the week.</p>
-              <p className="text-sm text-muted-foreground mt-1">Shows which days have the highest coding activity</p>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[420px]">
-          <HighchartsReact
-            highcharts={Highcharts}
-            options={options}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <ChartContainer
+      title="Activity by Day of Week"
+      helpText="Total accepted lines grouped by day of the week. Shows which days have the highest coding activity"
+    >
+      <BaseHighchart options={options} />
+    </ChartContainer>
   );
 };
