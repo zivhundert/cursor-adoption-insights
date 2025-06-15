@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { CalendarRange, Users, Filter, BarChart3, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,6 +35,11 @@ function extractDateRange(data: CursorDataRow[]) {
   if (validDates.length === 0) return { minDate: undefined, maxDate: undefined };
   validDates.sort(compareAsc);
   return { minDate: validDates[0], maxDate: validDates[validDates.length - 1] };
+}
+
+// Helper to zero out the time – useful for date comparison
+function toDateOnly(d: Date) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
 export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProps) => {
@@ -160,8 +164,8 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                     disabled={date =>
                       !minDate ||
                       !maxDate ||
-                      date.getTime() < minDate.getTime() ||
-                      date.getTime() > maxDate.getTime()
+                      toDateOnly(date) < toDateOnly(minDate) ||
+                      toDateOnly(date) > toDateOnly(maxDate)
                     }
                   />
                   <div className="text-xs text-muted-foreground p-2 pt-0">
