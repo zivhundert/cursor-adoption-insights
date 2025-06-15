@@ -85,7 +85,16 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="linesPerMinute">Team Coding Speed (lines/minute)</Label>
+                  <Label htmlFor="linesPerMinute">
+                    Team Coding Speed (lines/minute)
+                    <span className="block text-xs text-muted-foreground mt-1">
+                      <b>Why this matters:</b> Sets how quickly your team typically codes. Directly impacts time/cost savings. 
+                      <br />
+                      <b>Benchmark:</b> Most teams: 8–20 lines/minute.
+                      <br />
+                      <b>Tips:</b> Survey your team, or start with 10 as a reference.
+                    </span>
+                  </Label>
                   <Input
                     id="linesPerMinute"
                     type="number"
@@ -100,16 +109,22 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                     })}
                     className="mt-1"
                   />
-                  <div className="text-xs text-muted-foreground">
-                    The average number of code lines your team typically writes per minute (used for calculating hours saved). Default: 10
-                  </div>
                   {errors.linesPerMinute && (
                     <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 100.</div>
                   )}
                 </div>
                 
                 <div>
-                  <Label htmlFor="pricePerHour">Developer Hourly Rate ($)</Label>
+                  <Label htmlFor="pricePerHour">
+                    Developer Hourly Rate ($)
+                    <span className="block text-xs text-muted-foreground mt-1">
+                      <b>Why this matters:</b> Sets the rate for financial savings calculations.
+                      <br />
+                      <b>Benchmark:</b> US teams: $80–$120. Global median: $50–$90.
+                      <br />
+                      <b>Tips:</b> Use your payroll or market data for accuracy.
+                    </span>
+                  </Label>
                   <Input
                     id="pricePerHour"
                     type="number"
@@ -124,16 +139,22 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                     })}
                     className="mt-1"
                   />
-                  <div className="text-xs text-muted-foreground">
-                    The hourly rate used for calculating money saved (in USD). Default: $55
-                  </div>
                   {errors.pricePerHour && (
                     <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 500.</div>
                   )}
                 </div>
                 
                 <div>
-                  <Label htmlFor="cursorPricePerUser">Cursor Subscription Cost ($/user/month)</Label>
+                  <Label htmlFor="cursorPricePerUser">
+                    Cursor Subscription Cost ($/user/month)
+                    <span className="block text-xs text-muted-foreground mt-1">
+                      <b>Why this matters:</b> Tracks your AI tool’s subscription spend (factored into ROI).
+                      <br/>
+                      <b>Benchmark:</b> Cursor pro: $32/user/month (default).
+                      <br/>
+                      <b>Tips:</b> Check your actual invoice or SaaS admin for your real cost.
+                    </span>
+                  </Label>
                   <Input
                     id="cursorPricePerUser"
                     type="number"
@@ -148,9 +169,6 @@ export const DashboardSettings: React.FC<DashboardSettingsSheetProps> = ({ open,
                     })}
                     className="mt-1"
                   />
-                  <div className="text-xs text-muted-foreground">
-                    The monthly cost per user for Cursor subscriptions (in USD). Default: $32
-                  </div>
                   {errors.cursorPricePerUser && (
                     <div className="text-red-600 text-xs mt-1">Enter a number between 1 and 200.</div>
                   )}

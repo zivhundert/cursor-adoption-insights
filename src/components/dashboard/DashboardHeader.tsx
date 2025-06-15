@@ -41,8 +41,17 @@ export const DashboardHeader = ({ showReloadButton = false, onReloadCSV }: Dashb
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Your complete dashboard for Cursor team performance, adoption patterns, and productivity insights
+        Unlock your team’s full coding potential. Track real, business-driven metrics, improve productivity, and maximize ROI of AI tools like Cursor. 
       </p>
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
+        <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
+        <ul className="list-disc text-base text-left ml-6 mt-2">
+          <li><b>See cost savings</b> and time saved by your developers using AI.</li>
+          <li><b>Spot your AI Champions</b> and help others grow.</li>
+          <li><b>Adjust settings</b> for accurate ROI reporting (see top right wheel).</li>
+        </ul>
+        <div className="text-sm mt-2">Not sure how to interpret metrics? Hover <span className="inline-block align-text-bottom"><Settings className="h-4 w-4 inline" /></span> or question marks for insights.</div>
+      </div>
       <DashboardSettings open={settingsOpen} onOpenChange={setSettingsOpen} />
     </header>
   );
