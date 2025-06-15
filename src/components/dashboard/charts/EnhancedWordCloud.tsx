@@ -1,7 +1,6 @@
-
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 
 interface WordCloudItem {
@@ -160,17 +159,15 @@ export const EnhancedWordCloud = ({ data, title, helpText, colors }: EnhancedWor
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-xl font-semibold">{title}</CardTitle>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{helpText}</p>
-                <p className="text-sm text-muted-foreground mt-1">Larger text indicates higher usage frequency</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>{helpText}</p>
+              <p className="text-sm text-muted-foreground mt-1">Larger text indicates higher usage frequency</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>
@@ -181,31 +178,29 @@ export const EnhancedWordCloud = ({ data, title, helpText, colors }: EnhancedWor
         >
           {positionedWords.length > 0 ? (
             positionedWords.map((word, index) => (
-              <TooltipProvider key={`${word.text}-${index}`}>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <span
-                      className="absolute cursor-pointer hover:opacity-80 transition-all duration-200 font-semibold select-none hover:scale-110"
-                      style={{
-                        left: `${word.x}px`,
-                        top: `${word.y}px`,
-                        fontSize: `${word.fontSize}px`,
-                        color: word.color,
-                        transform: `rotate(${word.rotation}deg)`,
-                        transformOrigin: 'center',
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
-                      }}
-                      onClick={() => console.log(`Clicked: ${word.text} (${word.value} uses)`)}
-                    >
-                      {word.text}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{word.text}: {word.value} uses</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Popover key={`${word.text}-${index}`}>
+                <PopoverTrigger>
+                  <span
+                    className="absolute cursor-pointer hover:opacity-80 transition-all duration-200 font-semibold select-none hover:scale-110"
+                    style={{
+                      left: `${word.x}px`,
+                      top: `${word.y}px`,
+                      fontSize: `${word.fontSize}px`,
+                      color: word.color,
+                      transform: `rotate(${word.rotation}deg)`,
+                      transformOrigin: 'center',
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                    }}
+                    onClick={() => console.log(`Clicked: ${word.text} (${word.value} uses)`)}
+                  >
+                    {word.text}
+                  </span>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <p>{word.text}: {word.value} uses</p>
+                </PopoverContent>
+              </Popover>
             ))
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">

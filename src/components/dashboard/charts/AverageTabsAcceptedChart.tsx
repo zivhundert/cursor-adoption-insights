@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
@@ -123,17 +123,15 @@ export const AverageTabsAcceptedChart = ({ data, aggregationPeriod }: AverageTab
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-xl font-semibold">Code Completions per Developer ({getPeriodText()})</CardTitle>
-          <TooltipProvider>
-            <UITooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Shows the average Tabs Accepted per user per {getPeriodText().slice(0, -2)} period.</p>
-                <p className="text-sm text-muted-foreground mt-1">Calculated as Total Tabs Accepted ÷ Number of User-Days in period</p>
-              </TooltipContent>
-            </UITooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>Shows the average Tabs Accepted per user per {getPeriodText().slice(0, -2)} period.</p>
+              <p className="text-sm text-muted-foreground mt-1">Calculated as Total Tabs Accepted ÷ Number of User-Days in period</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>

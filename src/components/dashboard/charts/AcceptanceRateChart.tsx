@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { AggregationPeriod } from '@/utils/dataAggregation';
@@ -149,16 +149,14 @@ export const AcceptanceRateChart = ({ data, aggregationPeriod }: AcceptanceRateC
           <CardTitle className="text-xl font-semibold">
             AI Adoption Quality Trend ({getPeriodText()})
           </CardTitle>
-          <TooltipProvider>
-            <UITooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Shows the percentage of suggested lines that were accepted over time.</p>
-              </TooltipContent>
-            </UITooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>Shows the percentage of suggested lines that were accepted over time.</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>

@@ -5,7 +5,7 @@ import 'highcharts/modules/treemap';
 import { CursorDataRow } from '@/pages/Index';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpCircle } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface ProgrammingLanguageTreemapProps {
   data: CursorDataRow[];
@@ -91,16 +91,14 @@ export const ProgrammingLanguageTreemap = ({ data }: ProgrammingLanguageTreemapP
             <CardTitle className="text-lg font-semibold">Programming Language Usage</CardTitle>
             <CardDescription>Visual representation of the most frequently used programming languages</CardDescription>
           </div>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Shows programming languages by usage frequency. Larger rectangles indicate more frequent use.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>Shows programming languages by usage frequency. Larger rectangles indicate more frequent use.</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>

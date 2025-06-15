@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -220,17 +220,15 @@ export const ClientVersionChart = ({ data, aggregationPeriod }: ClientVersionCha
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-xl font-semibold">Client Version Distribution</CardTitle>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Distribution of Cursor client versions used over time.</p>
-                <p className="text-sm text-muted-foreground mt-1">Hover over bars to see which users are using each version.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>Distribution of Cursor client versions used over time.</p>
+              <p className="text-sm text-muted-foreground mt-1">Hover over bars to see which users are using each version.</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>

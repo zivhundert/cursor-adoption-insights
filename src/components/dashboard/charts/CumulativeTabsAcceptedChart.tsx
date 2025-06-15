@@ -1,8 +1,7 @@
-
 import { useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { formatPeriodLabel, type AggregationPeriod } from '@/utils/dataAggregation';
@@ -79,17 +78,15 @@ export const CumulativeTabsAcceptedChart = ({ data, aggregationPeriod }: Cumulat
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-xl font-semibold">Cumulative Tabs Accepted ({getPeriodText()})</CardTitle>
-          <TooltipProvider>
-            <UITooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Shows the running total of Tabs Accepted over time aggregated by {getPeriodText()} periods.</p>
-                <p className="text-sm text-muted-foreground mt-1">Area chart makes cumulative growth more visually apparent</p>
-              </TooltipContent>
-            </UITooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>Shows the running total of Tabs Accepted over time aggregated by {getPeriodText()} periods.</p>
+              <p className="text-sm text-muted-foreground mt-1">Area chart makes cumulative growth more visually apparent</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>

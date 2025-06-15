@@ -1,9 +1,8 @@
-
 import { useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { HelpCircle } from 'lucide-react';
 import { CursorDataRow } from '@/pages/Index';
 import { type AggregationPeriod } from '@/utils/dataAggregation';
@@ -178,17 +177,15 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
       <CardHeader>
         <div className="flex items-center gap-2">
           <CardTitle className="text-xl font-semibold">Chat Request Types ({getPeriodText()})</CardTitle>
-          <TooltipProvider>
-            <UITooltip>
-              <TooltipTrigger>
-                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Breakdown of different chat request types over time.</p>
-                <p className="text-sm text-muted-foreground mt-1">Shows Agent, Cmd+K, Ask, Edit, and Bugbot requests</p>
-              </TooltipContent>
-            </UITooltip>
-          </TooltipProvider>
+          <Popover>
+            <PopoverTrigger>
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>Breakdown of different chat request types over time.</p>
+              <p className="text-sm text-muted-foreground mt-1">Shows Agent, Cmd+K, Ask, Edit, and Bugbot requests</p>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
       <CardContent>
