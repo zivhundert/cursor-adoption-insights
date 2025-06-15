@@ -12,10 +12,13 @@ export const PerformanceSegmentBadge = ({ segment }: PerformanceSegmentBadgeProp
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>
-          <div className="flex items-center gap-2">
+        <TooltipTrigger asChild>
+          {/* Use group to enable group-hover and group-focus */}
+          <div className="flex items-center gap-2 group cursor-pointer">
             {getSegmentIcon(segment)}
-            <Badge className={getSegmentBadgeStyle(segment)}>
+            <Badge
+              className={`${getSegmentBadgeStyle(segment)} transition-colors duration-150 group-hover:text-white group-focus:text-white`}
+            >
               {segment}
             </Badge>
           </div>
