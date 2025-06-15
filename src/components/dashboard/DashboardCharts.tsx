@@ -1,4 +1,5 @@
 
+import React, { useMemo } from 'react';
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
 import { AverageAskRequestsChart } from './charts/AverageAskRequestsChart';
@@ -22,84 +23,163 @@ interface DashboardChartsProps {
   selectedUsers?: string[];
 }
 
-export const DashboardCharts = ({ data, originalData, baseFilteredData, aggregationPeriod, selectedUsers }: DashboardChartsProps) => {
+interface ChartRowConfig {
+  key: string;
+  charts: Array<{
+    component: React.ReactNode;
+    visible: boolean;
+    colSpan?: 'full' | 'half';
+  }>;
+}
+
+export const DashboardCharts = React.memo(({ 
+  data, 
+  originalData, 
+  baseFilteredData, 
+  aggregationPeriod, 
+  selectedUsers 
+}: DashboardChartsProps) => {
   const { settings } = useSettings();
   const { chartVisibility } = settings;
   const isFiltered = selectedUsers && selectedUsers.length > 0;
 
-  const modelAndChatChartsVisible = chartVisibility.modelUsageChart || chartVisibility.chatRequestTypesChart;
-  const averageChartsVisible = chartVisibility.averageAskRequestsChart || chartVisibility.averageTabsAcceptedChart;
-  const visualizationChartsVisible = chartVisibility.tabExtensionWordCloud || chartVisibility.programmingLanguageTreemap;
-  const dayOfWeekAndClientChartsVisible = (chartVisibility.dayOfWeekChart && aggregationPeriod === 'day') || chartVisibility.clientVersionChart;
+  // Memoize chart configurations to prevent unnecessary re-renders
+  const chartRows = useMemo((): ChartRowConfig[] => [
+    {
+      key: 'main-charts',
+      charts: [
+        {
+          component: <CumulativeChart baseFilteredData={baseFilteredData} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.cumulativeChart,
+          colSpan: 'full'
+        },
+        {
+          component: <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.acceptanceRateChart,
+          colSpan: 'full'
+        }
+      ]
+    },
+    {
+      key: 'model-and-chat',
+      charts: [
+        {
+          component: <ModelUsageChart data={data} />,
+          visible: chartVisibility.modelUsageChart,
+          colSpan: 'half'
+        },
+        {
+          component: <ChatRequestTypesChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.chatRequestTypesChart,
+          colSpan: 'half'
+        }
+      ]
+    },
+    {
+      key: 'average-charts',
+      charts: [
+        {
+          component: <AverageAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.averageAskRequestsChart,
+          colSpan: 'half'
+        },
+        {
+          component: <AverageTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.averageTabsAcceptedChart,
+          colSpan: 'half'
+        }
+      ]
+    },
+    {
+      key: 'visualization-charts',
+      charts: [
+        {
+          component: <TabExtensionWordCloud data={data} />,
+          visible: chartVisibility.tabExtensionWordCloud,
+          colSpan: 'half'
+        },
+        {
+          component: <ProgrammingLanguageTreemap data={data} />,
+          visible: chartVisibility.programmingLanguageTreemap,
+          colSpan: 'half'
+        }
+      ]
+    },
+    {
+      key: 'temporal-and-version',
+      charts: [
+        {
+          component: <DayOfWeekChart data={data} />,
+          visible: chartVisibility.dayOfWeekChart && aggregationPeriod === 'day',
+          colSpan: 'half'
+        },
+        {
+          component: <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />,
+          visible: chartVisibility.clientVersionChart,
+          colSpan: 'half'
+        }
+      ]
+    },
+    {
+      key: 'contributors-table',
+      charts: [
+        {
+          component: <TopContributorsTable data={data} isFiltered={isFiltered} />,
+          visible: chartVisibility.topContributorsTable,
+          colSpan: 'full'
+        }
+      ]
+    }
+  ], [
+    data, 
+    originalData, 
+    baseFilteredData, 
+    aggregationPeriod, 
+    selectedUsers, 
+    isFiltered, 
+    chartVisibility
+  ]);
+
+  // Helper function to render chart rows
+  const renderChartRow = (rowConfig: ChartRowConfig) => {
+    const visibleCharts = rowConfig.charts.filter(chart => chart.visible);
+    
+    if (visibleCharts.length === 0) return null;
+
+    // Handle special case for temporal-and-version row where client version should span full width if day chart is hidden
+    if (rowConfig.key === 'temporal-and-version') {
+      const dayChartVisible = chartVisibility.dayOfWeekChart && aggregationPeriod === 'day';
+      const clientVersionVisible = chartVisibility.clientVersionChart;
+      
+      if (clientVersionVisible && !dayChartVisible) {
+        return (
+          <div key={rowConfig.key} className="grid grid-cols-1">
+            <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />
+          </div>
+        );
+      }
+    }
+
+    const gridClass = visibleCharts.some(chart => chart.colSpan === 'full') 
+      ? "grid grid-cols-1" 
+      : "grid grid-cols-1 lg:grid-cols-2 gap-8";
+
+    return (
+      <div key={rowConfig.key} className={gridClass}>
+        {visibleCharts.map((chart, index) => (
+          <div key={index} className={chart.colSpan === 'full' ? 'lg:col-span-2' : ''}>
+            {chart.component}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-8">
-      {/* Main cumulative chart */}
-      {chartVisibility.cumulativeChart && (
-        <CumulativeChart baseFilteredData={baseFilteredData} aggregationPeriod={aggregationPeriod} />
-      )}
-      
-      {/* Acceptance Rate chart */}
-      {chartVisibility.acceptanceRateChart && (
-        <AcceptanceRateChart data={data} aggregationPeriod={aggregationPeriod} />
-      )}
-      
-      {/* Second row - Model Usage and Chat Request Types charts */}
-      {modelAndChatChartsVisible && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {chartVisibility.modelUsageChart && (
-            <ModelUsageChart data={data} />
-          )}
-          {chartVisibility.chatRequestTypesChart && (
-            <ChatRequestTypesChart data={data} aggregationPeriod={aggregationPeriod} />
-          )}
-        </div>
-      )}
-      
-      {/* Third row - Average charts */}
-      {averageChartsVisible && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {chartVisibility.averageAskRequestsChart && (
-            <AverageAskRequestsChart data={data} aggregationPeriod={aggregationPeriod} />
-          )}
-          {chartVisibility.averageTabsAcceptedChart && (
-            <AverageTabsAcceptedChart data={data} aggregationPeriod={aggregationPeriod} />
-          )}
-        </div>
-      )}
-
-      {/* Fourth row - Treemap and Word Cloud visualizations */}
-      {visualizationChartsVisible && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {chartVisibility.tabExtensionWordCloud && (
-            <TabExtensionWordCloud data={data} />
-          )}
-          {chartVisibility.programmingLanguageTreemap && (
-            <ProgrammingLanguageTreemap data={data} />
-          )}
-        </div>
-      )}
-      
-      {/* Fifth row - Day of Week Chart and Client Version Chart */}
-      {dayOfWeekAndClientChartsVisible && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {chartVisibility.dayOfWeekChart && aggregationPeriod === 'day' && (
-            <DayOfWeekChart data={data} />
-          )}
-          {chartVisibility.clientVersionChart && (
-            <div className={chartVisibility.dayOfWeekChart && aggregationPeriod === 'day' ? "lg:col-span-1" : "lg:col-span-2"}>
-              <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Sixth row - AI Adoption Champions Table (full width) */}
-      {chartVisibility.topContributorsTable && (
-        <div className="grid grid-cols-1">
-          <TopContributorsTable data={data} isFiltered={isFiltered} />
-        </div>
-      )}
+      {chartRows.map(renderChartRow)}
     </div>
   );
-};
+});
+
+DashboardCharts.displayName = 'DashboardCharts';
