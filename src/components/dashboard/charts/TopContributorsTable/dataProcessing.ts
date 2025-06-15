@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { CursorDataRow } from '@/pages/Index';
 import { ContributorWithSegment } from './types';
@@ -29,7 +30,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
           askRequests: 0,
           agentRequests: 0,
           userROI: 0,
-          segment: 'AI Starter', // default to new Option 2
+          segment: 'Starter', // badge name without "AI"
         });
       }
       
@@ -57,7 +58,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
         ? (individualMoneySaved / annualCursorCostPerUser) * 100
         : 0;
       
-      // Then determine segment using ROI
+      // Determine segment using updated badge names
       stats.segment = getPerformanceSegment(stats.acceptanceRate, stats.chatTotalApplies, stats.userROI);
     });
     

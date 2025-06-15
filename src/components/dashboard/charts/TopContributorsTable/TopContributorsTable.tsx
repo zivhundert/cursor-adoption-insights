@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHeader, TableRow } from '@/components/ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -36,7 +35,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CardTitle className="text-xl font-semibold">AI Adoption Champions</CardTitle>
+            <CardTitle className="text-xl font-semibold">Adoption Champions</CardTitle>
             <Popover>
               <PopoverTrigger>
                 <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground hover:scale-110 transition-all cursor-pointer" />
@@ -48,10 +47,10 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                   <p className="text-sm text-muted-foreground">User ROI = (Individual Money Saved / Annual Cursor Cost per User) × 100</p>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p><strong>Performance Segments:</strong></p>
-                    <p>🚀 <span className="font-medium">AI Champion:</span> Top-tier AI adopter, leading by example and delivering outstanding value.</p>
-                    <p>✨ <span className="font-medium">AI Producer:</span> Active and effective, regularly using AI to drive efficiency.</p>
-                    <p>📈 <span className="font-medium">AI Explorer:</span> Exploring AI, growing skills, and boosting your results.</p>
-                    <p>🌱 <span className="font-medium">AI Starter:</span> Just getting started on your AI productivity journey.</p>
+                    <p>🚀 <span className="font-medium">Champion:</span> Top-tier adopter, leading by example and delivering outstanding value.</p>
+                    <p>✨ <span className="font-medium">Producer:</span> Active and effective, regularly using AI to drive efficiency.</p>
+                    <p>📈 <span className="font-medium">Explorer:</span> Exploring new tools, growing skills, and boosting your results.</p>
+                    <p>🌱 <span className="font-medium">Starter:</span> Just getting started on your productivity journey.</p>
                   </div>
                   <div className="text-sm text-muted-foreground">
                     <p><strong>Metrics include:</strong></p>

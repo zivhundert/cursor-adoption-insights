@@ -1,11 +1,12 @@
+
 import { CursorDataRow } from '@/pages/Index';
 
-// Option 2: Consistent, motivational, AI-focused names.
+// Badge levels: Champion, Producer, Explorer, Starter (no "AI" prefix)
 export type PerformanceSegment =
-  | 'AI Champion'
-  | 'AI Producer'
-  | 'AI Explorer'
-  | 'AI Starter';
+  | 'Champion'
+  | 'Producer'
+  | 'Explorer'
+  | 'Starter';
 
 export interface ContributorWithSegment {
   email: string;
@@ -54,8 +55,8 @@ export const columnLabels: Record<SortableColumn, string> = {
 };
 
 export const segmentSortOrder: Record<PerformanceSegment, number> = {
-  'AI Champion': 0,
-  'AI Producer': 1,
-  'AI Explorer': 2,
-  'AI Starter': 3,
+  'Champion': 0,
+  'Producer': 1,
+  'Explorer': 2,
+  'Starter': 3,
 };
