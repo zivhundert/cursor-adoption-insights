@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { CumulativeChart } from './charts/CumulativeChart';
 import { AcceptanceRateChart } from './charts/AcceptanceRateChart';
@@ -151,21 +150,31 @@ export const DashboardCharts = React.memo(({
       const clientVersionVisible = chartVisibility.clientVersionChart;
       if (clientVersionVisible && !dayChartVisible) {
         return (
-          <div key={rowConfig.key} className="grid grid-cols-1">
+          <div key={rowConfig.key}>
             <ClientVersionChart data={data} aggregationPeriod={aggregationPeriod} />
           </div>
         );
       }
     }
 
-    const gridClass = visibleCharts.some(chart => chart.colSpan === 'full') 
-      ? "grid grid-cols-1"
-      : "grid grid-cols-1 lg:grid-cols-2 gap-8";
+    // For rows with full-width charts, use a simple container
+    if (visibleCharts.some(chart => chart.colSpan === 'full')) {
+      return (
+        <div key={rowConfig.key}>
+          {visibleCharts.map((chart, index) => (
+            <div key={index} className={chart.colSpan === 'full' ? 'mb-8 last:mb-0' : ''}>
+              {chart.component}
+            </div>
+          ))}
+        </div>
+      );
+    }
 
+    // For half-width charts, use grid layout
     return (
-      <div key={rowConfig.key} className={gridClass}>
+      <div key={rowConfig.key} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {visibleCharts.map((chart, index) => (
-          <div key={index} className={chart.colSpan === 'full' ? 'lg:col-span-2' : ''}>
+          <div key={index}>
             {chart.component}
           </div>
         ))}
