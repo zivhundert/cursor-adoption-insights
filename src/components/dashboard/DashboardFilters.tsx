@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { CalendarRange, Users, Filter, BarChart3, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -143,11 +142,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                       format(dateRange.from, "LLL dd, y")
                     )
                   ) : (
-                    <span>
-                      {minDate && maxDate
-                        ? `Pick between ${format(minDate, "LLL dd, y")} and ${format(maxDate, "LLL dd, y")}`
-                        : "Pick a date range"}
-                    </span>
+                    <span>Pick a date range</span>
                   )}
                 </Button>
               </PopoverTrigger>
@@ -156,7 +151,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                   <CalendarComponent
                     initialFocus
                     mode="range"
-                    defaultMonth={dateRange?.from || minDate}
+                    defaultMonth={minDate}
                     selected={dateRange}
                     onSelect={setDateRange}
                     numberOfMonths={2}
@@ -169,9 +164,14 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                     }
                   />
                   <div className="text-xs text-muted-foreground p-2 pt-0">
-                    <span>
-                      Data available between <b>{dataRangeLabel}</b>
-                    </span>
+                    {minDate && maxDate && (
+                      <span>
+                        Data available between <b>{dataRangeLabel}</b>
+                      </span>
+                    )}
+                    {(!minDate || !maxDate) && (
+                      <span>No data dates available.</span>
+                    )}
                   </div>
                 </div>
               </PopoverContent>
