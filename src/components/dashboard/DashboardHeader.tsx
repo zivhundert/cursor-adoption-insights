@@ -1,9 +1,11 @@
-import { BarChart3, RefreshCcw, Settings } from 'lucide-react';
+import { BarChart3, RefreshCcw, Settings, Download, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { LinkedInFollowButton } from "@/components/LinkedInFollowButton";
+import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useState } from "react";
 import { DashboardSettings } from "./DashboardSettings";
-import { ExportButton } from "./ExportButton";
+import { useToast } from '@/hooks/use-toast';
+import { exportToImage } from '@/utils/exportUtils';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
@@ -11,33 +13,119 @@ interface DashboardHeaderProps {
   showExportButton?: boolean;
 }
 
+const LINKEDIN_URL = "https://www.linkedin.com/in/zivhundert/";
+
 export const DashboardHeader = ({ 
   showReloadButton = false, 
   onReloadCSV,
   showExportButton = false
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
+
+  const handleExportImage = async () => {
+    setIsExporting(true);
+    try {
+      await exportToImage();
+      toast({
+        title: "Image Export Successful",
+        description: "Your dashboard has been downloaded as an image.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting the dashboard image.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <header className="text-center relative">
-      <div className="absolute top-0 right-0 flex items-center gap-2 z-10">
-        {showReloadButton && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onReloadCSV}
-            className="flex items-center gap-2"
-          >
-            <RefreshCcw className="w-4 h-4" />
-            Load New CSV
-          </Button>
-        )}
-        {showExportButton && <ExportButton />}
-        <LinkedInFollowButton />
-        <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Dashboard settings" className="p-2">
-          <Settings className="w-5 h-5 text-muted-foreground" />
-        </Button>
+      <div className="absolute top-0 right-0 z-10">
+        <div className="flex items-center bg-background/80 backdrop-blur-sm border rounded-lg p-1 shadow-sm">
+          {showReloadButton && (
+            <>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onReloadCSV}
+                    className="h-8 w-8"
+                  >
+                    <RefreshCcw className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <span>Load New CSV</span>
+                </TooltipContent>
+              </Tooltip>
+              <Separator orientation="vertical" className="h-6 mx-1" />
+            </>
+          )}
+          
+          {showExportButton && (
+            <>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={isExporting}
+                    onClick={handleExportImage}
+                    className="h-8 w-8"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <span>{isExporting ? 'Exporting...' : 'Export as Image'}</span>
+                </TooltipContent>
+              </Tooltip>
+              <Separator orientation="vertical" className="h-6 mx-1" />
+            </>
+          )}
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}
+              >
+                <Linkedin className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <span>Follow on LinkedIn</span>
+            </TooltipContent>
+          </Tooltip>
+          
+          <Separator orientation="vertical" className="h-6 mx-1" />
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setSettingsOpen(true)}
+                className="h-8 w-8"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <span>Dashboard Settings</span>
+            </TooltipContent>
+          </Tooltip>
+        </div>
       </div>
+      
       <div className="flex items-center justify-center gap-3 mb-4">
         <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
           <BarChart3 className="w-6 h-6 text-white" />
@@ -47,7 +135,7 @@ export const DashboardHeader = ({
         </h1>
       </div>
       <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        Unlock your team’s full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
+        Unlock your team's full coding potential. Track real, business-driven metrics, improve productivity, and maximize the ROI of AI-assisted development with Cursor.
       </p>
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-xl mx-auto mt-4 mb-2 text-blue-900">
         <strong>Welcome!</strong> This dashboard reveals how AI accelerates your team. 
