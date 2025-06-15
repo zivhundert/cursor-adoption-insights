@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
@@ -76,7 +77,6 @@ const Index = () => {
   const handleFiltersChange = (filters: {
     dateRange: { from?: Date; to?: Date };
     selectedUsers: string[];
-    selectedModel: string;
     aggregationPeriod: AggregationPeriod;
   }) => {
     let filtered = [...data];
@@ -94,11 +94,6 @@ const Index = () => {
     // Filter by users (multiple selection)
     if (filters.selectedUsers.length > 0) {
       filtered = filtered.filter(row => filters.selectedUsers.includes(row.Email));
-    }
-
-    // Filter by model
-    if (filters.selectedModel !== 'all') {
-      filtered = filtered.filter(row => row['Most Used Model'] === filters.selectedModel);
     }
 
     // Store base filtered data (without time period aggregation)
@@ -128,7 +123,7 @@ const Index = () => {
         {data.length === 0 && (
           <div className="mt-12">
             <div className="bg-teal-50 border border-teal-200 rounded-xl px-6 py-5 mb-8 max-w-2xl mx-auto text-teal-900 text-base flex flex-col gap-2">
-              <b>First time here?</b> Upload your team’s exported Cursor usage file above to start.
+              <b>First time here?</b> Upload your team's exported Cursor usage file above to start.
               <ul className="list-disc ml-6 text-sm">
                 <li>This dashboard will instantly analyze team AI usage, cost savings, and opportunities for improvement.</li>
                 <li>Want tips? <span className="font-semibold">Hover any <span className="inline-block align-text-bottom bg-gray-200 rounded px-1">?</span> or <span className="inline-block align-text-bottom"><Settings className="h-3 w-3 inline" /></span></span> for actionable explanations.</li>

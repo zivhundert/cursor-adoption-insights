@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { CalendarRange, Users, Filter, BarChart3, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +19,6 @@ interface DashboardFiltersProps {
   onFiltersChange: (filters: {
     dateRange: { from?: Date; to?: Date };
     selectedUsers: string[];
-    selectedModel: string;
     aggregationPeriod: AggregationPeriod;
   }) => void;
 }
@@ -37,7 +37,7 @@ function extractDateRange(data: CursorDataRow[]) {
   return { minDate: validDates[0], maxDate: validDates[validDates.length - 1] };
 }
 
-// Helper to zero out the time – useful for date comparison
+// Helper to zero out the time – useful for date comparison
 function toDateOnly(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
@@ -45,12 +45,10 @@ function toDateOnly(d: Date) {
 export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProps) => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState<string>('all');
   const [aggregationPeriod, setAggregationPeriod] = useState<AggregationPeriod>('day');
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   const uniqueUsers = Array.from(new Set(data.map(row => row.Email))).sort();
-  const uniqueModels = Array.from(new Set(data.map(row => row['Most Used Model']).filter(Boolean))).sort();
 
   // Calculate minDate and maxDate only when data changes
   const { minDate, maxDate } = useMemo(() => extractDateRange(data), [data]);
@@ -89,7 +87,6 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
         to: dateRange?.to,
       },
       selectedUsers,
-      selectedModel,
       aggregationPeriod,
     });
   };
@@ -97,12 +94,10 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
   const clearFilters = () => {
     setDateRange(undefined);
     setSelectedUsers([]);
-    setSelectedModel('all');
     setAggregationPeriod('day');
     onFiltersChange({
       dateRange: {},
       selectedUsers: [],
-      selectedModel: 'all',
       aggregationPeriod: 'day',
     });
   };
@@ -122,7 +117,7 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Date Range Picker */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Date Range</label>
@@ -284,24 +279,6 @@ export const DashboardFilters = ({ data, onFiltersChange }: DashboardFiltersProp
                 </div>
               </PopoverContent>
             </Popover>
-          </div>
-
-          {/* Model Filter */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Model</label>
-            <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select model" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Models</SelectItem>
-                {uniqueModels.map(model => (
-                  <SelectItem key={model} value={model}>
-                    {model}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Action Buttons */}
