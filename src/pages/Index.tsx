@@ -1,4 +1,3 @@
-
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
@@ -11,18 +10,26 @@ import { Settings } from 'lucide-react';
 
 export interface CursorDataRow {
   Date: string;
-  Email: string;
   'User ID': string;
+  Email: string;
   'Is Active': string;
-  'Ask Requests': string;
-  'Edit Requests': string;
-  'Agent Requests': string;
-  'Bugbot Requests': string;
-  'Cmd+K Requests': string;
-  'API Requests': string;
   'Chat Suggested Lines Added': string;
+  'Chat Suggested Lines Deleted': string;
   'Chat Accepted Lines Added': string;
+  'Chat Accepted Lines Deleted': string;
+  'Chat Total Applies': string;
+  'Chat Total Accepts': string;
+  'Chat Total Rejects': string;
+  'Chat Tabs Shown': string;
   'Tabs Accepted': string;
+  'Edit Requests': string;
+  'Ask Requests': string;
+  'Agent Requests': string;
+  'Cmd+K Usages': string;
+  'Subscription Included Reqs': string;
+  'API Key Reqs': string;
+  'Usage Based Reqs': string;
+  'Bugbot Usages': string;
   'Most Used Model': string;
   'Most Used Apply Extension': string;
   'Most Used Tab Extension': string;

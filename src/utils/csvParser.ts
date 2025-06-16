@@ -1,4 +1,3 @@
-
 import { CursorDataRow } from '@/pages/Index';
 
 export interface ParseResult {
@@ -37,10 +36,15 @@ export const parseCSVFile = async (file: File): Promise<ParseResult> => {
 
 export const validateCSVHeaders = (headers: string[]): boolean => {
   const requiredHeaders = [
-    'Date', 'Email', 'User ID', 'Is Active', 'Ask Requests', 'Edit Requests',
-    'Agent Requests', 'Bugbot Requests', 'Cmd+K Requests', 'API Requests',
-    'Chat Suggested Lines Added', 'Chat Accepted Lines Added', 'Tabs Accepted',
-    'Most Used Model', 'Most Used Apply Extension', 'Most Used Tab Extension'
+    'Date', 'User ID', 'Email', 'Is Active', 
+    'Chat Suggested Lines Added', 'Chat Suggested Lines Deleted',
+    'Chat Accepted Lines Added', 'Chat Accepted Lines Deleted',
+    'Chat Total Applies', 'Chat Total Accepts', 'Chat Total Rejects',
+    'Chat Tabs Shown', 'Tabs Accepted', 'Edit Requests', 'Ask Requests',
+    'Agent Requests', 'Cmd+K Usages', 'Subscription Included Reqs',
+    'API Key Reqs', 'Usage Based Reqs', 'Bugbot Usages',
+    'Most Used Model', 'Most Used Apply Extension', 'Most Used Tab Extension',
+    'Client Version'
   ];
   
   return requiredHeaders.every(required => headers.includes(required));

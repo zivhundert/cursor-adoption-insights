@@ -41,10 +41,10 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
       
       const dayData = periodData.get(date)!;
       dayData.agent += parseInt(row['Agent Requests']) || 0;
-      dayData.cmdK += parseInt(row['Cmd+K Requests']) || 0;
+              dayData.cmdK += parseInt(row['Cmd+K Usages']) || 0;
       dayData.ask += parseInt(row['Ask Requests']) || 0;
       dayData.edit += parseInt(row['Edit Requests']) || 0;
-      dayData.bugbot += parseInt(row['Bugbot Requests']) || 0;
+              dayData.bugbot += parseInt(row['Bugbot Usages']) || 0;
     });
 
     // Convert to chart series format
@@ -131,7 +131,7 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
   return (
     <ChartContainer
       title={`Chat Request Types (${getPeriodText()})`}
-      helpText="Breakdown of different chat request types over time. Shows Agent, Cmd+K, Ask, Edit, and Bugbot requests"
+                helpText="Breakdown of different chat request types over time. Shows Agent, Cmd+K, Ask, Edit, and Bugbot usages"
     >
       <BaseHighchart options={options} />
     </ChartContainer>

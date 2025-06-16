@@ -68,9 +68,9 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
     agg.askRequests += parseInt(row['Ask Requests']) || 0;
     agg.editRequests += parseInt(row['Edit Requests']) || 0;
     agg.agentRequests += parseInt(row['Agent Requests']) || 0;
-    agg.bugbotRequests += parseInt(row['Bugbot Requests']) || 0;
-    agg.cmdKRequests += parseInt(row['Cmd+K Requests']) || 0;
-    agg.apiRequests += parseInt(row['API Requests']) || 0;
+    agg.bugbotRequests += parseInt(row['Bugbot Usages']) || 0;
+    agg.cmdKRequests += parseInt(row['Cmd+K Usages']) || 0;
+    agg.apiRequests += parseInt(row['API Key Reqs']) || 0;
     agg.suggestedLines += parseInt(row['Chat Suggested Lines Added']) || 0;
     agg.acceptedLines += parseInt(row['Chat Accepted Lines Added']) || 0;
     agg.tabsAccepted += parseInt(row['Tabs Accepted']) || 0;
@@ -115,21 +115,30 @@ export const aggregateDataByPeriod = (data: CursorDataRow[], period: Aggregation
     // Add the aggregated row for time-series charts
     result.push({
       Date: agg.date,
-      Email: `${agg.activeUsers.size} active users`, // Special marker for aggregated data
       'User ID': '',
+      Email: `${agg.activeUsers.size} active users`, // Special marker for aggregated data
       'Is Active': agg.activeUsers.size > 0 ? 'true' : 'false',
-      'Ask Requests': agg.askRequests.toString(),
-      'Edit Requests': agg.editRequests.toString(),
-      'Agent Requests': agg.agentRequests.toString(),
-      'Bugbot Requests': agg.bugbotRequests.toString(),
-      'Cmd+K Requests': agg.cmdKRequests.toString(),
-      'API Requests': agg.apiRequests.toString(),
       'Chat Suggested Lines Added': agg.suggestedLines.toString(),
+      'Chat Suggested Lines Deleted': '0', // Default for new column
       'Chat Accepted Lines Added': agg.acceptedLines.toString(),
+      'Chat Accepted Lines Deleted': '0', // Default for new column
+      'Chat Total Applies': '0', // Default for new column
+      'Chat Total Accepts': '0', // Default for new column
+      'Chat Total Rejects': '0', // Default for new column
+      'Chat Tabs Shown': '0', // Default for new column
       'Tabs Accepted': agg.tabsAccepted.toString(),
+      'Edit Requests': agg.editRequests.toString(),
+      'Ask Requests': agg.askRequests.toString(),
+      'Agent Requests': agg.agentRequests.toString(),
+      'Cmd+K Usages': agg.cmdKRequests.toString(),
+      'Subscription Included Reqs': '0', // Default for new column
+      'API Key Reqs': agg.apiRequests.toString(),
+      'Usage Based Reqs': '0', // Default for new column
+      'Bugbot Usages': agg.bugbotRequests.toString(),
       'Most Used Model': mostUsedModel,
       'Most Used Apply Extension': mostUsedApplyExt,
       'Most Used Tab Extension': mostUsedTabExt,
+      'Client Version': '', // Default for new column
     } as CursorDataRow);
 
     // Add all individual user records for components that need them
