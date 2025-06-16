@@ -15,7 +15,7 @@ export const ContributorRow = ({ contributor }: ContributorRowProps) => {
     const baseClass = "text-right transition-colors duration-200";
     const isHighlighted = highlightedColumns.includes(columnKey) && hoveredEmail === contributor.email;
     return isHighlighted 
-      ? `${baseClass} bg-blue-50 dark:bg-blue-900/20` 
+      ? `${baseClass} bg-green-200/70 dark:bg-green-900/20` 
       : baseClass;
   };
 
