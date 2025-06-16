@@ -17,6 +17,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
       const editRequests = parseInt(row['Edit Requests']) || 0;
       const askRequests = parseInt(row['Ask Requests']) || 0;
       const agentRequests = parseInt(row['Agent Requests']) || 0;
+      const chatTotalApplies = parseInt(row['Chat Total Applies']) || 0;
       
       if (!userStats.has(email)) {
         userStats.set(email, {
@@ -37,7 +38,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
       const stats = userStats.get(email)!;
       stats.acceptedLines += acceptedLines;
       stats.suggestedLines += suggestedLines;
-      stats.chatTotalApplies += acceptedLines;
+      stats.chatTotalApplies += chatTotalApplies;
       stats.tabsAccepted += tabsAccepted;
       stats.editRequests += editRequests;
       stats.askRequests += askRequests;
