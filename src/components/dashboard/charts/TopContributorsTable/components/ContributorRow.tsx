@@ -9,11 +9,11 @@ interface ContributorRowProps {
 }
 
 export const ContributorRow = ({ contributor }: ContributorRowProps) => {
-  const { highlightedColumns } = useTableHover();
+  const { highlightedColumns, hoveredEmail } = useTableHover();
 
   const getCellClassName = (columnKey: string) => {
     const baseClass = "text-right transition-colors duration-200";
-    const isHighlighted = highlightedColumns.includes(columnKey);
+    const isHighlighted = highlightedColumns.includes(columnKey) && hoveredEmail === contributor.email;
     return isHighlighted 
       ? `${baseClass} bg-blue-50 dark:bg-blue-900/20` 
       : baseClass;

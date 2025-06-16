@@ -11,14 +11,16 @@ interface PerformanceSegmentBadgeProps {
 }
 
 export const PerformanceSegmentBadge = ({ segment, contributor }: PerformanceSegmentBadgeProps) => {
-  const { setHighlightedColumns } = useTableHover();
+  const { setHighlightedColumns, setHoveredEmail } = useTableHover();
 
   const handleMouseEnter = () => {
     setHighlightedColumns(['acceptanceRate', 'chatTotalApplies', 'userROI']);
+    setHoveredEmail(contributor.email);
   };
 
   const handleMouseLeave = () => {
     setHighlightedColumns([]);
+    setHoveredEmail(null);
   };
 
   return (
