@@ -6,6 +6,7 @@ import { useState } from "react";
 import { DashboardSettings } from "./DashboardSettings";
 import { useToast } from '@/hooks/use-toast';
 import { exportToImage } from '@/utils/exportUtils';
+import { analytics } from '@/services/analytics';
 
 interface DashboardHeaderProps {
   showReloadButton?: boolean;
@@ -28,6 +29,7 @@ export const DashboardHeader = ({
     setIsExporting(true);
     try {
       await exportToImage();
+      analytics.trackExport('image');
       toast({
         title: "Image Export Successful",
         description: "Your dashboard has been downloaded as an image.",
@@ -41,6 +43,11 @@ export const DashboardHeader = ({
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const handleSettingsOpen = () => {
+    setSettingsOpen(true);
+    analytics.trackSettingsOpen();
   };
 
   return (
@@ -113,7 +120,7 @@ export const DashboardHeader = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => setSettingsOpen(true)}
+                onClick={handleSettingsOpen}
                 className="h-8 w-8"
               >
                 <Settings className="w-4 h-4" />

@@ -1,9 +1,12 @@
+
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
+import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { analytics } from '@/services/analytics';
 import { Settings } from 'lucide-react';
 
 export interface CursorDataRow {
@@ -38,12 +41,33 @@ const Index = () => {
     filters
   } = useDashboardData();
 
+  // Enhanced file upload handler with analytics
+  const handleFileUploadWithAnalytics = (data: any) => {
+    handleFileUpload(data);
+    analytics.trackFileUpload(data.length);
+  };
+
+  // Enhanced reload handler with analytics
+  const handleReloadCSVWithAnalytics = () => {
+    handleReloadCSV();
+    analytics.trackCsvReload();
+  };
+
+  // Enhanced filters handler with analytics
+  const updateFiltersWithAnalytics = (newFilters: any) => {
+    updateFilters(newFilters);
+    // Track which filter was used
+    Object.keys(newFilters).forEach(filterKey => {
+      analytics.trackFilterUsage(filterKey);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8" data-export="dashboard-main">
         <DashboardHeader 
           showReloadButton={originalData.length > 0} 
-          onReloadCSV={handleReloadCSV}
+          onReloadCSV={handleReloadCSVWithAnalytics}
           showExportButton={originalData.length > 0}
         />
         
@@ -58,7 +82,7 @@ const Index = () => {
                 <li>For managers: Use dashboard insights to recognize champions, identify skills gaps, and boost adoption.</li>
               </ul>
             </div>
-            <FileUpload onFileUpload={handleFileUpload} isLoading={isLoading} />
+            <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
           </div>
         )}
         
@@ -71,7 +95,7 @@ const Index = () => {
             />
             <DashboardFilters 
               data={originalData} 
-              onFiltersChange={updateFilters} 
+              onFiltersChange={updateFiltersWithAnalytics} 
             />
             <div data-export="dashboard-charts">
               <DashboardCharts 
@@ -85,6 +109,7 @@ const Index = () => {
           </div>
         )}
       </div>
+      <PrivacyFooter />
     </div>
   );
 };
