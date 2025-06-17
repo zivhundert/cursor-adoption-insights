@@ -53,48 +53,42 @@ export const DashboardHeader = ({
   return (
     <header className="text-center relative">
       <div className="absolute top-0 right-0 z-10">
-        <div className="flex items-center bg-background/80 backdrop-blur-sm border rounded-lg p-1 shadow-sm">
+        <div className="flex flex-col bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-1">
           {showReloadButton && (
-            <>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onReloadCSV}
-                    className="h-8 w-8"
-                  >
-                    <RefreshCcw className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <span>Load New CSV</span>
-                </TooltipContent>
-              </Tooltip>
-              <Separator orientation="vertical" className="h-6 mx-1" />
-            </>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onReloadCSV}
+                  className="h-8 w-8"
+                >
+                  <RefreshCcw className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <span>Load New CSV</span>
+              </TooltipContent>
+            </Tooltip>
           )}
           
           {showExportButton && (
-            <>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    disabled={isExporting}
-                    onClick={handleExportImage}
-                    className="h-8 w-8"
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <span>{isExporting ? 'Exporting...' : 'Export as Image'}</span>
-                </TooltipContent>
-              </Tooltip>
-              <Separator orientation="vertical" className="h-6 mx-1" />
-            </>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  disabled={isExporting}
+                  onClick={handleExportImage}
+                  className="h-8 w-8"
+                >
+                  <Download className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="left">
+                <span>{isExporting ? 'Exporting...' : 'Export as Image'}</span>
+              </TooltipContent>
+            </Tooltip>
           )}
           
           <Tooltip>
@@ -108,12 +102,10 @@ export const DashboardHeader = ({
                 <Linkedin className="w-4 h-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="left">
               <span>Follow on LinkedIn</span>
             </TooltipContent>
           </Tooltip>
-          
-          <Separator orientation="vertical" className="h-6 mx-1" />
           
           <Tooltip>
             <TooltipTrigger asChild>
@@ -126,7 +118,7 @@ export const DashboardHeader = ({
                 <Settings className="w-4 h-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">
+            <TooltipContent side="left">
               <span>Dashboard Settings</span>
             </TooltipContent>
           </Tooltip>
