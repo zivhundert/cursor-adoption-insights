@@ -1,5 +1,5 @@
 
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
@@ -12,6 +12,19 @@ interface DayOfWeekChartProps {
 }
 
 export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const chartData = useMemo(() => {
     const dayOfWeekActivity = new Map<string, number>();
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -31,6 +44,24 @@ export const DayOfWeekChart = ({ data }: DayOfWeekChartProps) => {
 
   const options: Partial<HighchartsOptions> = {
     ...getColumnChartConfig(),
+    chart: {
+      ...getColumnChartConfig().chart,
+      marginBottom: isMobile ? 120 : 100,
+    },
+    xAxis: {
+      ...getColumnChartConfig().xAxis,
+      labels: {
+        rotation: isMobile ? -45 : 0,
+        style: {
+          fontSize: isMobile ? '10px' : '12px',
+          color: 'hsl(var(--foreground))'
+        },
+        formatter: function() {
+          const value = this.value as string;
+          return isMobile ? value.substring(0, 3) : value;
+        }
+      }
+    },
     tooltip: {
       formatter: createCategoryTooltipFormatter('Accepted Lines', (value) => value.toLocaleString())
     },

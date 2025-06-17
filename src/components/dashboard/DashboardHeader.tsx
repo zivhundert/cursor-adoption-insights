@@ -1,3 +1,4 @@
+
 import { BarChart3, RefreshCcw, Settings, Download, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -50,78 +51,93 @@ export const DashboardHeader = ({
     analytics.trackSettingsOpen();
   };
 
+  // Component for rendering button content - reused for both mobile and desktop
+  const ButtonGroup = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <>
+      {showReloadButton && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onReloadCSV}
+              className="h-8 w-8"
+            >
+              <RefreshCcw className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isMobile ? "bottom" : "left"}>
+            <span>Load New CSV</span>
+          </TooltipContent>
+        </Tooltip>
+      )}
+      
+      {showExportButton && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={isExporting}
+              onClick={handleExportImage}
+              className="h-8 w-8"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isMobile ? "bottom" : "left"}>
+            <span>{isExporting ? 'Exporting...' : 'Export as Image'}</span>
+          </TooltipContent>
+        </Tooltip>
+      )}
+      
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}
+          >
+            <Linkedin className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side={isMobile ? "bottom" : "left"}>
+          <span>Follow on LinkedIn</span>
+        </TooltipContent>
+      </Tooltip>
+      
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleSettingsOpen}
+            className="h-8 w-8"
+          >
+            <Settings className="w-4 h-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side={isMobile ? "bottom" : "left"}>
+          <span>Dashboard Settings</span>
+        </TooltipContent>
+      </Tooltip>
+    </>
+  );
+
   return (
     <header className="text-center relative">
-      <div className="absolute top-0 right-0 z-10">
+      {/* Mobile buttons - horizontal, top center, above title */}
+      <div className="sm:hidden flex justify-center gap-2 mb-4">
+        <div className="flex bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-2">
+          <ButtonGroup isMobile={true} />
+        </div>
+      </div>
+
+      {/* Desktop buttons - vertical, top right */}
+      <div className="hidden sm:block absolute top-0 right-0 z-10">
         <div className="flex flex-col bg-background/80 backdrop-blur-sm border rounded-lg p-2 shadow-sm gap-1">
-          {showReloadButton && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onReloadCSV}
-                  className="h-8 w-8"
-                >
-                  <RefreshCcw className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <span>Load New CSV</span>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          
-          {showExportButton && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled={isExporting}
-                  onClick={handleExportImage}
-                  className="h-8 w-8"
-                >
-                  <Download className="w-4 h-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="left">
-                <span>{isExporting ? 'Exporting...' : 'Export as Image'}</span>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => window.open(LINKEDIN_URL, "_blank", "noopener,noreferrer")}
-              >
-                <Linkedin className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <span>Follow on LinkedIn</span>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleSettingsOpen}
-                className="h-8 w-8"
-              >
-                <Settings className="w-4 h-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <span>Dashboard Settings</span>
-            </TooltipContent>
-          </Tooltip>
+          <ButtonGroup isMobile={false} />
         </div>
       </div>
       
