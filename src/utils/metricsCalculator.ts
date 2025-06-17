@@ -31,7 +31,7 @@ export const calculateMetrics = (
   const activeUsers = new Set(
     baseFilteredData
       .filter(row => !row.Email.includes('active users')) // Skip aggregated rows
-      .filter(row => row['Is Active'] === 'true')
+      .filter(row => row['Is Active'].toLowerCase() === 'true')
       .map(row => row.Email)
   ).size;
 
