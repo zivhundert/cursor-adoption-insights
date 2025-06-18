@@ -27,14 +27,14 @@ export const ExampleShowcase = () => {
           <div className="flex items-center justify-center gap-2 mb-3">
             <Sparkles className="w-6 h-6 text-blue-600" />
             <Badge variant="secondary" className="bg-blue-100 text-blue-800 font-semibold">
-              הצלחה אמיתית
+              Real Success Story
             </Badge>
           </div>
           <h3 className="text-3xl font-bold text-gray-900 mb-2">
-            תוצאות אמיתיות מחברה בינונית
+            Real Results from a Mid-Size Company
           </h3>
           <p className="text-lg text-gray-600">
-            אחרי רק חודשיים עם Cursor AI - זה יכול להיות הדשבורד של הצוות שלכם!
+            After just 2 months with Cursor AI - this could be your team's dashboard!
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export const ExampleShowcase = () => {
             <div className="relative">
               <img 
                 src="/example.png" 
-                alt="Cursor AI Dashboard Example - חצי דוח להצגה"
+                alt="Cursor AI Dashboard Example - Partial View"
                 className="w-full rounded-lg shadow-md"
               />
               
@@ -65,24 +65,24 @@ export const ExampleShowcase = () => {
             {/* Success Badge Overlay */}
             <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-2 rounded-full shadow-lg flex items-center gap-1">
               <TrendingUp className="w-4 h-4" />
-              <span className="font-semibold text-sm">ROI מוכח</span>
+              <span className="font-semibold text-sm">Proven ROI</span>
             </div>
 
             {/* Bottom Overlay with "More Content" Message */}
             <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm border border-blue-200 rounded-lg p-4 shadow-xl">
               <div className="flex items-center justify-center mb-2">
-                <Lock className="w-5 h-5 text-blue-600 ml-2" />
-                <h4 className="font-bold text-gray-900 text-center">📊 זה רק ההתחלה...</h4>
+                <Lock className="w-5 h-5 text-blue-600 mr-2" />
+                <h4 className="font-bold text-gray-900 text-center">📊 This is just the beginning...</h4>
               </div>
               
               <div className="text-sm text-gray-700 space-y-1 mb-3">
-                <p className="font-semibold text-center">הדשבורד המלא כולל:</p>
+                <p className="font-semibold text-center">The full dashboard includes:</p>
                 <div className="grid grid-cols-1 gap-1 text-xs">
-                  <span>✓ 15+ גרפים מפורטים</span>
-                  <span>✓ ניתוח ביצועים של הצוות</span>
-                  <span>✓ פירוט עלויות לפי משתמש</span>
-                  <span>✓ תובנות שפות תכנות</span>
-                  <span>✓ ייצוא ל-PDF ותמונות</span>
+                  <span>✓ 15+ detailed charts</span>
+                  <span>✓ Team performance analysis</span>
+                  <span>✓ Cost breakdown by user</span>
+                  <span>✓ Programming language insights</span>
+                  <span>✓ Export to PDF & images</span>
                 </div>
               </div>
               
@@ -91,8 +91,8 @@ export const ExampleShowcase = () => {
                 className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
                 size="sm"
               >
-                <Download className="w-4 h-4 ml-2" />
-                הורד דוגמה מלאה
+                <Download className="w-4 h-4 mr-2" />
+                Download Full Example
               </Button>
             </div>
           </div>
@@ -102,36 +102,36 @@ export const ExampleShowcase = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-blue-100">
             <div className="flex items-center justify-center mb-2">
-              <Users className="w-5 h-5 text-blue-600 ml-2" />
+              <Users className="w-5 h-5 text-blue-600 mr-2" />
               <span className="font-bold text-2xl text-gray-900">107K+</span>
             </div>
-            <p className="text-sm text-gray-600">שורות קוד שאושרו</p>
+            <p className="text-sm text-gray-600">Code lines accepted</p>
           </div>
           
           <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-green-100">
             <div className="flex items-center justify-center mb-2">
-              <DollarSign className="w-5 h-5 text-green-600 ml-2" />
+              <DollarSign className="w-5 h-5 text-green-600 mr-2" />
               <span className="font-bold text-2xl text-gray-900">$59K+</span>
             </div>
-            <p className="text-sm text-gray-600">חיסכון בעלויות פיתוח</p>
+            <p className="text-sm text-gray-600">Development cost savings</p>
           </div>
           
           <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center border border-purple-100">
             <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="w-5 h-5 text-purple-600 ml-2" />
+              <TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
               <span className="font-bold text-2xl text-gray-900">480%</span>
             </div>
-            <p className="text-sm text-gray-600">החזר השקעה</p>
+            <p className="text-sm text-gray-600">Return on investment</p>
           </div>
         </div>
 
         {/* Call to Action */}
         <div className="text-center space-y-4">
           <p className="text-lg font-semibold text-gray-800">
-            📊 רוצים לראות תובנות כאלה עבור הצוות שלכם?
+            📊 Want to see insights like these for your team?
           </p>
           <p className="text-gray-600 mb-4">
-            הורידו את הדוגמה הזו או העלו את נתוני Cursor של הצוות שלכם כדי להתחיל מיידית
+            Download this example or upload your team's Cursor data to get started instantly
           </p>
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
@@ -140,8 +140,8 @@ export const ExampleShowcase = () => {
               variant="outline"
               className="border-blue-300 hover:bg-blue-50 hover:border-blue-400 transition-all"
             >
-              <Download className="w-4 h-4 ml-2" />
-              הורד דוגמה מלאה
+              <Download className="w-4 h-4 mr-2" />
+              Download Full Example
             </Button>
             
             <Button 
@@ -153,8 +153,8 @@ export const ExampleShowcase = () => {
                 }
               }}
             >
-              <Sparkles className="w-4 h-4 ml-2" />
-              העלו את הנתונים שלכם עכשיו
+              <Sparkles className="w-4 h-4 mr-2" />
+              Upload Your Data Now
             </Button>
           </div>
         </div>
