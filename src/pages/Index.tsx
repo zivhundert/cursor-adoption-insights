@@ -1,8 +1,10 @@
+
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { FileUpload } from '@/components/dashboard/FileUpload';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
+import { ExampleShowcase } from '@/components/dashboard/ExampleShowcase';
 import { PrivacyFooter } from '@/components/common/PrivacyFooter';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { analytics } from '@/services/analytics';
@@ -78,21 +80,29 @@ const Index = () => {
           showExportButton={originalData.length > 0}
         />
         
-        {/* Onboarding panel for new users */}
+        {/* Show content only when no data is uploaded */}
         {originalData.length === 0 && (
           <div className="mt-12">
+            {/* Example Showcase - New Eye-Catching Section */}
+            <ExampleShowcase />
+            
+            {/* Onboarding panel for new users */}
             <div className="bg-teal-50 border border-teal-200 rounded-xl px-6 py-5 mb-8 max-w-2xl mx-auto text-teal-900 text-base flex flex-col gap-2">
-              <b>First time here?</b> Upload your team's exported Cursor usage file above to start.
+              <b>First time here?</b> Upload your team's exported Cursor usage file below to start.
               <ul className="list-disc ml-6 text-sm">
                 <li>This dashboard will instantly analyze team AI usage, cost savings, and opportunities for improvement.</li>
                 <li>Want tips? <span className="font-semibold">Hover any <span className="inline-block align-text-bottom bg-gray-200 rounded px-1">?</span> or <span className="inline-block align-text-bottom"><Settings className="h-3 w-3 inline" /></span></span> for actionable explanations.</li>
                 <li>For managers: Use dashboard insights to recognize champions, identify skills gaps, and boost adoption.</li>
               </ul>
             </div>
-            <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
+            
+            <div data-upload-section>
+              <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
+            </div>
           </div>
         )}
         
+        {/* Show dashboard when data is uploaded */}
         {originalData.length > 0 && (
           <div className="mt-8 space-y-8">
             <DashboardMetrics 
