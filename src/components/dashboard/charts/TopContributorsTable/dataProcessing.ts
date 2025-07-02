@@ -51,7 +51,7 @@ export const useContributorData = (data: CursorDataRow[], linesPerMinute: number
         : 0;
       
       // Calculate User ROI first
-      const estimatedHoursSaved = stats.acceptedLines / (linesPerMinute * 60);
+      const estimatedHoursSaved = Math.round(stats.acceptedLines / (linesPerMinute * 60));
       const individualMoneySaved = estimatedHoursSaved * pricePerHour;
       const annualCursorCostPerUser = cursorPricePerUser * 12;
       

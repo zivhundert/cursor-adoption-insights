@@ -8,13 +8,6 @@ interface CalculatedMetrics {
   estimatedHoursSaved: string;
   estimatedMoneySaved: string;
   roi: string;
-  debug: {
-    totalAcceptedLinesRaw: number;
-    estimatedHoursSavedRaw: number;
-    estimatedMoneySavedRaw: number;
-    annualCursorCost: number;
-    roiRaw: number;
-  };
 }
 
 interface MetricsSettings {
@@ -76,12 +69,5 @@ export const calculateMetrics = (
     estimatedHoursSaved: estimatedHoursSaved.toLocaleString(),
     estimatedMoneySaved: `$${estimatedMoneySaved.toLocaleString()}`,
     roi: `${roi}%`,
-    debug: {
-      totalAcceptedLinesRaw: totalAcceptedLines,
-      estimatedHoursSavedRaw: estimatedHoursSaved,
-      estimatedMoneySavedRaw: estimatedMoneySaved,
-      annualCursorCost,
-      roiRaw: parseFloat(roi),
-    },
   };
 };
