@@ -13,6 +13,7 @@ interface DashboardHeaderProps {
   showReloadButton?: boolean;
   onReloadCSV?: () => void;
   showExportButton?: boolean;
+  showSettingsButton?: boolean;
 }
 
 const LINKEDIN_URL = "https://www.linkedin.com/in/zivhundert/";
@@ -20,7 +21,8 @@ const LINKEDIN_URL = "https://www.linkedin.com/in/zivhundert/";
 export const DashboardHeader = ({ 
   showReloadButton = false, 
   onReloadCSV,
-  showExportButton = false
+  showExportButton = false,
+  showSettingsButton = true
 }: DashboardHeaderProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -107,21 +109,23 @@ export const DashboardHeader = ({
         </TooltipContent>
       </Tooltip>
       
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={handleSettingsOpen}
-            className="h-8 w-8"
-          >
-            <Settings className="w-4 h-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side={isMobile ? "bottom" : "left"}>
-          <span>Dashboard Settings</span>
-        </TooltipContent>
-      </Tooltip>
+      {showSettingsButton && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleSettingsOpen}
+              className="h-8 w-8"
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side={isMobile ? "bottom" : "left"}>
+            <span>Dashboard Settings</span>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </>
   );
 

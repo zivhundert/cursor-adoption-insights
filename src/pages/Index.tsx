@@ -78,6 +78,7 @@ const Index = () => {
           showReloadButton={originalData.length > 0} 
           onReloadCSV={handleReloadCSVWithAnalytics}
           showExportButton={originalData.length > 0}
+          showSettingsButton={originalData.length > 0}
         />
         
         {/* Show content only when no data is uploaded */}
