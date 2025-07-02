@@ -86,15 +86,6 @@ const Index = () => {
             {/* Example Showcase - New Eye-Catching Section */}
             <ExampleShowcase />
             
-            {/* Onboarding panel for new users */}
-            <div className="bg-teal-50 border border-teal-200 rounded-xl px-6 py-5 mb-8 max-w-2xl mx-auto text-teal-900 text-base flex flex-col gap-2">
-              <b>First time here?</b> Upload your team's exported Cursor usage file below to start.
-              <ul className="list-disc ml-6 text-sm">
-                <li>This dashboard will instantly analyze team AI usage, cost savings, and opportunities for improvement.</li>
-                <li>Want tips? <span className="font-semibold">Hover any <span className="inline-block align-text-bottom bg-gray-200 rounded px-1">?</span> or <span className="inline-block align-text-bottom"><Settings className="h-3 w-3 inline" /></span></span> for actionable explanations.</li>
-                <li>For managers: Use dashboard insights to recognize champions, identify skills gaps, and boost adoption.</li>
-              </ul>
-            </div>
             
             <div data-upload-section>
               <FileUpload onFileUpload={handleFileUploadWithAnalytics} isLoading={isLoading} />
