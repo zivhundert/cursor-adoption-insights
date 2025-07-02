@@ -86,7 +86,13 @@ export const DashboardMetrics = ({ data, originalData, baseFilteredData }: Dashb
         <br/><br/>
         <strong>Action:</strong> Use this to justify AI expenses to leadership.
         <br/><br/>
-        <em>Annual cost = {metrics.activeUsers} users × ${settings.cursorPricePerUser}/month × 12 months</em>
+        <strong>DEBUG - Calculation Details:</strong>
+        <br/>• Accepted Lines: {metrics.debug.totalAcceptedLinesRaw.toLocaleString()}
+        <br/>• Hours Saved: {metrics.debug.estimatedHoursSavedRaw.toLocaleString()}
+        <br/>• Money Saved: ${metrics.debug.estimatedMoneySavedRaw.toLocaleString()}
+        <br/>• Active Users: {metrics.activeUsers}
+        <br/>• Annual Cursor Cost: ${metrics.debug.annualCursorCost.toLocaleString()}
+        <br/>• ROI Calculation: (${metrics.debug.estimatedMoneySavedRaw.toLocaleString()} ÷ ${metrics.debug.annualCursorCost.toLocaleString()}) × 100 = {metrics.debug.roiRaw.toFixed(1)}%
       </>
     },
     {
