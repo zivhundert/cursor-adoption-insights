@@ -20,7 +20,7 @@ export const ExampleShowcase = () => {
   };
 
   return (
-    <Card className="max-w-4xl mx-auto mb-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-teal-50 border-2 border-blue-200 shadow-xl">
+    <Card className="w-full mx-auto mb-8 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-teal-50 border-2 border-blue-200 shadow-xl">
       <div className="p-8">
         {/* Header Section */}
         <div className="text-center mb-6">
@@ -92,7 +92,7 @@ export const ExampleShowcase = () => {
                 size="sm"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Download Full Example
+                Download Full Report Example
               </Button>
             </div>
           </div>
@@ -136,12 +136,23 @@ export const ExampleShowcase = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
             <Button 
-              onClick={handleDownloadExample}
+              onClick={() => {
+                // Track download event
+                analytics.trackExport('image');
+                
+                // Create download link for CSV
+                const link = document.createElement('a');
+                link.href = '/cursor_analytics.csv';
+                link.download = 'cursor-analytics-example.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+              }}
               variant="outline"
               className="border-blue-300 hover:bg-blue-50 hover:border-blue-400 transition-all"
             >
               <Download className="w-4 h-4 mr-2" />
-              Download Full Example
+              Download CSV Example
             </Button>
             
             <Button 
