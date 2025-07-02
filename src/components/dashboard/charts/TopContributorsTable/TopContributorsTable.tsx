@@ -30,7 +30,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
     return null;
   }
 
-  const displayedContributors = showAll ? sortedContributors : sortedContributors.slice(0, 7);
+  const displayedContributors = showAll ? sortedContributors : sortedContributors.slice(0, 10);
 
   return (
     <TableHoverProvider>
@@ -68,7 +68,7 @@ export const TopContributorsTable = ({ data, isFiltered = false }: TopContributo
                 size="sm"
                 onClick={toggleShowAll}
               >
-                {showAll ? 'Show Top 7' : 'Show All'}
+                {showAll ? 'Show Top 10' : 'Show All'}
               </Button>
             )}
           </div>
