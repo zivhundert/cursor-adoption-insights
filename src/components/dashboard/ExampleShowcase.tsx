@@ -12,8 +12,8 @@ export const ExampleShowcase = () => {
     
     // Create download link
     const link = document.createElement('a');
-    link.href = '/example.png';
-    link.download = 'cursor-dashboard-example.png';
+    link.href = '/fullreport.png';
+    link.download = 'cursor-full-report-example.png';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
