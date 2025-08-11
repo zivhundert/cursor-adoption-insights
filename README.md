@@ -1,73 +1,44 @@
-# Welcome to your Lovable project
+# Cursor Analytics Dashboard
 
-## Project info
+Open-source dashboard to analyze developer adoption and productivity using Cursor IDE telemetry exports. Built with Vite, React, TypeScript, Tailwind, and shadcn-ui.
 
-**URL**: https://lovable.dev/projects/d29ff02d-6444-4c1b-9ea7-490f9e2f46c3
+## Features
+- KPI cards (AI code %, acceptance rate, hours and cost savings, ROI)
+- Charts: cumulative usage, request types over time, model usage, day-of-week, treemap, and more
+- AI Adoption Champions table with sortable metrics
+- CSV upload (no server required) and export to image
+- Theme switching and per-chart visibility settings
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/d29ff02d-6444-4c1b-9ea7-490f9e2f46c3) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+## Quick start
+```bash
+# 1) Install deps
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 2) Run the dev server
 npm run dev
+
+# 3) Build for production
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+## Tech stack
+- Vite + React + TypeScript
+- Tailwind CSS + shadcn-ui
+- Highcharts (via highcharts-react-official)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Privacy
+This project is client-side only. If you enable analytics (gtag) in your hosting environment, events are anonymous. See src/services/analytics.ts. The in-app footer also clarifies that no personal information is stored.
 
-**Use GitHub Codespaces**
+## License
+This repository is licensed under the MIT License. See LICENSE for details.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Note about Highcharts: While this code is MIT, Highcharts itself is commercially licensed. You may need a valid Highcharts license to use it in production. See https://www.highcharts.com/license
 
-## What technologies are used for this project?
+## Contributing
+We welcome contributions! Please read CONTRIBUTING.md for the development workflow and coding standards. By participating, you agree to abide by our CODE_OF_CONDUCT.md.
 
-This project is built with:
+## Security
+Please report security issues privately. See SECURITY.md for instructions.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d29ff02d-6444-4c1b-9ea7-490f9e2f46c3) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Credits
+Built with Lovable.dev. Original project scaffold and scripts adapted from Lovable templates.

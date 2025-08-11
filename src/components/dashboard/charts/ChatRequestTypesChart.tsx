@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Options as HighchartsOptions } from 'highcharts';
 import { ChartContainer } from '@/components/common/ChartContainer';
 import { BaseHighchart } from '@/components/common/BaseHighchart';
-import { getColumnChartConfig, CHART_COLORS } from '@/config/chartConfigs';
+import { getLineChartConfig, CHART_COLORS } from '@/config/chartConfigs';
 import { createDateTooltipFormatter } from '@/utils/chartHelpers';
 import { CursorDataRow } from '@/pages/Index';
 import { type AggregationPeriod } from '@/utils/dataAggregation';
@@ -69,13 +69,17 @@ export const ChatRequestTypesChart = ({ data, aggregationPeriod }: ChatRequestTy
   };
 
   const options: Partial<HighchartsOptions> = {
-    ...getColumnChartConfig(),
+    ...getLineChartConfig(),
+    chart: {
+      ...getLineChartConfig().chart,
+      type: 'column'
+    },
     xAxis: {
-      ...getColumnChartConfig().xAxis,
+      ...getLineChartConfig().xAxis,
       type: 'datetime'
     },
     yAxis: {
-      ...getColumnChartConfig().yAxis,
+      ...getLineChartConfig().yAxis,
       title: {
         text: 'Usage',
         style: {
